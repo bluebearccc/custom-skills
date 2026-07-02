@@ -1,5 +1,5 @@
 ---
-description: Agent tạo Requirements Traceability Matrix (RTM) — mapping FR → UC → Component → API → DB → Test
+description: Agent that creates the Requirements Traceability Matrix (RTM) — mapping FR → UC → Component → API → DB → Test
 mode: subagent
 permission:
   edit: allow
@@ -10,85 +10,85 @@ permission:
 
 # Traceability Agent
 
-## Mục đích
-Traceability Agent tạo **Requirements Traceability Matrix (RTM)** — artifact bắt buộc để chứng minh mọi requirement trong SRS đều có design trong SDD và (sau này) có test case coverage.
+## Purpose
+Traceability Agent creates the **Requirements Traceability Matrix (RTM)** — a required artifact to prove that every requirement in the SRS has a corresponding design in the SDD and (later) test case coverage.
 
-RTM là nguồn sự thật duy nhất cho câu hỏi:
-> *"FR này có được implement chưa? UC này có test case chưa? Component này cover UC nào?"*
+The RTM is the single source of truth for the question:
+> *"Has this FR been implemented? Does this UC have a test case? Which UCs does this component cover?"*
 
 ## Trigger
-Được spawn bởi `integration-agent` sau khi cả SRS và SDD hoàn thành.
+Spawned by `integration-agent` after both the SRS and SDD are complete.
 
 ```
 integration-agent
-  └── @traceability-agent   ← spawn sau khi SRS + SDD done
+  └── @traceability-agent   ← spawned after SRS + SDD are done
 ```
 
-## Điều kiện tiên quyết
+## Prerequisites
 
 ```
-✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md tồn tại
-✅ docs/{ProjectName}/SDD_{ProjectName}_v*.md tồn tại
-✅ docs/{ProjectName}/requirements-summary.md tồn tại
-✅ docs/{ProjectName}/api/openapi.yaml tồn tại
-✅ docs/{ProjectName}/db/schema.sql tồn tại
+✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md exists
+✅ docs/{ProjectName}/SDD_{ProjectName}_v*.md exists
+✅ docs/{ProjectName}/requirements-summary.md exists
+✅ docs/{ProjectName}/api/openapi.yaml exists
+✅ docs/{ProjectName}/db/schema.sql exists
 ```
 
-## Skills sử dụng
-| Skill | Khi nào |
+## Skills Used
+| Skill | When |
 |-------|---------|
-| `traceability` | Chính — tạo RTM document |
+| `traceability` | Primary — creates the RTM document |
 
 ---
 
-## Quy trình
+## Process
 
-### Bước 1: Thu thập dữ liệu từ tất cả documents
-
-```
-Đọc và extract:
-
-Từ SRS:
-  - Danh sách FR (Functional Requirements) với ID
-  - Danh sách UC (Use Cases) với ID, tên, actors
-  - Danh sách NFR (Non-Functional Requirements)
-
-Từ SDD:
-  - Danh sách Components và purpose
-  - Section 0.2 UC → Implementation Mapping (nếu đã có)
-
-Từ api/openapi.yaml:
-  - Tất cả paths và operationId
-
-Từ db/schema.sql:
-  - Tất cả table names
-
-Từ test-plan/ (nếu đã có từ test-agent):
-  - Danh sách test cases với ID
-```
-
-### Bước 2: Tạo mapping chains
+### Step 1: Collect data from all documents
 
 ```
-Xây dựng 4 chains mapping:
+Read and extract:
+
+From the SRS:
+  - List of FRs (Functional Requirements) with IDs
+  - List of UCs (Use Cases) with IDs, names, actors
+  - List of NFRs (Non-Functional Requirements)
+
+From the SDD:
+  - List of Components and their purpose
+  - Section 0.2 UC → Implementation Mapping (if available)
+
+From api/openapi.yaml:
+  - All paths and operationId
+
+From db/schema.sql:
+  - All table names
+
+From test-plan/ (if already produced by test-agent):
+  - List of test cases with IDs
+```
+
+### Step 2: Build the mapping chains
+
+```
+Build 4 mapping chains:
 
 Chain 1: FR → UC
-  Mỗi FR thuộc về UC nào?
+  Which UC does each FR belong to?
 
 Chain 2: UC → Component
-  UC được implement bởi Component nào?
+  Which Component implements each UC?
 
 Chain 3: Component → API Endpoints
-  Component expose API endpoint nào?
+  Which API endpoints does the Component expose?
 
 Chain 4: Component → DB Tables
-  Component sử dụng DB tables nào?
+  Which DB tables does the Component use?
 
-Chain 5: UC → Test Cases (nếu test-plan tồn tại)
-  UC có test case nào cover?
+Chain 5: UC → Test Cases (if the test plan exists)
+  Which test cases cover each UC?
 ```
 
-### Bước 3: Tạo RTM và coverage reports
+### Step 3: Create the RTM and coverage reports
 
 ```
 skill({ name: "traceability" })
@@ -98,20 +98,20 @@ Output:
 - traceability/coverage.md   — Coverage summary + gaps
 ```
 
-### Bước 4: Báo cáo gaps
+### Step 4: Report gaps
 
 ```
 Gap analysis:
-- FRs không có UC tương ứng → untracked requirements
-- UCs không có Component tương ứng → unimplemented use cases
-- UCs không có API endpoint → missing API
-- UCs không có DB table → missing data model
-- UCs không có test case → untested (nếu test-plan có)
+- FRs with no corresponding UC → untracked requirements
+- UCs with no corresponding Component → unimplemented use cases
+- UCs with no API endpoint → missing API
+- UCs with no DB table → missing data model
+- UCs with no test case → untested (if the test plan exists)
 ```
 
 ---
 
-## Output Structure (BẮT BUỘC)
+## Output Structure (REQUIRED)
 
 ```
 docs/{ProjectName}/
@@ -122,7 +122,7 @@ docs/{ProjectName}/
 
 ---
 
-## Báo cáo kết quả cho integration-agent
+## Result Report for integration-agent
 
 ```json
 {

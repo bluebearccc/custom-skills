@@ -1,15 +1,15 @@
 ---
 name: requirements-gathering
 description: |
-  Thu thập yêu cầu phần mềm bằng cách phỏng vấn CHI TIẾT từng câu hỏi.
-  BẮT BUỘC người dùng trả lời đầy đủ TRƯỚC KHI chuyển sang câu hỏi tiếp theo.
-  KHÔNG CHO PHÉP bỏ qua - nếu câu trả lời chưa đủ, ĐÀO SÂU cho đến khi user XÁC NHẬN hài lòng.
+  Gather software requirements by interviewing the user in DETAIL, question by question.
+  The user MUST answer fully BEFORE moving to the next question.
+  Skipping is NOT ALLOWED - if an answer is incomplete, DIG DEEPER until the user CONFIRMS they are satisfied.
 
-  SỬ DỤNG KHI:
-  - Người dùng muốn thu thập yêu cầu cho dự án mới
-  - Cần phỏng vấn stakeholders bằng câu hỏi cụ thể
+  USE WHEN:
+  - The user wants to gather requirements for a new project
+  - Stakeholders need to be interviewed with specific questions
 
-  QUAN TRỌNG: PHẢI sử dụng tool AskUserQuestion cho TẤT CẢ các câu hỏi interview.
+  IMPORTANT: You MUST use the AskUserQuestion tool for ALL interview questions.
 version: "3.2.0"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "AskUserQuestion"]
 mode: false
@@ -17,102 +17,102 @@ mode: false
 
 # Requirements Gathering Skill v3.2.0
 
-## Nguyên tắc BẮT BUỘC
+## MANDATORY Principles
 
-### 0. CÁCH HỎI — AskUserQuestion CHO LỰA CHỌN, PROSE CHO NHẬP TỰ DO
+### 0. HOW TO ASK — AskUserQuestion FOR CHOICES, PROSE FOR FREE-FORM INPUT
 
-> ⚠️ **QUAN TRỌNG — đọc kỹ trước khi dùng:** Tool `AskUserQuestion` **bắt buộc mỗi câu hỏi có 2–4 `options`**.
-> Tool **tự động thêm một lựa chọn "Other"** để user gõ tự do. **KHÔNG có chế độ chỉ-nhập-text.**
-> Vì vậy:
-> - **Câu hỏi LỰA CHỌN** (chọn từ danh sách: MoSCoW, platform, sync mode, yes/no…) → dùng `AskUserQuestion` với `options`.
-> - **Câu hỏi MỞ** (tên dự án, mô tả, liệt kê features/entities, điền bảng…) → **hỏi bằng prose** (text thường) và để user gõ trả lời. KHÔNG ép vào `AskUserQuestion` rỗng options.
+> ⚠️ **IMPORTANT — read carefully before using:** The `AskUserQuestion` tool **requires every question to have 2–4 `options`**.
+> The tool **automatically adds an "Other" option** so the user can type freely. **There is no text-only mode.**
+> Therefore:
+> - **CHOICE questions** (selecting from a list: MoSCoW, platform, sync mode, yes/no…) → use `AskUserQuestion` with `options`.
+> - **OPEN-ENDED questions** (project name, description, listing features/entities, filling in a table…) → **ask in prose** (plain text) and let the user type their answer. Do NOT force these into an `AskUserQuestion` with empty options.
 
 ```
-✅ Câu LỰA CHỌN → AskUserQuestion (có options)
-✅ Câu MỞ      → prose: "📝 Câu X/35: Mô tả ngắn gọn hệ thống bạn muốn xây dựng?"
+✅ CHOICE question → AskUserQuestion (with options)
+✅ OPEN question   → prose: "📝 Question X/35: Briefly describe the system you want to build?"
 ```
 
-### AskUserQuestion — chữ ký ĐÚNG
+### AskUserQuestion — CORRECT signature
 
-> Các khối code phía dưới trong skill này là **minh họa**. Khi chạy thực tế, hãy gọi tool thật
-> với đúng tên field dưới đây (đặc biệt `multiSelect`, **không phải** `multiSelect`):
+> The code blocks below in this skill are **illustrative**. When actually running, call the real tool
+> with the exact field names below (especially `multiSelect`, **not** `multiSelect`):
 
 ```javascript
 AskUserQuestion({
   questions: [
     {
-      question: "Câu hỏi (có thể xuống dòng bằng \n)",
-      header: "Nhãn ngắn (≤ 12 ký tự)",
-      multiSelect: false,          // false = chọn 1 · true = chọn nhiều
-      options: [                    // BẮT BUỘC 2–4 options
-        { label: "Option A", description: "Mô tả A" },
-        { label: "Option B", description: "Mô tả B" }
+      question: "Question text (line breaks with \n)",
+      header: "Short label (≤ 12 characters)",
+      multiSelect: false,          // false = single choice · true = multiple choice
+      options: [                    // REQUIRED 2–4 options
+        { label: "Option A", description: "Description A" },
+        { label: "Option B", description: "Description B" }
       ]
     }
   ]
 })
 ```
 
-### QUY TẮC SỬ DỤNG:
-- Mỗi câu hỏi AskUserQuestion **phải có 2–4 `options`** — nếu không có lựa chọn rõ ràng, hỏi bằng prose.
-- `multiSelect: false` cho chọn 1; `multiSelect: true` cho chọn nhiều.
-- User luôn có thể chọn "Other" để nhập tự do — không cần thêm option "Khác" thủ công.
-- LUÔN dùng `\n` để xuống dòng trong question text.
+### USAGE RULES:
+- Every AskUserQuestion question **must have 2–4 `options`** — if there's no clear set of choices, ask in prose instead.
+- `multiSelect: false` for single choice; `multiSelect: true` for multiple choice.
+- The user can always choose "Other" to type a free-form answer — no need to manually add an "Other" option.
+- ALWAYS use `\n` for line breaks in the question text.
 
-### 1. HỎI TỪNG CÂU - LOOP CHO ĐẾN KHI ĐẦY ĐỦ
+### 1. ASK ONE QUESTION AT A TIME - LOOP UNTIL COMPLETE
 ```
-❌ SAI: Hỏi → User trả lời ngắn → Chuyển câu tiếp theo
-✅ ĐÚNG: Hỏi → User trả lời → Đánh giá → Nếu CHƯA ĐỦ → ĐÀO SÂU → Lặp lại → Đến khi ĐẦY ĐỦ → Hỏi "Bạn có hài lòng?" → Xác nhận → Câu tiếp theo
-```
-
-### 2. CƠ CHẾ "SATISFIED?" - BẮT BUỘC XÁC NHẬN
-```
-Sau MỖI câu trả lời chính, PHẢI hỏi:
-"☝️ Tạm ổn rồi. Bạn có muốn bổ sung thêm gì không? Hay chúng ta chuyển sang câu tiếp theo?"
-- User đồng ý → Chuyển câu tiếp theo
-- User muốn bổ sung → Tiếp tục câu hiện tại
+❌ WRONG: Ask → User gives a short answer → Move to the next question
+✅ RIGHT: Ask → User answers → Evaluate → If NOT COMPLETE → DIG DEEPER → Repeat → Until COMPLETE → Ask "Are you satisfied?" → Confirm → Next question
 ```
 
-### 3. ĐÀO SÂU KHI TRẢ LỜI VAGUE/NGẮN
+### 2. THE "SATISFIED?" MECHANISM - CONFIRMATION IS MANDATORY
 ```
-User: "Cần có quản lý users"
-→ "Quản lý users có nghĩa là gì cụ thể? Có phải:"
-     a) Tạo mới user?
-     b) Sửa thông tin user?
-     c) Xóa user?
-     d) Phân quyền user?
-     e) Reset password?
-   Bạn muốn tất cả hay chỉ một số tính năng?"
-
-User: "khoảng 1000"
-→ "1000 users? 1000 sản phẩm? 1000 đơn hàng? Con số này thuộc loại dữ liệu nào?"
+After EVERY main answer, you MUST ask:
+"☝️ That's good for now. Would you like to add anything else? Or shall we move to the next question?"
+- User agrees → Move to the next question
+- User wants to add more → Continue with the current question
 ```
 
-### 4. ĐÁNH DẤU TRẠNG THÁI MỖI CÂU HỎI
+### 3. DIG DEEPER WHEN ANSWERS ARE VAGUE/SHORT
 ```
-Mỗi câu hỏi phải có trạng thái:
-[ ] Pending    - Chưa hỏi
-[ ] Asked      - Đã hỏi, đang chờ trả lời
-[ ] Probing    - Đang đào sâu
-[ ] Satisfied  - User xác nhận đã đầy đủ
-[ ] Skipped    - User từ chối trả lời (ghi reason)
+User: "We need user management"
+→ "What exactly does 'user management' mean? Is it:"
+     a) Creating a new user?
+     b) Editing user info?
+     c) Deleting a user?
+     d) Managing user permissions?
+     e) Resetting passwords?
+   Do you want all of these, or just some of these features?"
+
+User: "around 1000"
+→ "1000 users? 1000 products? 1000 orders? What kind of data does this number refer to?"
+```
+
+### 4. TRACK THE STATUS OF EACH QUESTION
+```
+Every question must have a status:
+[ ] Pending    - Not yet asked
+[ ] Asked      - Asked, awaiting an answer
+[ ] Probing    - Currently digging deeper
+[ ] Satisfied  - User confirmed it's complete
+[ ] Skipped    - User declined to answer (record the reason)
 ```
 
 ---
 
 ## Interview Flow (12 Steps)
 
-### STEP 1: Giới thiệu + Xác nhận bắt đầu
+### STEP 1: Introduction + Confirm Start
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "👋 Xin chào! Tôi sẽ giúp bạn thu thập yêu cầu cho dự án.\n\nQUY TẮC:\n• Tôi sẽ hỏi TỪNG câu một\n• Với mỗi câu, tôi cần bạn trả lời ĐẦY ĐỦ và CỤ THỂ\n• Nếu câu trả lời còn thiếu, tôi sẽ đào sâu thêm\n• Sau mỗi câu trả lời, bạn sẽ được hỏi 'Có hài lòng không?'\n• Bạn có thể bổ sung thêm bất cứ lúc nào\n\nBắt đầu nhé?",
-    header: "Bắt đầu",
+    question: "👋 Hello! I'll help you gather requirements for your project.\n\nRULES:\n• I will ask ONE question at a time\n• For each question, I need you to answer FULLY and SPECIFICALLY\n• If an answer is incomplete, I will dig deeper\n• After each answer, I'll ask you 'Are you satisfied?'\n• You can add more information at any time\n\nShall we start?",
+    header: "Start",
     options: [
-      { label: "Bắt đầu", description: "Tôi đã sẵn sàng trả lời phỏng vấn" },
-      { label: "Cần tìm hiểu thêm", description: "Tôi muốn biết thêm về quy trình" }
+      { label: "start", description: "I'm ready to begin the interview" },
+      { label: "Need more info first", description: "I'd like to learn more about the process" }
     ],
     multiSelect: false
   }]
@@ -121,715 +121,713 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### STEP 2: Thông tin Dự án Cơ bản
+### STEP 2: Basic Project Information
 
-**Câu hỏi 2.1 (Bắt buộc) - TÊN DỰ ÁN:**
+**Question 2.1 (Required) - PROJECT NAME:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 1/35: Tên dự án của bạn là gì?\n\nVí dụ: 'Hệ thống Quản lý Bán hàng', 'App Đặt món ăn', 'Phần mềm CRM'",
-    header: "Tên Dự án"
+    question: "📝 Question 1/35: What is the name of your project?\n\nExamples: 'Sales Management System', 'Food Ordering App', 'CRM Software'",
+    header: "Project Name"
   }]
 })
 ```
 
-**Probing 2.1a (nếu quá ngắn/chung chung) - DÙNG AskUserQuestion:**
+**Probing 2.1a (if too short/generic) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "Tên này có phải là tên chính thức của dự án không?\nHay đây chỉ là tên tạm thời để phân biệt với dự án khác?",
-    header: "Xác nhận tên"
+    question: "Is this the official name of the project?\nOr is this just a working name to distinguish it from other projects?",
+    header: "Confirm Name"
   }]
 })
 ```
 
-**SATISFACTION CHECK 2.1 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 2.1 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Tên dự án: [tên đã nhập]\n\nBạn có hài lòng với tên này không? Có muốn đổi hoặc bổ sung gì thêm không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Project name: [name entered]\n\nAre you satisfied with this name? Would you like to change or add anything?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-**Câu hỏi 2.2 (Bắt buộc) - MÔ TẢ HỆ THỐNG:**
+**Question 2.2 (Required) - SYSTEM DESCRIPTION:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 2/35: Mô tả ngắn gọn (2-3 câu) hệ thống bạn muốn xây dựng.\n\nGợi ý trả lời:\n• Hệ thống làm gì?\n• Ai sử dụng?\n• Mục đích chính?\n\nVí dụ: 'Hệ thống quản lý bán hàng cho cửa hàng với 5 nhân viên. Nhân viên có thể tạo đơn hàng, theo dõi tồn kho. Chủ cửa hàng xem báo cáo doanh thu.'",
-    header: "Mô tả HT"
+    question: "📝 Question 2/35: Briefly describe (2-3 sentences) the system you want to build.\n\nSuggested points to cover:\n• What does the system do?\n• Who uses it?\n• What is the main purpose?\n\nExample: 'A sales management system for a store with 5 employees. Employees can create orders and track inventory. The store owner views revenue reports.'",
+    header: "System Desc."
   }]
 })
 ```
 
-**Probing 2.2a (nếu mô tả chung chung) - DÙNG AskUserQuestion:**
+**Probing 2.2a (if the description is too generic) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "Bạn nói 'quản lý bán hàng' - cụ thể là:\na) Tạo đơn hàng?\nb) Quản lý tồn kho?\nc) Tính tiền/thanh toán?\nd) In hóa đơn?\ne) Xem báo cáo?\nf) Quản lý khách hàng?\n\nBạn muốn tất cả hay chỉ một số tính năng?",
-    header: "Làm rõ tính năng",
+    question: "You mentioned 'sales management' - specifically, does that mean:\na) Creating orders?\nb) Managing inventory?\nc) Calculating payments/checkout?\nd) Printing invoices?\ne) Viewing reports?\nf) Managing customers?\n\nDo you want all of these, or only some of these features?",
+    header: "Clarify Features",
     options: [
-      { label: "Tất cả (a-f)", description: "Cần tất cả tính năng" },
-      { label: "Chỉ a, b, c", description: "Tạo đơn, tồn kho, thanh toán" },
-      { label: "Chỉ a, b, e", description: "Tạo đơn, tồn kho, báo cáo" },
-      { label: "Khác", description: "Tôi sẽ liệt kê cụ thể" }
+      { label: "All (a-f)", description: "Need all features" },
+      { label: "Only a, b, c", description: "Orders, inventory, payments" },
+      { label: "Only a, b, e", description: "Orders, inventory, reports" },
+      { label: "Other", description: "I'll list them specifically" }
     ],
     multiSelect: false
   }]
 })
 ```
 
-**SATISFACTION CHECK 2.2 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 2.2 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Mô tả hệ thống:\n[đã nhập]\n\nBạn có hài lòng với mô tả này không? Có cần bổ sung gì về:\n• Chức năng chính của hệ thống?\n• Đối tượng sử dụng?\n• Mục tiêu của hệ thống?",
-    header: "Xác nhận OK?"
+    question: "☝️ System description:\n[entered]\n\nAre you satisfied with this description? Does it need anything added about:\n• The system's main functions?\n• The target users?\n• The system's goals?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-**Câu hỏi 2.3 (Bắt buộc) - HỆ THỐNG HIỆN CÓ:**
+**Question 2.3 (Required) - EXISTING SYSTEM:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 3/35: Hệ thống này thay thế hay bổ sung cho hệ thống hiện có nào không?\n\nTrả lời một trong các trường hợp:\nA) HOÀN TOÀN MỚI - Xây từ đầu, chưa có hệ thống cũ\nB) THAY THẾ - Có hệ thống cũ, sẽ bỏ hoàn toàn\nC) BỔ SUNG - Có hệ thống cũ, thêm tính năng mới\nD) NÂNG CẤP - Có hệ thống cũ, chuyển đổi công nghệ mới",
-    header: "HT Hiện có",
+    question: "📝 Question 3/35: Does this system replace or supplement any existing system?\n\nAnswer with one of the following cases:\nA) BRAND NEW - Built from scratch, no existing system\nB) REPLACEMENT - There is an old system, it will be fully retired\nC) SUPPLEMENT - There is an old system, adding new features to it\nD) UPGRADE - There is an old system, migrating to new technology",
+    header: "Existing System",
     options: [
-      { label: "A) Hoàn toàn mới", description: "Xây từ đầu, chưa có hệ thống cũ" },
-      { label: "B) Thay thế", description: "Có hệ thống cũ, sẽ bỏ hoàn toàn" },
-      { label: "C) Bổ sung", description: "Có hệ thống cũ, thêm tính năng mới" },
-      { label: "D) Nâng cấp", description: "Có hệ thống cũ, chuyển đổi công nghệ mới" }
+      { label: "A) Brand new", description: "Built from scratch, no existing system" },
+      { label: "B) Replacement", description: "There is an old system, will be fully retired" },
+      { label: "C) Supplement", description: "There is an old system, adding new features" },
+      { label: "D) Upgrade", description: "There is an old system, migrating to new technology" }
     ],
     multiSelect: false
   }]
 })
 ```
 
-**Probing 2.3a (nếu chọn B/C/D) - DÙNG AskUserQuestion:**
+**Probing 2.3a (if B/C/D is selected) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "• Hệ thống hiện tại tên gì?\n• Đang dùng công nghệ gì? (Excel, phần mềm cũ, database...)\n• Có dữ liệu cần di chuyển không?\n• Tính năng nào từ hệ thống cũ PHẢI giữ lại?\n• Tính năng nào từ hệ thống cũ có thể BỎ?",
-    header: "Chi tiết HT cũ"
+    question: "• What is the current system called?\n• What technology is it currently using? (Excel, legacy software, database...)\n• Is there any data that needs to be migrated?\n• Which features from the old system MUST be kept?\n• Which features from the old system CAN be dropped?",
+    header: "Old System Details"
   }]
 })
 ```
 
-**SATISFACTION CHECK 2.3 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 2.3 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Hệ thống hiện tại: [đã mô tả]\n\nĐã đầy đủ thông tin chưa? Có muốn bổ sung về:\n• Dữ liệu cần di chuyển?\n• Tính năng bắt buộc phải giữ?\n• Thời gian chuyển đổi?",
-    header: "Xác nhận OK?"
-  }]
-})
-```
-
----
-
-**Câu hỏi 2.4 (Tùy chọn) - VẤN ĐỀ KINH DOANH:**
-
-**SỬ DỤNG AskUserQuestion tool:**
-```javascript
-tool.Call("AskUserQuestion", {
-  questions: [{
-    question: "📝 Câu hỏi 4/35: Vấn đề hoặc cơ hội kinh doanh nào dự án này giải quyết?\n\nGợi ý:\n• Đang gặp vấn đề gì với quy trình hiện tại?\n• Dự án này mang lại lợi ích gì?\n• Đo lường thành công bằng gì? (tiết kiệm thời gian, tăng doanh thu, giảm sai sót...)",
-    header: "Vấn đề KD"
+    question: "☝️ Current system: [described]\n\nIs the information complete? Would you like to add anything about:\n• Data that needs to be migrated?\n• Features that must be kept?\n• Transition timeline?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### STEP 3: Người dùng & Actors
+**Question 2.4 (Optional) - BUSINESS PROBLEM:**
 
-**Câu hỏi 3.1 (Bắt buộc) - DANH SÁCH NGƯỜI DÙNG:**
-
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 5/35: Ai sẽ sử dụng hệ thống này?\n\nLiệt kê tất cả nhóm người dùng (actors).\n\nTrả lời theo format:\n| Nhóm người dùng | Mô tả ngắn |\n| Admin | Quản lý hệ thống |\n| Nhân viên bán hàng | Tạo đơn hàng |\n| Khách hàng | Đặt hàng online |\n\nVí dụ: 'Admin, Nhân viên kho, Kế toán, Khách hàng'",
-    header: "Danh sách Users"
-  }]
-})
-```
-
-**Probing 3.1a (nếu liệt kê chung chung) - DÙNG AskUserQuestion:**
-```javascript
-tool.Call("AskUserQuestion", {
-  questions: [{
-    question: "Với mỗi nhóm người dùng, tôi cần biết:\n1. [Nhóm 1]: Làm gì trên hệ thống? (tạo? đọc? sửa? xóa?)\n2. [Nhóm 2]: Làm gì trên hệ thống?\n...\n\nVí dụ:\n• Admin: Toàn quyền quản lý hệ thống\n• Kế toán: Chỉ xem và xuất báo cáo tài chính\n• Khách hàng: Chỉ đặt hàng và xem lịch sử đặt hàng",
-    header: "Chi tiết Users"
-  }]
-})
-```
-
-**Probing 3.1b (nếu thiếu actor rõ ràng) - DÙNG AskUserQuestion:**
-```javascript
-tool.Call("AskUserQuestion", {
-  questions: [{
-    question: "Tôi thấy bạn chưa liệt kê đầy đủ. Thử xem xét:\n• Người quản lý (xem báo cáo, duyệt phê duyệt)?\n• Người giao hàng (cập nhật trạng thái giao hàng)?\n• Khách hàng tiềm năng (xem sản phẩm trước khi đăng ký)?\n• Đối tác/cung cấp (xem đơn đặt hàng)?",
-    header: "Gợi ý Actors"
-  }]
-})
-```
-
-**SATISFACTION CHECK 3.1 - DÙNG AskUserQuestion:**
-```javascript
-tool.Call("AskUserQuestion", {
-  questions: [{
-    question: "☝️ Danh sách người dùng:\n[đã liệt kê]\n\nBạn có hài lòng với danh sách này không?\n• Còn nhóm nào khác sử dụng hệ thống không?\n• Mỗi nhóm đã mô tả đủ quyền hạn chưa?\n• Có nhóm nào cần CHIA NHỎ thành nhiều nhóm con không?",
-    header: "Xác nhận OK?"
+    question: "📝 Question 4/35: What business problem or opportunity does this project address?\n\nSuggested points to cover:\n• What problems exist with the current process?\n• What benefits will this project bring?\n• How will success be measured? (time saved, revenue increase, fewer errors...)",
+    header: "Business Problem"
   }]
 })
 ```
 
 ---
 
-**Câu hỏi 3.2 (Bắt buộc) - QUYỀN HẠN TỪNG ACTOR:**
+### STEP 3: Users & Actors
 
-**SỬ DỤNG AskUserQuestion tool:**
+**Question 3.1 (Required) - LIST OF USERS:**
+
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 6/35: Mỗi nhóm người dùng có quyền hạn gì khác nhau?\n\nVới mỗi actor, tôi cần biết rõ:\n• Được PHÉP làm gì?\n• KHÔNG được làm gì?\n• Có cần phê duyệt từ ai không?\n\nFormat đề xuất:\n| Actor | Được làm | Không được làm | Cần phê duyệt |\n|-------|---------|----------------|---------------|\n| Admin | Tất cả | Không | Không ai |\n| Staff | CRUD đơn hàng | Xóa đơn hàng đã duyệt | Quản lý |",
-    header: "Phân quyền"
+    question: "📝 Question 5/35: Who will use this system?\n\nList all user groups (actors).\n\nAnswer in this format:\n| User Group | Short Description |\n| Admin | Manages the system |\n| Sales Staff | Creates orders |\n| Customer | Orders online |\n\nExample: 'Admin, Warehouse Staff, Accountant, Customer'",
+    header: "User List"
   }]
 })
 ```
 
-**Probing 3.2a (nếu quyền hạn mập mờ) - DÙNG AskUserQuestion:**
+**Probing 3.1a (if the list is too generic) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "'Admin có quyền làm mọi thứ' - cụ thể là:\na) Tạo/sửa/xóa tất cả data?\nb) Thay đổi cấu hình hệ thống?\nc) Xem báo cáo nhạy cảm?\nd) Quản lý users khác?\n\nVới Staff:\na) CRUD đơn hàng - CRUD nghĩa là gì? Tạo, xem, sửa, xóa?\nb) Được xóa đơn hàng không?\nc) Được hoàn tiền không?\nd) Được xem báo cáo không?",
-    header: "Làm rõ quyền"
+    question: "For each user group, I need to know:\n1. [Group 1]: What do they do in the system? (create? read? update? delete?)\n2. [Group 2]: What do they do in the system?\n...\n\nExample:\n• Admin: Full control over the system\n• Accountant: Can only view and export financial reports\n• Customer: Can only place orders and view order history",
+    header: "User Details"
   }]
 })
 ```
 
-**SATISFACTION CHECK 3.2 - DÙNG AskUserQuestion:**
+**Probing 3.1b (if obvious actors are missing) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Quyền hạn actors:\n[đã mô tả]\n\nBạn có hài lòng với phân quyền này không?\n• Có xung đột quyền hạn nào không?\n• Có nhóm nào cần quyền cao hơn/thấp hơn không?",
-    header: "Xác nhận OK?"
+    question: "It looks like your list may be incomplete. Consider:\n• A manager (views reports, approves requests)?\n• A delivery person (updates delivery status)?\n• A prospective customer (views products before signing up)?\n• A partner/supplier (views purchase orders)?",
+    header: "Actor Suggestions"
+  }]
+})
+```
+
+**SATISFACTION CHECK 3.1 - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "☝️ User list:\n[listed]\n\nAre you satisfied with this list?\n• Are there other groups that use the system?\n• Has each group's permissions been described sufficiently?\n• Does any group need to be SPLIT into sub-groups?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-**Câu hỏi 3.3 (Tùy chọn) - NGƯỜI DÙNG ẨN DANH:**
+**Question 3.2 (Required) - PERMISSIONS PER ACTOR:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 7/35: Có người dùng ẩn danh (guest/chưa đăng nhập) không?\n\nNếu CÓ, họ có thể:\n• Xem sản phẩm/dịch vụ?\n• So sánh sản phẩm?\n• Thêm vào giỏ hàng nhưng chưa đặt?\n• Đăng ký tài khoản mới?\n\nNếu KHÔNG, tại sao? (yêu cầu đăng nhập trước khi xem nội dung?)",
-    header: "Guest User"
+    question: "📝 Question 6/35: What permissions does each user group have, and how do they differ?\n\nFor each actor, I need to know:\n• What are they ALLOWED to do?\n• What are they NOT allowed to do?\n• Do they need approval from anyone?\n\nSuggested format:\n| Actor | Allowed | Not Allowed | Needs Approval |\n|-------|---------|----------------|---------------|\n| Admin | Everything | Nothing | No one |\n| Staff | CRUD orders | Delete approved orders | Manager |",
+    header: "Permissions"
+  }]
+})
+```
+
+**Probing 3.2a (if permissions are vague) - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "'Admin can do everything' - specifically, does that mean:\na) Create/edit/delete all data?\nb) Change system configuration?\nc) View sensitive reports?\nd) Manage other users?\n\nFor Staff:\na) CRUD orders - what does CRUD mean here? Create, view, edit, delete?\nb) Can they delete orders?\nc) Can they issue refunds?\nd) Can they view reports?",
+    header: "Clarify Permissions"
+  }]
+})
+```
+
+**SATISFACTION CHECK 3.2 - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "☝️ Actor permissions:\n[described]\n\nAre you satisfied with these permissions?\n• Are there any permission conflicts?\n• Does any group need higher/lower permissions?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
+**Question 3.3 (Optional) - ANONYMOUS USERS:**
+
+**USE the AskUserQuestion tool:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "📝 Question 7/35: Are there anonymous users (guests/not logged in)?\n\nIf YES, can they:\n• View products/services?\n• Compare products?\n• Add items to a cart without ordering?\n• Register a new account?\n\nIf NO, why not? (must log in before viewing content?)",
+    header: "Guest Users"
+  }]
+})
+```
+
 ---
 
-## SECTION C: FUNCTIONAL REQUIREMENTS (Câu 8-12)
+## SECTION C: FUNCTIONAL REQUIREMENTS (Questions 8-12)
 
-### Câu 8 (Bắt buộc) - FEATURES LIST & MOSCOW:
+### Question 8 (Required) - FEATURES LIST & MOSCOW:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 8/35: Hệ thống cần làm những chức năng gì? Liệt kê tất cả tính năng theo thứ tự ưu tiên.\n\nFormat:\n| STT | Tên tính năng | Mô tả ngắn | Actor chính | MoSCoW |\n|-----|--------------|-------------|-------------|--------|\n| 1 | Đăng nhập | Email + password | User | Must |\n| 2 | Tạo đơn hàng | Tạo đơn hàng mới | Staff | Must |\n...\n\nGợi ý nhóm tính năng:\n• Quản lý tài khoản (đăng ký, đăng nhập, quên password)\n• CRUD cơ bản (tạo, đọc, sửa, xóa data)\n• Tìm kiếm & Lọc & Sắp xếp\n• Báo cáo & Thống kê\n• Thanh toán & Giao dịch\n• Thông báo (email/SMS/push)",
-    header: "Tính năng"
+    question: "📝 Question 8/35: What functions does the system need? List all features in priority order.\n\nFormat:\n| No. | Feature Name | Short Description | Main Actor | MoSCoW |\n|-----|--------------|-------------|-------------|--------|\n| 1 | Login | Email + password | User | Must |\n| 2 | Create Order | Create a new order | Staff | Must |\n...\n\nSuggested feature groups:\n• Account management (register, login, forgot password)\n• Basic CRUD (create, read, update, delete data)\n• Search & Filter & Sort\n• Reports & Statistics\n• Payment & Transactions\n• Notifications (email/SMS/push)",
+    header: "Features"
   }]
 })
 ```
 
-**Probing 8a (mỗi tính năng đào sâu) - DÙNG AskUserQuestion:**
+**Probing 8a (dig deeper into each feature) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "Với tính năng '[tên tính năng]', tôi cần hiểu rõ:\n\n1. AI sử dụng tính năng này? (Actor nào?)\n2. Tính năng bắt đầu như thế nào?\n   (User click nút? System tự động? Schedule? Event triggered?)\n3. Các bước chính để hoàn thành?\n   (B1: ... → B2: ... → B3: ...)\n4. Kết quả cuối cùng là gì?\n   (Data được lưu? Email được gửi? Page chuyển?)\n5. Có lỗi gì có thể xảy ra?\n   (Network lỗi? Validation fail? Permission denied?)\n6. Khi nào thì BỊ TỪ CHỐI?\n   (Sai input? Không đủ quyền? Data không tồn tại?)",
-    header: "Đào sâu tính năng"
+    question: "For the feature '[feature name]', I need to understand clearly:\n\n1. WHO uses this feature? (Which actor?)\n2. How does the feature start?\n   (User clicks a button? System triggers automatically? Scheduled? Event triggered?)\n3. What are the main steps to complete it?\n   (Step 1: ... → Step 2: ... → Step 3: ...)\n4. What is the final result?\n   (Data saved? Email sent? Page redirected?)\n5. What errors could occur?\n   (Network error? Validation failure? Permission denied?)\n6. When is it REJECTED?\n   (Invalid input? Insufficient permission? Data doesn't exist?)",
+    header: "Dig Into Feature"
   }]
 })
 ```
 
-**Probing 8b (nếu thiếu tính năng hiển nhiên) - DÙNG AskUserQuestion:**
+**Probing 8b (if obvious features are missing) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "Tôi thấy bạn chưa liệt kê một số tính năng phổ biến:\n• [ ] Đăng nhập/Đăng xuất\n• [ ] Đăng ký/Tạo tài khoản\n• [ ] Quên mật khẩu/Reset password\n• [ ] Xem danh sách/List data\n• [ ] Tìm kiếm/Search\n• [ ] Lọc/Filter\n• [ ] Sắp xếp/Sort\n• [ ] Phân trang/Pagination\n• [ ] Xuất báo cáo/Export (Excel, PDF)\n• [ ] Import dữ liệu\n• [ ] Backup dữ liệu\n• [ ] Thông báo (email/SMS/push)\n• [ ] Lịch sử hoạt động/Audit log",
-    header: "Gợi ý tính năng",
+    question: "It looks like you haven't listed some common features:\n• [ ] Login/Logout\n• [ ] Register/Create account\n• [ ] Forgot password/Reset password\n• [ ] View list/List data\n• [ ] Search\n• [ ] Filter\n• [ ] Sort\n• [ ] Pagination\n• [ ] Export report (Excel, PDF)\n• [ ] Import data\n• [ ] Backup data\n• [ ] Notifications (email/SMS/push)\n• [ ] Activity history/Audit log",
+    header: "Feature Suggestions",
     options: [
-      { label: "Thêm tất cả", description: "Bổ sung các tính năng phổ biến" },
-      { label: "Chỉ một số", description: "Chọn lọc tính năng phù hợp" },
-      { label: "Đủ rồi", description: "Không cần thêm" }
+      { label: "Add all", description: "Add the common features" },
+      { label: "Only some", description: "Select the relevant features" },
+      { label: "That's enough", description: "No need to add more" }
     ],
     multiSelect: false
   }]
 })
 ```
 
-**SATISFACTION CHECK 8 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 8 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Danh sách tính năng:\n[đã liệt kê]\n\nBạn có hài lòng với danh sách này không?\n• Còn tính năng nào khác không?\n• Tính năng nào chưa mô tả đủ chi tiết?\n• Thứ tự ưu tiên đã đúng chưa?",
-    header: "Xác nhận OK?"
+    question: "☝️ Feature list:\n[listed]\n\nAre you satisfied with this list?\n• Are there any other features?\n• Which features aren't described in enough detail yet?\n• Is the priority order correct?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 9 (Bắt buộc) - MoSCoW PHÂN LOẠI:
+### Question 9 (Required) - MOSCOW CLASSIFICATION:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 9/35: Tính năng nào là BẮT BUỘC, tính năng nào là 'có cũng được'?\n\nDùng MoSCoW:\n| Ký hiệu |Ý nghĩa | Định nghĩa |\n|---------|---------|-------------|\n| M | Must Have | Không có = KHÔNG thể phát hành |\n| S | Should Have | Nên có = Quan trọng nhưng không bắt buộc |\n| C | Could Have | Có thể có = Nice to have |\n| W | Won't Have | Không có trong phiên bản này |",
+    question: "📝 Question 9/35: Which features are MANDATORY, and which are 'nice to have'?\n\nUse MoSCoW:\n| Symbol | Meaning | Definition |\n|---------|---------|-------------|\n| M | Must Have | Without it = CANNOT be released |\n| S | Should Have | Should have = Important but not mandatory |\n| C | Could Have | Could have = Nice to have |\n| W | Won't Have | Not included in this version |",
     header: "MoSCoW"
   }]
 })
 ```
 
-**Probing 9a (nếu tất cả đều là Must) - DÙNG AskUserQuestion:**
+**Probing 9a (if everything is marked Must) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "⚠️ Bạn đánh dấu tất cả đều là MUST. Thật ra rất ít hệ thống cần tất cả tính năng ngay lập tức.\n\nHãy nghĩ xem:\n• Nếu KHÔNG có tính năng X, hệ thống có thể chạy được không?\n• Nếu KHÔNG có tính năng Y, user có từ bỏ không?\n\nThường có thể chuyển:\n• Báo cáo chi tiết → có thể export Excel trước\n• Dashboard phức tạp → có thể dùng bảng đơn giản\n• Mobile app → có thể dùng web responsive trước\n• Real-time notifications → có thể dùng email thường",
-    header: "Điều chỉnh Must"
+    question: "⚠️ You marked everything as MUST. In reality, very few systems need every feature right away.\n\nConsider:\n• If feature X were MISSING, could the system still function?\n• If feature Y were missing, would users give up?\n\nOften you can shift:\n• Detailed reports → export to Excel first instead\n• Complex dashboard → use a simple table first\n• Mobile app → use responsive web first\n• Real-time notifications → use regular email first",
+    header: "Adjust Must-Haves"
   }]
 })
 ```
 
-**SATISFACTION CHECK 9 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 9 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Phân loại MoSCoW:\nMust Have: [danh sách]\nShould Have: [danh sách]\nCould Have: [danh sách]\n\nBạn có hài lòng với phân loại này không?\n• Có tính năng nào bị đánh giá sai mức độ ưu tiên không?\n• Có cần điều chỉnh gì không?",
-    header: "Xác nhận OK?"
+    question: "☝️ MoSCoW classification:\nMust Have: [list]\nShould Have: [list]\nCould Have: [list]\n\nAre you satisfied with this classification?\n• Is any feature mis-prioritized?\n• Does anything need adjusting?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 10 (Bắt buộc) - BUSINESS RULES & CALCULATIONS:
+### Question 10 (Required) - BUSINESS RULES & CALCULATIONS:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 10/35: Có quy tắc nghiệp vụ đặc biệt nào cần hệ thống tự động không?\n\nFormat:\n| Rule | Mô tả | Trigger | Action |\n|------|-------|---------|--------|\n| Auto_cancel | Tự hủy đơn sau 24h | Order unpaid > 24h | Cancel + notify |\n| Tier_pricing | Giảm giá theo số lượng | Qty > 10 | 10% off |\n| Auto_refund | Tự hoàn tiền khi hủy | Order cancelled | Refund to original payment |\n\nVí dụ:\n• Tự động gửi email khi có đơn hàng mới\n• Tự động tính hoa hồng cho đại lý (%)\n• Tự động gia hạn subscription\n• Tự động inventory alert khi hết hàng\n• Validation rules (điều kiện validate input)",
+    question: "📝 Question 10/35: Are there any special business rules the system should automate?\n\nFormat:\n| Rule | Description | Trigger | Action |\n|------|-------|---------|--------|\n| Auto_cancel | Auto-cancel order after 24h | Order unpaid > 24h | Cancel + notify |\n| Tier_pricing | Discount by quantity | Qty > 10 | 10% off |\n| Auto_refund | Auto-refund on cancellation | Order cancelled | Refund to original payment |\n\nExamples:\n• Automatically send an email when a new order arrives\n• Automatically calculate commission for agents (%)\n• Automatically renew a subscription\n• Automatic inventory alert when stock runs out\n• Validation rules (conditions for validating input)",
     header: "Business Rules"
   }]
 })
 ```
 
-**Probing 10a - DÙNG AskUserQuestion:**
+**Probing 10a - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "Với mỗi rule:\n1. Rule này áp dụng khi nào? (trigger condition)\n2. Hệ thống làm gì khi trigger? (action)\n3. Có exception không? (khi nào thì không áp dụng)\n4. Ai có thể override manual?\n5. Có log để audit không?",
-    header: "Đào sâu Rules"
+    question: "For each rule:\n1. When does this rule apply? (trigger condition)\n2. What does the system do when triggered? (action)\n3. Are there any exceptions? (when does it not apply)\n4. Who can override it manually?\n5. Is there a log for auditing?",
+    header: "Dig Into Rules"
   }]
 })
 ```
 
-**SATISFACTION CHECK 10 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 10 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Danh sách Business Rules:\n[đã liệt kê]\n\nBạn có hài lòng với danh sách này không?\n• Còn rule nào khác không?\n• Có rule nào cần điều chỉnh logic không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Business Rules list:\n[listed]\n\nAre you satisfied with this list?\n• Are there any other rules?\n• Does the logic of any rule need adjusting?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 11 (Bắt buộc) - VALIDATION & ERROR HANDLING:
+### Question 11 (Required) - VALIDATION & ERROR HANDLING:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 11/35: Hệ thống validate dữ liệu như thế nào? Error handling ra sao?\n\nVới mỗi loại input, cần biết:\n• Required fields? (bắt buộc nhập)\n• Format validation? (email format, phone format, date format)\n• Range validation? (số lượng min/max, ngày tháng range)\n• Custom validation rules?\n\nError handling:\n• Khi validation fail thì hiển thị gì?\n• Khi network lỗi thì sao?\n• Khi timeout thì sao?\n• Khi permission denied thì sao?\n• Có retry mechanism không?",
+    question: "📝 Question 11/35: How does the system validate data? How is error handling done?\n\nFor each input type, I need to know:\n• Required fields?\n• Format validation? (email format, phone format, date format)\n• Range validation? (min/max quantity, date range)\n• Custom validation rules?\n\nError handling:\n• What is shown when validation fails?\n• What happens on a network error?\n• What happens on a timeout?\n• What happens when permission is denied?\n• Is there a retry mechanism?",
     header: "Validation"
   }]
 })
 ```
 
-**Probing 11a - DÙNG AskUserQuestion:**
+**Probing 11a - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "Với mỗi validation rule:\n1. Rule cụ thể là gì? (VD: email phải đúng format)\n2. Khi fail thì hiển thị message gì?\n3. Có prevent form submission không?\n4. Có highlight field lỗi không?\n\nVới error handling:\n1. Network error → hiển thị retry button?\n2. Timeout → tự động retry mấy lần?\n3. Permission denied → redirect sang login?",
-    header: "Đào sâu Validation"
+    question: "For each validation rule:\n1. What is the specific rule? (e.g., email must be in a valid format)\n2. What message is shown on failure?\n3. Does it prevent form submission?\n4. Is the invalid field highlighted?\n\nFor error handling:\n1. Network error → show a retry button?\n2. Timeout → auto-retry how many times?\n3. Permission denied → redirect to login?",
+    header: "Dig Into Validation"
   }]
 })
 ```
 
-**SATISFACTION CHECK 11 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 11 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Validation & Error Handling:\n[đã mô tả]\n\nBạn có hài lòng với cách xử lý này không?\n• Còn validation nào khác cần thêm?\n• Còn error case nào chưa xử lý?",
-    header: "Xác nhận OK?"
+    question: "☝️ Validation & Error Handling:\n[described]\n\nAre you satisfied with this handling?\n• Any other validation to add?\n• Any error case not yet handled?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 12 (Tùy chọn) - REPORTING & ANALYTICS:
+### Question 12 (Optional) - REPORTING & ANALYTICS:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 12/35: Cần những báo cáo và analytics gì?\n\nFormat:\n| Report | Mô tả | Ai xem | Tần suất | Format |\n|--------|--------|--------|----------|--------|\n| Doanh thu | Tổng hợp doanh thu theo ngày | Admin, Manager | Daily | PDF, Excel |\n| Tồn kho | Báo cáo tồn kho | Admin, Warehouse | Weekly | Excel |\n\nCần biết:\n• Report real-time hay delayed?\n• Ai được phép xem report nào?\n• Có drill-down không? (click vào xem chi tiết)\n• Export được những format nào?\n• Có scheduled reports gửi email tự động không?",
+    question: "📝 Question 12/35: What reports and analytics are needed?\n\nFormat:\n| Report | Description | Viewed By | Frequency | Format |\n|--------|--------|--------|----------|--------|\n| Revenue | Revenue summary by day | Admin, Manager | Daily | PDF, Excel |\n| Inventory | Inventory report | Admin, Warehouse | Weekly | Excel |\n\nNeed to know:\n• Real-time or delayed reports?\n• Who is allowed to view which reports?\n• Is drill-down needed? (click to see details)\n• Which export formats are supported?\n• Are there scheduled reports sent automatically by email?",
     header: "Reports"
   }]
 })
 ```
 
-**SATISFACTION CHECK 12 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 12 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Danh sách Reports/Analytics:\n[đã liệt kê]\n\nBạn có hài lòng với danh sách này không?\n• Còn report nào khác không?\n• Có dashboard/visualization nào đặc biệt không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Reports/Analytics list:\n[listed]\n\nAre you satisfied with this list?\n• Are there other reports needed?\n• Any special dashboard/visualization needed?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-## SECTION D: DATA MODEL (Câu 13-15)
+## SECTION D: DATA MODEL (Questions 13-15)
 
-### Câu 13 (Bắt buộc) - ENTITIES & FIELDS:
+### Question 13 (Required) - ENTITIES & FIELDS:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 13/35: Hệ thống cần lưu trữ những loại dữ liệu gì? (Entities)\n\nFormat:\n| Entity | Mô tả | Primary Fields | Ai quản lý |\n|--------|--------|-----------------|-------------|\n| User | Tài khoản người dùng | id, name, email, phone, password, role | Admin |\n| Product | Sản phẩm/dịch vụ | id, name, price, stock, category_id | Admin |\n| Order | Đơn hàng | id, user_id, total, status, created_at | Staff |\n\nGợi ý - Nghĩ về DANH TỪ trong hệ thống:\n• Ai? → User, Customer, Employee, Admin",
+    question: "📝 Question 13/35: What kinds of data does the system need to store? (Entities)\n\nFormat:\n| Entity | Description | Primary Fields | Managed By |\n|--------|--------|-----------------|-------------|\n| User | User account | id, name, email, phone, password, role | Admin |\n| Product | Product/service | id, name, price, stock, category_id | Admin |\n| Order | Order | id, user_id, total, status, created_at | Staff |\n\nHint - Think about the NOUNS in the system:\n• Who? → User, Customer, Employee, Admin",
     header: "Entities"
   }]
 })
 ```
 
-**SATISFACTION CHECK 13 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 13 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Danh sách Entities:\n[đã liệt kê]\n\nBạn có hài lòng với danh sách này không?\n• Còn entity nào khác không?\n• Entity nào cần thêm fields?",
-    header: "Xác nhận OK?"
+    question: "☝️ Entity list:\n[listed]\n\nAre you satisfied with this list?\n• Are there other entities?\n• Does any entity need more fields?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
-**Probing 13a (với mỗi entity đào sâu):**
+**Probing 13a (dig deeper into each entity):**
 ```
-Với entity "[tên]", tôi cần biết:
-1. Cần những fields/thông tin gì?
-   Ví dụ: User có: id, name, email, phone, password, role, created_at, updated_at
-2. Data type của mỗi field? (string, int, date, boolean, enum...)
-3. Required hay optional?
+For entity "[name]", I need to know:
+1. What fields/information does it need?
+   Example: User has: id, name, email, phone, password, role, created_at, updated_at
+2. Data type of each field? (string, int, date, boolean, enum...)
+3. Required or optional?
 4. Default value?
-5. Có validation nào đặc biệt?
+5. Any special validation?
 ```
 
-**Probing 13b (nếu thiếu entity cơ bản):**
+**Probing 13b (if common entities are missing):**
 ```
-Tôi thấy bạn chưa liệt kê một số entity phổ biến:
-• [ ] User/Account (thông tin đăng nhập)
-• [ ] Role/Permission (phân quyền)
-• [ ] Category/Type (phân loại)
-• [ ] Log/Audit (lịch sử thay đổi)
-• [ ] Setting/Config (cấu hình hệ thống)
-• [ ] Notification (thông báo)
-• [ ] Attachment/File (tệp đính kèm)
+It looks like you haven't listed some common entities:
+• [ ] User/Account (login information)
+• [ ] Role/Permission (access control)
+• [ ] Category/Type (classification)
+• [ ] Log/Audit (change history)
+• [ ] Setting/Config (system configuration)
+• [ ] Notification
+• [ ] Attachment/File
 ```
 
 **SATISFACTION CHECK 13:**
 ```
-☝️ Danh sách Entities:
-[đã liệt kê]
+☝️ Entity list:
+[listed]
 
-Bạn có hài lòng với danh sách này không?
-• Còn entity nào khác không?
-• Entity nào cần thêm fields?
+Are you satisfied with this list?
+• Are there other entities?
+• Does any entity need more fields?
 ```
 
 ---
 
-### Câu 14 (Bắt buộc) - RELATIONSHIPS & CARDINALITY:
+### Question 14 (Required) - RELATIONSHIPS & CARDINALITY:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 14/35: Các entities có mối liên hệ với nhau như thế nào?\n\nFormat:\n| Entity A | Relationship | Entity B | Cardinality |\n|----------|--------------|----------|--------------|\n| User | has many | Order | 1:N |\n| Order | contains many | OrderItem | 1:N |\n| OrderItem | belongs to | Product | N:1 |\n| Product | belongs to | Category | N:1 |\n\nCần biết:\n• 1:N hay N:N?\n• Có cascade delete không? (xóa parent → xóa child?)\n• Có soft delete không? (xóa mềm - is_deleted flag)\n• Có timestamp tracking không? (created_at, updated_at)",
+    question: "📝 Question 14/35: How are the entities related to each other?\n\nFormat:\n| Entity A | Relationship | Entity B | Cardinality |\n|----------|--------------|----------|--------------|\n| User | has many | Order | 1:N |\n| Order | contains many | OrderItem | 1:N |\n| OrderItem | belongs to | Product | N:1 |\n| Product | belongs to | Category | N:1 |\n\nNeed to know:\n• 1:N or N:N?\n• Is there cascade delete? (deleting parent → deletes children?)\n• Is there soft delete? (is_deleted flag)\n• Is there timestamp tracking? (created_at, updated_at)",
     header: "Relationships"
   }]
 })
 ```
 
-**Probing 14a - DÙNG AskUserQuestion:**
+**Probing 14a - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "Với mỗi relationship:\n1. Entity A và Entity B liên hệ như thế nào?\n2. Một A có bao nhiêu B? (1:N, N:1, N:N)\n3. Khi xóa A thì B có bị xóa không? (Cascade delete)\n4. Có xóa mềm (soft delete) không?",
-    header: "Đào sâu Relationships"
+    question: "For each relationship:\n1. How are Entity A and Entity B related?\n2. How many Bs does one A have? (1:N, N:1, N:N)\n3. When A is deleted, is B deleted too? (Cascade delete)\n4. Is there soft delete?",
+    header: "Dig Into Relationships"
   }]
 })
 ```
 
-**SATISFACTION CHECK 14 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 14 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Relationships:\n[đã liệt kê]\n\nBạn có hài lòng với các mối quan hệ này không?\n• Còn relationship nào chưa rõ không?\n• Có cần thêm junction table cho N:N không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Relationships:\n[listed]\n\nAre you satisfied with these relationships?\n• Is any relationship still unclear?\n• Do you need a junction table for any N:N relationship?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 15 (Tùy chọn) - DATA VOLUME & GROWTH:
+### Question 15 (Optional) - DATA VOLUME & GROWTH:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 15/35: Dữ liệu ban đầu khoảng bao nhiêu? Dự kiến tăng trưởng?\n\nƯớc lượng cho mỗi entity:\n• Users: ~ ? (VD: 100, 1000, 10000)\n• Products: ~ ?\n• Orders/Transactions: ~ ?\n• Storage estimate: ~ ? GB\n\nDự kiến tăng trưởng:\n• User growth: % / tháng\n• Data growth: % / tháng\n• Peak load: (VD: 10,000 concurrent users)\n\nĐiều này ảnh hưởng đến:\n• Database design (indexing, partitioning)\n• Caching strategy\n• Scalability requirements",
+    question: "📝 Question 15/35: Roughly how much initial data is there? What growth is expected?\n\nEstimate for each entity:\n• Users: ~ ? (e.g., 100, 1000, 10000)\n• Products: ~ ?\n• Orders/Transactions: ~ ?\n• Storage estimate: ~ ? GB\n\nExpected growth:\n• User growth: % / month\n• Data growth: % / month\n• Peak load: (e.g., 10,000 concurrent users)\n\nThis affects:\n• Database design (indexing, partitioning)\n• Caching strategy\n• Scalability requirements",
     header: "Data Volume"
   }]
 })
 ```
 
-**SATISFACTION CHECK 15 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 15 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Data Volume & Growth:\n[đã ước lượng]\n\nBạn có hài lòng với các con số này không?\n• Cần điều chỉnh gì không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Data Volume & Growth:\n[estimated]\n\nAre you satisfied with these numbers?\n• Does anything need adjusting?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-## SECTION E: INTEGRATION & INTERFACES (Câu 16-19)
+## SECTION E: INTEGRATION & INTERFACES (Questions 16-19)
 
-**Câu 16 (Bắt buộc) - EXTERNAL SYSTEMS:**
+**Question 16 (Required) - EXTERNAL SYSTEMS:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 16/35: Hệ thống có cần kết nối với hệ thống khác không?\n\nFormat:\n| Hệ thống | Mục đích kết nối | Method | Data Flow |\n|----------|-----------------|--------|-----------|\n| CRM Salesforce | Đồng bộ khách hàng | API | Bidirectional |\n| Kế toán MISA | Xuất hóa đơn | File export | One-way |\n| Shipping GHN | Tính phí giao hàng | API | Bidirectional |\n| Payment VNPay | Thanh toán | API | Bidirectional |\n\nVí dụ phổ biến:\n• Payment gateway (Stripe, VNPay, MoMo, ZaloPay)\n• Shipping (GHN, GHTK, J&T, Ninja Van)\n• SMS/Email service (Twilio, SendGrid, AWS SES)\n• Storage (AWS S3, Google Drive)",
+    question: "📝 Question 16/35: Does the system need to connect with any other system?\n\nFormat:\n| System | Purpose of Connection | Method | Data Flow |\n|----------|-----------------|--------|-----------|\n| Salesforce CRM | Sync customers | API | Bidirectional |\n| MISA Accounting | Export invoices | File export | One-way |\n| GHN Shipping | Calculate shipping fees | API | Bidirectional |\n| VNPay Payment | Payment processing | API | Bidirectional |\n\nCommon examples:\n• Payment gateway (Stripe, VNPay, MoMo, ZaloPay)\n• Shipping (GHN, GHTK, J&T, Ninja Van)\n• SMS/Email service (Twilio, SendGrid, AWS SES)\n• Storage (AWS S3, Google Drive)",
     header: "External Systems"
   }]
 })
 ```
 
-**Probing 16a (với mỗi hệ thống kết nối):**
+**Probing 16a (for each connected system):**
 ```
-Với mỗi hệ thống:
-1. Hệ thống bên ngoài có API spec chưa?
+For each system:
+1. Does the external system have an API spec yet?
 2. Authentication method? (API key, OAuth, JWT)
-3. Rate limits? (VD: 1000 requests/minute)
-4. SLA của hệ thống bên ngoài? (uptime guarantee)
-5. Khi hệ thống bên ngoài down thì sao?
+3. Rate limits? (e.g., 1000 requests/minute)
+4. SLA of the external system? (uptime guarantee)
+5. What happens when the external system is down?
 ```
 
-**SATISFACTION CHECK 16 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 16 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ External Systems đã xác định:\n[đã liệt kê]\n\nBạn có hài lòng với danh sách này không?\n• Còn hệ thống nào khác cần kết nối không?\n• Đã hiểu rõ về authentication và SLA của từng hệ thống chưa?",
-    header: "Xác nhận OK?"
+    question: "☝️ External Systems identified:\n[listed]\n\nAre you satisfied with this list?\n• Any other systems that need connecting?\n• Do you have a clear understanding of the authentication and SLA for each system?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-**Câu 17 (Bắt buộc) - API SPECS & DATA FORMAT:**
+**Question 17 (Required) - API SPECS & DATA FORMAT:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 17/35: Các API integrations dùng format dữ liệu gì?\n\nVới mỗi integration:\n• REST API (JSON) hay GraphQL hay SOAP (XML)?\n• API version hiện tại?\n• Authentication method?\n• Error codes chuẩn không?",
+    question: "📝 Question 17/35: What data format do the API integrations use?\n\nFor each integration:\n• REST API (JSON) or GraphQL or SOAP (XML)?\n• Current API version?\n• Authentication method?\n• Standard error codes?",
     header: "API Specs"
   }]
 })
 ```
 
-**SATISFACTION CHECK 17 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 17 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ API Specs đã xác định:\n[đã liệt kê]\n\nBạn có hài lòng với thông tin này không?\n• Đã nắm rõ versioning strategy chưa?\n• Có cần bổ sung retry logic hoặc timeout settings không?",
-    header: "Xác nhận OK?"
+    question: "☝️ API Specs identified:\n[listed]\n\nAre you satisfied with this information?\n• Do you have a clear versioning strategy?\n• Do you need to add retry logic or timeout settings?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-**Câu 18 (Bắt buộc) - DATA SYNC STRATEGY:**
+**Question 18 (Required) - DATA SYNC STRATEGY:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 18/35: Dữ liệu được sync giữa các hệ thống như thế nào?\n\nChọn sync mode:\nA) Real-time (Webhook, Socket) - Ngay khi có thay đổi\nB) Scheduled (Cron job) - Định kỳ (VD: mỗi 15 phút)\nC) Batch (Manual trigger) - Khi cần\nD) Event-driven (Message queue) - Khi event xảy ra\n\nVới mỗi sync:\n• Sync direction? (Push, Pull, Bidirectional)\n• Conflict resolution khi data mismatch?",
+    question: "📝 Question 18/35: How is data synced between systems?\n\nChoose a sync mode:\nA) Real-time (Webhook, Socket) - Immediately when a change occurs\nB) Scheduled (Cron job) - Periodic (e.g., every 15 minutes)\nC) Batch (Manual trigger) - On demand\nD) Event-driven (Message queue) - When an event occurs\n\nFor each sync:\n• Sync direction? (Push, Pull, Bidirectional)\n• Conflict resolution when data mismatches?",
     header: "Data Sync"
   }]
 })
 ```
 
-**SATISFACTION CHECK 18 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 18 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Data Sync Strategy:\n[đã mô tả]\n\nBạn có hài lòng với chiến lược sync này không?\n• Tần suất sync đã phù hợp với business needs chưa?",
-    header: "Xác nhận OK?"
+    question: "☝️ Data Sync Strategy:\n[described]\n\nAre you satisfied with this sync strategy?\n• Is the sync frequency appropriate for business needs?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-**Câu 19 (Tùy chọn) - FILE IMPORTS/EXPORTS:**
+**Question 19 (Optional) - FILE IMPORTS/EXPORTS:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 19/35: Có cần import/export dữ liệu từ file không?\n\nFormat phổ biến:\n• Excel (.xlsx, .csv) - cho báo cáo, export data\n• PDF - cho hóa đơn, hợp đồng\n• JSON/XML - cho API, data exchange\n• Image/PDF - cho in ấn\n\nVới mỗi loại:\n• Ai được phép export/import?\n• File size limit? (VD: max 10MB)",
+    question: "📝 Question 19/35: Do you need to import/export data from files?\n\nCommon formats:\n• Excel (.xlsx, .csv) - for reports, data export\n• PDF - for invoices, contracts\n• JSON/XML - for API, data exchange\n• Image/PDF - for printing\n\nFor each type:\n• Who is allowed to export/import?\n• File size limit? (e.g., max 10MB)",
     header: "File Import/Export"
   }]
 })
 ```
 
-**SATISFACTION CHECK 19 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 19 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ File Import/Export:\n[đã mô tả]\n\nBạn có hài lòng với thông tin này không?\n• Còn loại file nào khác cần hỗ trợ không?",
-    header: "Xác nhận OK?"
+    question: "☝️ File Import/Export:\n[described]\n\nAre you satisfied with this information?\n• Are there other file types that need to be supported?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-## SECTION F: PLATFORM & UI (Câu 20-22)
+## SECTION F: PLATFORM & UI (Questions 20-22)
 
-**Câu 20 (Bắt buộc) - PLATFORMS:**
+**Question 20 (Required) - PLATFORMS:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 20/35: Người dùng truy cập hệ thống bằng gì?\n\nChọn tất cả applicable:\nA) Web Browser (Chrome, Safari, Firefox, Edge...)\nB) Mobile Web (trình duyệt trên điện thoại)\nC) Native iOS App\nD) Native Android App\nE) Desktop App (Windows/Mac/Linux)\nF) API cho hệ thống khác gọi\n\nNếu chọn nhiều, cho biết tỷ lệ sử dụng:\nVD: Web 70%, Mobile Web 20%, API 10%",
+    question: "📝 Question 20/35: How will users access the system?\n\nSelect all that apply:\nA) Web Browser (Chrome, Safari, Firefox, Edge...)\nB) Mobile Web (browser on a phone)\nC) Native iOS App\nD) Native Android App\nE) Desktop App (Windows/Mac/Linux)\nF) API for other systems to call\n\nIf multiple are selected, provide the usage split:\ne.g., Web 70%, Mobile Web 20%, API 10%",
     header: "Platforms",
     options: [
       { label: "A) Web Browser", description: "Desktop browser" },
-      { label: "B) Mobile Web", description: "Trình duyệt trên điện thoại" },
+      { label: "B) Mobile Web", description: "Browser on a phone" },
       { label: "C) Native iOS", description: "iPhone/iPad app" },
       { label: "D) Native Android", description: "Android app" },
       { label: "E) Desktop App", description: "Windows/Mac/Linux" },
-      { label: "F) API", description: "Cho hệ thống khác gọi" }
+      { label: "F) API", description: "For other systems to call" }
     ],
     multiSelect: true
   }]
 })
 ```
 
-**SATISFACTION CHECK 20 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 20 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Platforms: [đã chọn]\nTỷ lệ sử dụng: [đã xác định]\n\nBạn có hài lòng với platforms này không?\n• Có cần bổ sung platform nào khác không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Platforms: [selected]\nUsage split: [determined]\n\nAre you satisfied with these platforms?\n• Do you need to add any other platform?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-**Câu 21 (Bắt buộc) - RESPONSIVE & ACCESSIBILITY:**
+**Question 21 (Required) - RESPONSIVE & ACCESSIBILITY:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 21/35: Có yêu cầu đặc biệt về giao diện và accessibility không?\n\nResponsive Design:\n• Mobile-first hay desktop-first?\n• Breakpoints? (480px, 768px, 1024px, 1440px)\n• Touch-friendly targets? (min 44x44px)\n\nAccessibility (WCAG compliance):\n• Screen reader support? (alt text, ARIA labels)\n• Keyboard navigation?\n• Color contrast? (4.5:1 ratio minimum)\n• Dark mode support?\n\nUI/UX Standards:\n• Design system có sẵn không? (Material, Bootstrap, Tailwind, custom)",
+    question: "📝 Question 21/35: Are there any special requirements for the UI and accessibility?\n\nResponsive Design:\n• Mobile-first or desktop-first?\n• Breakpoints? (480px, 768px, 1024px, 1440px)\n• Touch-friendly targets? (min 44x44px)\n\nAccessibility (WCAG compliance):\n• Screen reader support? (alt text, ARIA labels)\n• Keyboard navigation?\n• Color contrast? (4.5:1 ratio minimum)\n• Dark mode support?\n\nUI/UX Standards:\n• Is there an existing design system? (Material, Bootstrap, Tailwind, custom)",
     header: "UI/UX"
   }]
 })
 ```
 
-**SATISFACTION CHECK 21 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 21 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Responsive & Accessibility:\n[đã mô tả]\n\nBạn có hài lòng với các yêu cầu UI/UX này không?\n• WCAG level nào? (A, AA, AAA)\n• Design system đã có sẵn hay cần create từ đầu?",
-    header: "Xác nhận OK?"
+    question: "☝️ Responsive & Accessibility:\n[described]\n\nAre you satisfied with these UI/UX requirements?\n• Which WCAG level? (A, AA, AAA)\n• Is there an existing design system, or does one need to be created from scratch?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-**Câu 22 (Tùy chọn) - MULTI-LANGUAGE & INTERNATIONALIZATION:**
+**Question 22 (Optional) - MULTI-LANGUAGE & INTERNATIONALIZATION:**
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 22/35: Có cần hỗ trợ nhiều ngôn ngữ hoặc internationalization không?",
+    question: "📝 Question 22/35: Do you need support for multiple languages or internationalization?",
     header: "i18n"
   }]
 })
 ```
 
-> Nếu CÓ i18n, hỏi tiếp (prose) các chi tiết sau:
+> If i18n is NEEDED, follow up (in prose) with these details:
 
 ```
 Languages:
-• Primary language? (VD: Tiếng Việt)
-• Additional languages? (VD: English, Chinese)
-• RTL support? (Right-to-left cho tiếng Ả Rập, Hebrew)
+• Primary language? (e.g., Vietnamese)
+• Additional languages? (e.g., English, Chinese)
+• RTL support? (Right-to-left for Arabic, Hebrew)
 
 Localization considerations:
 • Date/Time format? (DD/MM/YYYY vs MM/DD/YYYY)
@@ -846,64 +844,64 @@ i18n implementation:
 
 **Probing 22a:**
 ```
-Với mỗi ngôn ngữ:
-1. Content có sẵn chưa? (cần translate bao nhiêu?)
-2. UI strings đã externalized chưa?
-3. Plural forms xử lý thế nào?
-4. Gender-specific translations có không?
+For each language:
+1. Is content already available? (how much needs translating?)
+2. Have UI strings been externalized?
+3. How are plural forms handled?
+4. Are there gender-specific translations?
 5. Date/time timezone handling?
 
 Technical considerations:
-1. Font support có đủ không? (VD: CJK characters)
-2. Text expansion (VD: German có thể dài hơn 30%)
-3. RTL layout mirroring có cần không?
+1. Is font support sufficient? (e.g., CJK characters)
+2. Text expansion (e.g., German text can be up to 30% longer)
+3. Is RTL layout mirroring needed?
 ```
 
-**SATISFACTION CHECK 22 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 22 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Multi-language & i18n:\n[đã mô tả]\n\nBạn có hài lòng với thông tin này không?\n• Số lượng languages và priority đã đúng chưa?",
-    header: "Xác nhận OK?"
+    question: "☝️ Multi-language & i18n:\n[described]\n\nAre you satisfied with this information?\n• Is the number of languages and their priority correct?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-## SECTION G: NON-FUNCTIONAL REQUIREMENTS (Câu 23-27)
+## SECTION G: NON-FUNCTIONAL REQUIREMENTS (Questions 23-27)
 
-### Câu 23 (Bắt buộc) - PERFORMANCE:
+### Question 23 (Required) - PERFORMANCE:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 23/35: Hệ thống cần phản hồi nhanh như thế nào?\n\nTrả lời cụ thể cho mỗi operation:\n| Operation | Acceptable | Ideal | Measurement |\n|-----------|------------|-------|------------|\n| Page load | < 3s | < 1s | P95 |\n| API call | < 1s | < 200ms | P95 |\n| Search query | < 2s | < 500ms | P95 |\n\nVí dụ:\n• 'API phải respond trong < 500ms với P95'\n• 'Page load phải < 2 giây với 1000 concurrent users'",
+    question: "📝 Question 23/35: How fast does the system need to respond?\n\nAnswer specifically for each operation:\n| Operation | Acceptable | Ideal | Measurement |\n|-----------|------------|-------|------------|\n| Page load | < 3s | < 1s | P95 |\n| API call | < 1s | < 200ms | P95 |\n| Search query | < 2s | < 500ms | P95 |\n\nExamples:\n• 'The API must respond within < 500ms at P95'\n• 'Page load must be < 2 seconds with 1000 concurrent users'",
     header: "Performance"
   }]
 })
 ```
 
-**SATISFACTION CHECK 23 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 23 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Performance Requirements:\n• Page load: [target]\n• API response: [target]\n• Search: [target]\n\nBạn có hài lòng với các con số này không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Performance Requirements:\n• Page load: [target]\n• API response: [target]\n• Search: [target]\n\nAre you satisfied with these numbers?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 24 (Bắt buộc) - SCALABILITY & CONCURRENCY:
+### Question 24 (Required) - SCALABILITY & CONCURRENCY:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 24/35: Hệ thống cần scale như thế nào? Bao nhiêu users đồng thời?\n\nConcurrent Users:\n| Metric | Value |\n|--------|-------|\n| Peak concurrent users | ~? |\n| Average concurrent users | ~? |\n| Peak hour | VD: 9-11h, 14-16h |\n\nData Growth:\n• User growth rate: % / tháng\n• Storage needed: ~? GB/TB",
+    question: "📝 Question 24/35: How does the system need to scale? How many concurrent users?\n\nConcurrent Users:\n| Metric | Value |\n|--------|-------|\n| Peak concurrent users | ~? |\n| Average concurrent users | ~? |\n| Peak hours | e.g., 9-11am, 2-4pm |\n\nData Growth:\n• User growth rate: % / month\n• Storage needed: ~? GB/TB",
     header: "Scalability"
   }]
 })
@@ -912,8 +910,8 @@ tool.Call("AskUserQuestion", {
 **Probing 24a:**
 ```
 Scalability models:
-• Vertical (scale up): Thêm CPU/RAM vào server
-• Horizontal (scale out): Thêm more servers
+• Vertical (scale up): Add CPU/RAM to the server
+• Horizontal (scale out): Add more servers
 
 Auto-scaling triggers:
 • CPU > 70% for 5 minutes → Add 1 instance
@@ -921,100 +919,100 @@ Auto-scaling triggers:
 • Request count > 1000/min → Add instances
 
 Database scaling:
-• Read replicas for read-heavy workload
-• Sharding for write-heavy
+• Read replicas for read-heavy workloads
+• Sharding for write-heavy workloads
 • Partitioning for large tables
 ```
 
-**SATISFACTION CHECK 24 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 24 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Scalability:\n• Concurrent users: [peak / average]\n• Auto-scaling: [có/không]\n• Data growth: [% / tháng]\n\nBạn có hài lòng với scalability plan này không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Scalability:\n• Concurrent users: [peak / average]\n• Auto-scaling: [yes/no]\n• Data growth: [% / month]\n\nAre you satisfied with this scalability plan?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 25 (Bắt buộc) - AVAILABILITY & SLA:
+### Question 25 (Required) - AVAILABILITY & SLA:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 25/35: Hệ thống cần uptime như thế nào?\n\nSLA Levels:\n| SLA | Downtime/year | Downtime/month | Use Case |\n|-----|---------------|----------------|----------|\n| 99% | 3.65 days | 7.3 hours | Internal tools |\n| 99.9% | 8.76 hours | 43.8 min | Standard apps |\n| 99.95% | 4.38 hours | 21.9 min | E-commerce |\n| 99.99% | 52.6 min | 4.4 min | FinTech/Healthcare |\n\nMaintenance windows:\n• Planned maintenance: Ngày giờ nào?\n• Emergency maintenance: Có thể làm khi nào?",
+    question: "📝 Question 25/35: What uptime does the system need?\n\nSLA Levels:\n| SLA | Downtime/year | Downtime/month | Use Case |\n|-----|---------------|----------------|----------|\n| 99% | 3.65 days | 7.3 hours | Internal tools |\n| 99.9% | 8.76 hours | 43.8 min | Standard apps |\n| 99.95% | 4.38 hours | 21.9 min | E-commerce |\n| 99.99% | 52.6 min | 4.4 min | FinTech/Healthcare |\n\nMaintenance windows:\n• Planned maintenance: What day/time?\n• Emergency maintenance: When can it be done?",
     header: "Availability"
   }]
 })
 ```
 
-**SATISFACTION CHECK 25 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 25 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Availability:\n• SLA target: [X%]\n• Max downtime allowed: [X hours/year]\n\nBạn có hài lòng với availability plan này không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Availability:\n• SLA target: [X%]\n• Max downtime allowed: [X hours/year]\n\nAre you satisfied with this availability plan?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 26 (Bắt buộc) - BACKUP & RECOVERY:
+### Question 26 (Required) - BACKUP & RECOVERY:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 26/35: Backup và recovery như thế nào?\n\nBackup Strategy:\n| Type | Frequency | Retention |\n|------|-----------|-----------|\n| Full backup | Weekly | 4 weeks |\n| Incremental | Daily | 7 days |\n\nRPO (Recovery Point Objective):\n• Chấp nhận mất bao nhiêu data?\n• VD: RPO = 1 hour → Max acceptable data loss = 1 hour\n\nRTO (Recovery Time Objective):\n• Hệ thống down → Bao lâu phải lên lại?",
+    question: "📝 Question 26/35: How should backup and recovery work?\n\nBackup Strategy:\n| Type | Frequency | Retention |\n|------|-----------|-----------|\n| Full backup | Weekly | 4 weeks |\n| Incremental | Daily | 7 days |\n\nRPO (Recovery Point Objective):\n• How much data loss is acceptable?\n• e.g., RPO = 1 hour → Max acceptable data loss = 1 hour\n\nRTO (Recovery Time Objective):\n• If the system goes down, how quickly must it be back up?",
     header: "Backup"
   }]
 })
 ```
 
-**SATISFACTION CHECK 26 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 26 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Backup & Recovery:\n• RPO: [X hours]\n• RTO: [X hours]\n• Backup frequency: [daily/weekly/etc]\n\nBạn có hài lòng với backup plan này không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Backup & Recovery:\n• RPO: [X hours]\n• RTO: [X hours]\n• Backup frequency: [daily/weekly/etc]\n\nAre you satisfied with this backup plan?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 27 (Bắt buộc) - SECURITY & AUTHENTICATION:
+### Question 27 (Required) - SECURITY & AUTHENTICATION:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 27/35: Yêu cầu bảo mật và xác thực như thế nào?\n\nAuthentication Methods:\n| Method | Use Case | Security Level |\n|--------|----------|----------------|\n| Email + Password | Standard users | Basic |\n| Password + 2FA/TOTP | Sensitive apps | Strong |\n| OAuth/Social Login | Consumer apps | Strong |\n| SSO (SAML/OIDC) | Enterprise | Very Strong |\n\nPassword Requirements:\n• Minimum length: 8 / 12 / 16 characters?\n• Complexity requirements?\n• 2FA required?",
+    question: "📝 Question 27/35: What are the security and authentication requirements?\n\nAuthentication Methods:\n| Method | Use Case | Security Level |\n|--------|----------|----------------|\n| Email + Password | Standard users | Basic |\n| Password + 2FA/TOTP | Sensitive apps | Strong |\n| OAuth/Social Login | Consumer apps | Strong |\n| SSO (SAML/OIDC) | Enterprise | Very Strong |\n\nPassword Requirements:\n• Minimum length: 8 / 12 / 16 characters?\n• Complexity requirements?\n• Is 2FA required?",
     header: "Security"
   }]
 })
 ```
 
-**SATISFACTION CHECK 27 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 27 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Security:\n• Auth method: [phương thức]\n• Password policy: [requirements]\n• 2FA required: [có/không]\n\nBạn có hài lòng với security plan này không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Security:\n• Auth method: [method]\n• Password policy: [requirements]\n• 2FA required: [yes/no]\n\nAre you satisfied with this security plan?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-## SECTION H: COMPLIANCE & RISK (Câu 28-30)
+## SECTION H: COMPLIANCE & RISK (Questions 28-30)
 
-### Câu 28 (Bắt buộc) - REGULATORY COMPLIANCE:
+### Question 28 (Required) - REGULATORY COMPLIANCE:
 ```
-📝 Câu hỏi 28/35: Có yêu cầu tuân thủ pháp luật nào không?
+📝 Question 28/35: Are there any regulatory compliance requirements?
 
 Common Compliance Frameworks:
 | Framework | Region | Industry | Key Requirements |
@@ -1045,7 +1043,7 @@ Compliance evidence needed:
 **Probing 28a:**
 ```
 Compliance implications:
-• GDPR: €20M fine or 4% global revenue
+• GDPR: €20M fine or 4% of global revenue
 • PCI-DSS: $500K-$5M fine per breach
 • PDPA: Up to 5% of annual revenue
 
@@ -1059,49 +1057,49 @@ Compliance roadmap:
 
 If unsure about compliance:
 • Consult legal counsel
-• Hire compliance consultant
-• Start with GDPR/PDPA as baseline
+• Hire a compliance consultant
+• Start with GDPR/PDPA as a baseline
 ```
 
-**SATISFACTION CHECK 28 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 28 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Compliance:\n• Frameworks: [danh sách]\n• Audit requirements: [có/không]\n\nBạn có hài lòng với compliance plan này không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Compliance:\n• Frameworks: [list]\n• Audit requirements: [yes/no]\n\nAre you satisfied with this compliance plan?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 29 (Bắt buộc) - DATA CLASSIFICATION & PRIVACY:
+### Question 29 (Required) - DATA CLASSIFICATION & PRIVACY:
 
-**SỬ DỤNG AskUserQuestion tool:**
+**USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Câu hỏi 29/35: Dữ liệu được phân loại và bảo vệ như thế nào?\n\nData Classification:\n| Level | Examples | Handling |\n|-------|----------|----------|\n| Public | Marketing materials | Open |\n| Internal | Company policies | Internal only |\n| Confidential | Customer data | Restricted |\n| Restricted | Financial records, PII | Highly restricted |\n\nPII (Personally Identifiable Information):\n• What PII is collected? (name, email, phone, ID, IP)\n• How is PII stored?\n• PII retention period?",
+    question: "📝 Question 29/35: How is data classified and protected?\n\nData Classification:\n| Level | Examples | Handling |\n|-------|----------|----------|\n| Public | Marketing materials | Open |\n| Internal | Company policies | Internal only |\n| Confidential | Customer data | Restricted |\n| Restricted | Financial records, PII | Highly restricted |\n\nPII (Personally Identifiable Information):\n• What PII is collected? (name, email, phone, ID, IP)\n• How is PII stored?\n• PII retention period?",
     header: "Data Privacy"
   }]
 })
 ```
 
-**SATISFACTION CHECK 29 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 29 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Data Classification:\n• Classification levels: [danh sách]\n• PII collected: [danh sách]\n\nBạn có hài lòng với data classification này không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Data Classification:\n• Classification levels: [list]\n• PII collected: [list]\n\nAre you satisfied with this data classification?",
+    header: "Confirm OK?"
   }]
 })
 ```
 
 ---
 
-### Câu 30 (Bắt buộc) - AUDIT TRAIL & LOGGING:
+### Question 30 (Required) - AUDIT TRAIL & LOGGING:
 ```
-📝 Câu hỏi 30/35: Cần logging và audit trail như thế nào?
+📝 Question 30/35: What logging and audit trail is needed?
 
 Audit Trail Requirements:
 | Event Type | Log Details | Retention |
@@ -1155,12 +1153,12 @@ Log retention:
 • Cold storage: 1-7 years (slow query, compliance)
 ```
 
-**SATISFACTION CHECK 30 - DÙNG AskUserQuestion:**
+**SATISFACTION CHECK 30 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "☝️ Audit Trail:\n• Events logged: [danh sách]\n• Retention: [duration]\n• Alerting: [có/không]\n\nBạn có hài lòng với audit plan này không?",
-    header: "Xác nhận OK?"
+    question: "☝️ Audit Trail:\n• Events logged: [list]\n• Retention: [duration]\n• Alerting: [yes/no]\n\nAre you satisfied with this audit plan?",
+    header: "Confirm OK?"
   }]
 })
 ```
@@ -1171,61 +1169,61 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-**Câu hỏi 31 (Bắt buộc) - DEPLOYMENT & INFRASTRUCTURE:**
+**Question 31 (Required) - DEPLOYMENT & INFRASTRUCTURE:**
 ```
-📝 Câu hỏi 31/35: Môi trường deployment và infrastructure như thế nào?
+📝 Question 31/35: What is the deployment environment and infrastructure?
 
 Infrastructure:
 • Cloud provider? (AWS, Azure, GCP, On-premise, Hybrid)
-• Region? (VD: Singapore, Vietnam, US)
+• Region? (e.g., Singapore, Vietnam, US)
 • Compute type? (VMs, Containers, Serverless)
 • Database? (RDS, self-managed, managed service)
 
 Environment Tiers:
 | Environment | Purpose | Config |
 |-------------|---------|--------|
-| Development | Coding và testing | Dev configs |
+| Development | Coding and testing | Dev configs |
 | Staging | Pre-production testing | Production-like |
 | Production | Live users | Full production |
 
 CI/CD:
-• CI/CD pipeline có chưa? (Jenkins, GitHub Actions, GitLab CI)
+• Is a CI/CD pipeline already in place? (Jenkins, GitHub Actions, GitLab CI)
 • Deployment strategy? (blue-green, canary, rolling)
-• Automated testing in pipeline?
+• Automated testing in the pipeline?
 • Rollback procedure?
 
 Environment-specific configs:
 • Feature flags?
-• Environment variables management?
+• Environment variable management?
 • Secrets management?
 ```
 
-**Probing 31a (nếu chưa có infrastructure plan):**
+**Probing 31a (if there's no infrastructure plan yet):**
 ```
-Bạn đã có cloud account chưa? Nếu chưa, tôi có thể recommend:
-• AWS: Phổ biến nhất, nhiều dịch vụ
-• Azure: Tích hợp tốt với Microsoft
-• GCP: Tốt cho container/Kubernetes
-• On-premise: Nếu data phải ở local
+Do you already have a cloud account? If not, I can recommend:
+• AWS: Most popular, wide range of services
+• Azure: Integrates well with Microsoft
+• GCP: Good for containers/Kubernetes
+• On-premise: If data must stay local
 
-Với region, chọn gần users nhất:
-• Vietnam users → Singapore hoặc Vietnam region
+For region, choose the one closest to your users:
+• Vietnam users → Singapore or Vietnam region
 • US users → US region
 • Global → Multi-region
 ```
 
-**Probing 31b (nếu chưa có CI/CD):**
+**Probing 31b (if there's no CI/CD yet):**
 ```
-CI/CD pipeline giúp tự động hóa deployment và giảm lỗi human error.
-Nếu chưa có, chúng ta có thể setup:
-• GitHub Actions: Miễn phí cho repo public, cheap cho private
-• GitLab CI: Built-in với GitLab
-• Jenkins: Self-hosted, miễn phí nhưng cần server
+A CI/CD pipeline helps automate deployment and reduce human error.
+If you don't have one, we can set up:
+• GitHub Actions: Free for public repos, cheap for private
+• GitLab CI: Built into GitLab
+• Jenkins: Self-hosted, free but requires a server
 
 Deployment strategy:
-• Rolling: Lần lượt replace instances (đơn giản)
-• Blue-green: 2 environments, switch đột ngột (an toàn hơn)
-• Canary: Deploy cho % small users trước (ít risk)
+• Rolling: Replace instances one at a time (simple)
+• Blue-green: 2 environments, switch instantly (safer)
+• Canary: Deploy to a small % of users first (lower risk)
 ```
 
 **SATISFACTION CHECK 31:**
@@ -1233,19 +1231,19 @@ Deployment strategy:
 ☝️ Infrastructure:
 • Cloud: [provider]
 • Region: [region]
-• Environments: [số lượng]
-• CI/CD: [có/không]
+• Environments: [count]
+• CI/CD: [yes/no]
 
-Bạn có hài lòng với infrastructure plan này không?
-• Có cần bổ sung môi trường nào khác không?
-• Có yêu cầu đặc biệt về region/data residency không?
+Are you satisfied with this infrastructure plan?
+• Do you need to add any other environments?
+• Are there any special region/data residency requirements?
 ```
 
 ---
 
-**Câu hỏi 32 (Tùy chọn) - MONITORING & ALERTING:**
+**Question 32 (Optional) - MONITORING & ALERTING:**
 ```
-📝 Câu hỏi 32/35: Có yêu cầu monitoring và alerting như thế nào?
+📝 Question 32/35: What are the monitoring and alerting requirements?
 
 Monitoring:
 • Infrastructure monitoring? (CPU, RAM, Disk, Network)
@@ -1274,12 +1272,12 @@ Alerting:
 Dashboards:
 • Real-time dashboard?
 • Historical data retention?
-• Custom dashboards cho stakeholders?
+• Custom dashboards for stakeholders?
 ```
 
-**Probing 32a (nếu chưa có monitoring):**
+**Probing 32a (if there's no monitoring yet):**
 ```
-Monitoring giúp phát hiện vấn đề TRƯỚC KHI users phàn nàn.
+Monitoring helps detect problems BEFORE users complain.
 
 Tool recommendations:
 • Infrastructure: CloudWatch (AWS), Azure Monitor, Stackdriver (GCP)
@@ -1288,46 +1286,46 @@ Tool recommendations:
 • Log: ELK Stack, CloudWatch Logs, Datadog
 
 Cost consideration:
-• Basic monitoring: Miễn phí (built-in cloud tools)
-• APM: $50-500/month tùy traffic
-• Uptime monitoring: Miễn phí - $50/month
+• Basic monitoring: Free (built-in cloud tools)
+• APM: $50-500/month depending on traffic
+• Uptime monitoring: Free - $50/month
 ```
 
-**Probing 32b (nếu cần alerting chi tiết):**
+**Probing 32b (if detailed alerting is needed):**
 ```
-Alerting cần cân bằng giữa "đủ thông tin" và "không spam".
+Alerting needs to balance "enough information" against "not spamming".
 
-Mô hình alerting phổ biến:
-• Critical: P1 - 24/7 on-call, immediate response (VD: site down)
-• High: P2 - Business hours response, 4h resolution (VD: error rate > 5%)
-• Medium: P3 - Next business day (VD: disk > 70%)
-• Low: P4 - Backlog, investigate when able (VD: slow queries)
+Common alerting model:
+• Critical: P1 - 24/7 on-call, immediate response (e.g., site down)
+• High: P2 - Business hours response, 4h resolution (e.g., error rate > 5%)
+• Medium: P3 - Next business day (e.g., disk > 70%)
+• Low: P4 - Backlog, investigate when able (e.g., slow queries)
 
 Alert channels:
-• Slack: Nhanh, miễn phí, mọi người thấy
-• SMS: Cho Critical alerts, cần phone number
-• Email: Cho non-urgent, audit trail tốt
-• PagerDuty: Cho on-call rotation chuyên nghiệp
+• Slack: Fast, free, everyone sees it
+• SMS: For Critical alerts, requires a phone number
+• Email: For non-urgent items, good audit trail
+• PagerDuty: For a professional on-call rotation
 ```
 
 **SATISFACTION CHECK 32:**
 ```
 ☝️ Monitoring & Alerting:
-• Monitoring tools: [danh sách]
-• Metrics tracked: [danh sách]
+• Monitoring tools: [list]
+• Metrics tracked: [list]
 • Alert channels: [channels]
 • Severity levels: [levels]
 
-Bạn có hài lòng với monitoring plan này không?
-• Có cần track thêm metrics nào không?
-• Có stakeholders nào cần dashboard access không?
+Are you satisfied with this monitoring plan?
+• Do you need to track any additional metrics?
+• Do any stakeholders need dashboard access?
 ```
 
 ---
 
-**Câu hỏi 33 (Tùy chọn) - SUPPORT MODEL & TRAINING:**
+**Question 33 (Optional) - SUPPORT MODEL & TRAINING:**
 ```
-📝 Câu hỏi 33/35: Support model và training plan như thế nào?
+📝 Question 33/35: What is the support model and training plan?
 
 Support Model:
 • Tier 1: First line support (helpdesk)
@@ -1348,7 +1346,7 @@ Service Hours:
 • SLA for response time?
 
 Training:
-• User training required?
+• Is user training required?
 • Training materials? (docs, videos, hands-on)
 • Admin training for system administrators?
 • Training schedule?
@@ -1360,30 +1358,30 @@ Documentation:
 • Deployment runbook?
 ```
 
-**Probing 33a (nếu chưa có support model):**
+**Probing 33a (if there's no support model yet):**
 ```
-Support model phụ thuộc vào criticality của hệ thống.
+The support model depends on the criticality of the system.
 
-Mô hình phổ biến:
-• Startup/SMB: Developer trực tiếp → Fast response nhưng không scalable
+Common models:
+• Startup/SMB: Direct developer support → Fast response but not scalable
 • Growth: Helpdesk → Jira/Zendesk → Dev team
-• Enterprise: Formal Tiers → SLA contracts → Professional services
+• Enterprise: Formal tiers → SLA contracts → Professional services
 
 Tool choices:
 • Jira Service Management: Best for IT teams
 • Zendesk: Best for customer-facing support
-• Freshdesk: Affordable, easy to setup
+• Freshdesk: Affordable, easy to set up
 • Simple: Email + WhatsApp for small teams
 ```
 
-**Probing 33b (nếu cần training):**
+**Probing 33b (if training is needed):**
 ```
-Training cần thiết nếu users không quen với system mới.
+Training is necessary if users aren't familiar with the new system.
 
 Training components:
 1. User Documentation
-   • How-to guides với screenshots
-   • Video tutorials (5-10 phút/topic)
+   • How-to guides with screenshots
+   • Video tutorials (5-10 minutes/topic)
    • FAQ
 
 2. Admin Documentation
@@ -1391,33 +1389,33 @@ Training components:
    • Troubleshooting guide
    • Configuration reference
 
-3. API Documentation (nếu có API)
+3. API Documentation (if there's an API)
    • OpenAPI/Swagger spec
    • Integration examples
    • Postman collection
 
 Training delivery:
-• Live training: Q&A tốt, nhưng cần schedule
-• Self-paced: Users learn theo tốc độ riêng
-• Documentation: Luôn có sẵn, nhưng có thể out of date
+• Live training: Good for Q&A, but requires scheduling
+• Self-paced: Users learn at their own speed
+• Documentation: Always available, but can go out of date
 ```
 
 **SATISFACTION CHECK 33:**
 ```
 ☝️ Support Model:
-• Tiers: [T1/T2/T3 hoặc single level]
-• Channels: [danh sách]
+• Tiers: [T1/T2/T3 or single level]
+• Channels: [list]
 • Hours: [business hours/24-7]
 • Ticketing: [tool]
 
 Training & Documentation:
-• Training required: [có/không]
+• Training required: [yes/no]
 • Doc types: [user/admin/API]
-• Knowledge base: [có/không]
+• Knowledge base: [yes/no]
 
-Bạn có hài lòng với support model này không?
-• SLA requirements đã rõ chưa?
-• Training schedule đã xác định chưa?
+Are you satisfied with this support model?
+• Are the SLA requirements clear?
+• Has the training schedule been determined?
 ```
 
 ---
@@ -1426,9 +1424,9 @@ Bạn có hài lòng với support model này không?
 
 ---
 
-**Câu hỏi 34 (Bắt buộc) - SUCCESS METRICS & ACCEPTANCE:**
+**Question 34 (Required) - SUCCESS METRICS & ACCEPTANCE:**
 ```
-📝 Câu hỏi 34/35: Làm sao để đo lường thành công của dự án?
+📝 Question 34/35: How will the success of the project be measured?
 
 Success Metrics (KPIs):
 | KPI | Current | Target | Measurement |
@@ -1439,52 +1437,52 @@ Success Metrics (KPIs):
 | System uptime | 99% | 99.9% | % availability |
 
 Baseline:
-• Có baseline metrics hiện tại để so sánh không?
-• Đo lường trong bao lâu trước launch?
+• Are there current baseline metrics to compare against?
+• How long will it be measured before launch?
 
 Acceptance Criteria:
-• Khi nào thì project được coi là thành công?
-• User acceptance criteria (UAT) có defined không?
+• When is the project considered successful?
+• Are user acceptance criteria (UAT) defined?
 • Sign-off process?
 • Definition of Done?
 
 Post-implementation:
-• Post-implementation review khi nào?
+• When will the post-implementation review happen?
 • Lessons learned session?
 • Continuous improvement plan?
 ```
 
-**Probing 34a (nếu chưa có KPIs):**
+**Probing 34a (if there are no KPIs yet):**
 ```
-KPIs giúp đo lường ROI của dự án và xác định success.
+KPIs help measure the project's ROI and determine success.
 
-Cách xác định KPIs tốt (SMART):
-• Specific: Cụ thể cái gì
-• Measurable: Đo lường được
-• Achievable: Có thể đạt được
-• Relevant: Liên quan đến business goals
-• Time-bound: Có thời hạn
+How to define good KPIs (SMART):
+• Specific: What exactly
+• Measurable: Can be measured
+• Achievable: Attainable
+• Relevant: Related to business goals
+• Time-bound: Has a deadline
 
 Examples:
-• Performance: "Page load < 2s (P95)" thay vì "nhanh"
-• Conversion: "Order completion rate > 80%" thay vì "nhiều đơn hàng"
-• Adoption: "50% users active weekly within 1 month" thay vì "users dùng nhiều"
+• Performance: "Page load < 2s (P95)" instead of "fast"
+• Conversion: "Order completion rate > 80%" instead of "more orders"
+• Adoption: "50% of users active weekly within 1 month" instead of "users use it a lot"
 ```
 
-**Probing 34b (nếu cần UAT process):**
+**Probing 34b (if a UAT process is needed):**
 ```
-User Acceptance Testing (UAT) là bước cuối trước go-live.
+User Acceptance Testing (UAT) is the last step before go-live.
 
 UAT Process:
-1. Preparation (Week before UAT)
-   • UAT test cases written và approved
+1. Preparation (week before UAT)
+   • UAT test cases written and approved
    • Test environment ready
-   • Users notified và scheduled
+   • Users notified and scheduled
 
 2. Execution (1-2 weeks)
    • Users execute test cases
-   • Bugs logged và triaged
-   • Daily standups để track progress
+   • Bugs logged and triaged
+   • Daily standups to track progress
 
 3. Sign-off
    • All P1/P2 bugs fixed
@@ -1503,25 +1501,25 @@ Definition of Done:
 **SATISFACTION CHECK 34:**
 ```
 ☝️ Success Metrics:
-• KPIs: [số lượng] defined
-• Baseline: [có/không - giá trị]
-• Targets: [rõ ràng/mơ hồ]
+• KPIs: [count] defined
+• Baseline: [yes/no - value]
+• Targets: [clear/vague]
 
 Acceptance:
-• UAT defined: [có/không]
-• Sign-off process: [mô tả]
-• Definition of Done: [mô tả]
+• UAT defined: [yes/no]
+• Sign-off process: [description]
+• Definition of Done: [description]
 
-Bạn có hài lòng với success metrics và acceptance criteria này không?
-• KPIs đã align với business goals chưa?
-• UAT process đã rõ ràng chưa?
+Are you satisfied with these success metrics and acceptance criteria?
+• Are the KPIs aligned with business goals?
+• Is the UAT process clear?
 ```
 
 ---
 
-**Câu hỏi 35 (Bắt buộc) - TIMELINE & PHASES:**
+**Question 35 (Required) - TIMELINE & PHASES:**
 ```
-📝 Câu hỏi 35/35: Timeline và các phases của dự án như thế nào?
+📝 Question 35/35: What is the project timeline and what are its phases?
 
 Timeline:
 • Start date:
@@ -1539,9 +1537,9 @@ Phases/Milestones:
 | Stabilization | Post-launch support | Week 14-16 |
 
 Constraints:
-• Hard deadline? (VD: phải xong trước Tết, before fiscal year end)
+• Hard deadline? (e.g., must finish before Tet, before fiscal year end)
 • Dependencies on external parties?
-• Holiday periods where work stops?
+• Holiday periods when work stops?
 
 Budget:
 • Approved budget:
@@ -1549,19 +1547,19 @@ Budget:
 • Cost breakdown by phase?
 ```
 
-**Probing 35a (nếu timeline chưa rõ ràng):**
+**Probing 35a (if the timeline isn't clear yet):**
 ```
-Timeline cần realistic và có buffer cho unexpected delays.
+The timeline needs to be realistic and have buffer for unexpected delays.
 
 Rule of thumb:
-• 1 week development → 0.5-1 week buffer
+• 1 week of development → 0.5-1 week buffer
 • Complex project → 20-30% time buffer
 • Dependencies → Add 1-2 weeks buffer
 
 Phase duration estimates:
 • Discovery (SRS): 1-2 weeks
 • Design (UI/UX, SDD): 2-4 weeks
-• Development (MVP): 4-12 weeks (tùy scope)
+• Development (MVP): 4-12 weeks (depending on scope)
 • Testing (UAT): 2-4 weeks
 • Go-Live: 1 week
 • Stabilization: 2-4 weeks
@@ -1572,20 +1570,20 @@ Minimum viable timeline:
 • Large project (10+ features): 20+ weeks
 ```
 
-**Probing 35b (nếu có constraints đặc biệt):**
+**Probing 35b (if there are special constraints):**
 ```
-Constraints ảnh hưởng đến timeline và scope.
+Constraints affect the timeline and scope.
 
-Hard deadlines phổ biến:
-• "Must ship before Tết" → Count backwards từ Tết
-• "Must launch before competitor" → Compress timeline
+Common hard deadlines:
+• "Must ship before Tet" → Count backwards from Tet
+• "Must launch before the competitor" → Compress the timeline
 • "Fiscal year end" → Q4 deadline pressure
-• "Trade show demo" → MVP only acceptable
+• "Trade show demo" → MVP only is acceptable
 
-Dependencies cần track:
-• External APIs → Need API spec before dev
+Dependencies to track:
+• External APIs → Need the API spec before development
 • Third-party vendors → Lead time for contracts
-• Data migration → Need old data export
+• Data migration → Need the old data export
 • User training → Need materials before UAT
 
 Budget considerations:
@@ -1610,81 +1608,81 @@ Phases:
 • Stabilization: [date range]
 
 Constraints:
-• Hard deadline: [có/không - mô tả]
-• Dependencies: [danh sách]
+• Hard deadline: [yes/no - description]
+• Dependencies: [list]
 • Budget: [approved amount]
 
-Bạn có hài lòng với timeline này không?
-• Deadline có realistic không?
-• Có phase nào cần adjust không?
+Are you satisfied with this timeline?
+• Is the deadline realistic?
+• Does any phase need adjusting?
 ```
 
 ---
 
-### STEP 36: FINAL CONFIRMATION (Sau khi hoàn thành phỏng vấn)
+### STEP 36: FINAL CONFIRMATION (After the interview is complete)
 
 ---
 
-**FINAL CONFIRMATION - XÁC NHẬN YÊU CẦU CUỐI CÙNG:**
+**FINAL CONFIRMATION - CONFIRMING THE FINAL REQUIREMENTS:**
 ```
 ╔══════════════════════════════════════════════════════════════════════════════════════╗
-║  📋 KIỂM TRA CUỐI CÙNG - XÁC NHẬN YÊU CẦU                                      ║
+║  📋 FINAL CHECK - CONFIRM REQUIREMENTS                                      ║
 ╠══════════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                      ║
-║  1. PROJECT CONTEXT (4 câu)                                                       ║
-║     ✅ Tên dự án: [tên]                                                            ║
-║     ✅ Mô tả hệ thống: [mô tả]                                                     ║
-║     ✅ Hệ thống cũ: [có/không]                                                     ║
-║     ✅ Vấn đề kinh doanh: [mô tả]                                                  ║
+║  1. PROJECT CONTEXT (4 questions)                                                       ║
+║     ✅ Project name: [name]                                                            ║
+║     ✅ System description: [description]                                                     ║
+║     ✅ Existing system: [yes/no]                                                     ║
+║     ✅ Business problem: [description]                                                  ║
 ║                                                                                      ║
-║  2. USERS & ACTORS (3 câu)                                                          ║
-║     ✅ Actors: [danh sách với permissions]                                         ║
-║     ✅ Quyền hạn: [mô tả chi tiết]                                                 ║
-║     ✅ Guest users: [có/không]                                                      ║
+║  2. USERS & ACTORS (3 questions)                                                          ║
+║     ✅ Actors: [list with permissions]                                         ║
+║     ✅ Permissions: [detailed description]                                                 ║
+║     ✅ Guest users: [yes/no]                                                      ║
 ║                                                                                      ║
-║  3. FUNCTIONAL REQUIREMENTS (5 câu)                                                ║
-║     ✅ Features: [số lượng] tính năng đã liệt kê                                   ║
+║  3. FUNCTIONAL REQUIREMENTS (5 questions)                                                ║
+║     ✅ Features: [count] features listed                                   ║
 ║     ✅ MoSCoW: Must: [X], Should: [Y], Could: [Z]                                   ║
-║     ✅ Business rules: [số lượng] quy tắc                                           ║
-║     ✅ Error handling: [mô tả]                                                     ║
+║     ✅ Business rules: [count] rules                                           ║
+║     ✅ Error handling: [description]                                                     ║
 ║                                                                                      ║
-║  4. DATA MODEL (3 câu)                                                             ║
-║     ✅ Entities: [số lượng] entities                                                ║
-║     ✅ Fields: [mô tả]                                                              ║
-║     ✅ Relationships: [mô tả]                                                     ║
+║  4. DATA MODEL (3 questions)                                                             ║
+║     ✅ Entities: [count] entities                                                ║
+║     ✅ Fields: [description]                                                              ║
+║     ✅ Relationships: [description]                                                     ║
 ║                                                                                      ║
-║  5. INTEGRATION & INTERFACES (4 câu)                                                ║
-║     ✅ External systems: [danh sách]                                               ║
-║     ✅ API specs: [mô tả]                                                          ║
+║  5. INTEGRATION & INTERFACES (4 questions)                                                ║
+║     ✅ External systems: [list]                                               ║
+║     ✅ API specs: [description]                                                          ║
 ║     ✅ Data exchange: [format, frequency]                                          ║
 ║     ✅ Import/Export: [formats]                                                     ║
 ║                                                                                      ║
-║  6. PLATFORM & UI (3 câu)                                                           ║
+║  6. PLATFORM & UI (3 questions)                                                           ║
 ║     ✅ Platforms: [Web/Mobile/Desktop/API]                                          ║
-║     ✅ Responsive: [có/không]                                                      ║
-║     ✅ Accessibility/i18n: [mô tả]                                                  ║
+║     ✅ Responsive: [yes/no]                                                      ║
+║     ✅ Accessibility/i18n: [description]                                                  ║
 ║                                                                                      ║
-║  7. NON-FUNCTIONAL (5 câu)                                                          ║
+║  7. NON-FUNCTIONAL (5 questions)                                                          ║
 ║     ✅ Performance: [response time targets]                                         ║
 ║     ✅ Scalability: [concurrent users]                                              ║
 ║     ✅ Availability: [SLA %]                                                        ║
 ║     ✅ Backup & Recovery: [RPO/RTO]                                                 ║
 ║     ✅ Security: [auth methods, encryption]                                          ║
 ║                                                                                      ║
-║  8. COMPLIANCE & RISK (3 câu)                                                      ║
+║  8. COMPLIANCE & RISK (3 questions)                                                      ║
 ║     ✅ Regulatory compliance: [frameworks]                                          ║
 ║     ✅ Data classification: [levels]                                                ║
-║     ✅ Audit trail: [mô tả]                                                         ║
+║     ✅ Audit trail: [description]                                                         ║
 ║                                                                                      ║
-║  9. OPERATIONS & SUPPORT (3 câu)                                                    ║
+║  9. OPERATIONS & SUPPORT (3 questions)                                                    ║
 ║     ✅ Infrastructure: [cloud/provider/region/environments]                         ║
-║     ✅ CI/CD: [có/không, tool]                                                      ║
+║     ✅ CI/CD: [yes/no, tool]                                                      ║
 ║     ✅ Monitoring: [tools/alerts]                                                   ║
 ║     ✅ Support model: [tiers/hours/channels]                                       ║
-║     ✅ Training: [có/không, materials]                                              ║
+║     ✅ Training: [yes/no, materials]                                              ║
 ║                                                                                      ║
-║  10. PROJECT GOVERNANCE (2 câu)                                                    ║
-║     ✅ Success metrics: [KPIs với targets]                                          ║
+║  10. PROJECT GOVERNANCE (2 questions)                                                    ║
+║     ✅ Success metrics: [KPIs with targets]                                          ║
 ║     ✅ Acceptance: [UAT/sign-off/DOD]                                                ║
 ║     ✅ Timeline: [phases/dates]                                                     ║
 ║     ✅ Budget: [approved amount]                                                    ║
@@ -1693,55 +1691,55 @@ Bạn có hài lòng với timeline này không?
 ║                                                                                      ║
 ║  📊 SUMMARY:                                                                        ║
 ║  ────────────────────────────────────────────────────────────────────────────────    ║
-║  Tổng số câu hỏi: 35                                                                ║
-║  Bắt buộc ✅ đã trả lời: [X]/26                                                    ║
-║  Tùy chọn ⚠️ đã trả lời: [Y]/9                                                     ║
-║  Tùy chọn ❌ đã bỏ qua: [Z]/9                                                      ║
+║  Total questions: 35                                                                ║
+║  Required ✅ answered: [X]/26                                                    ║
+║  Optional ⚠️ answered: [Y]/9                                                     ║
+║  Optional ❌ skipped: [Z]/9                                                      ║
 ║                                                                                      ║
-║  ⚠️ Cảnh báo: [Nếu có câu bắt buộc chưa trả lời]                                   ║
+║  ⚠️ Warning: [If any required question is unanswered]                                   ║
 ║                                                                                      ║
 ╠══════════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                      ║
-║  ✅ Nếu mọi thứ đã CHÍNH XÁC, gõ "XÁC NHẬN" để tạo SRS                            ║
-║  📝 Nếu cần SỬA, cho tôi biết câu hỏi số mấy cần sửa                               ║
-║  ➕ Nếu muốn BỔ SUNG, cho tôi biết thêm gì                                          ║
-║  ❌ Nếu muốn BỎ QUA câu nào, cho biết lý do                                        ║
+║  ✅ If everything is CORRECT, type "CONFIRM" to generate the SRS                            ║
+║  📝 If something needs FIXING, tell me which question number needs to change                               ║
+║  ➕ If you want to ADD something, tell me what                                          ║
+║  ❌ If you want to SKIP a question, tell me why                                        ║
 ║                                                                                      ║
 ╚══════════════════════════════════════════════════════════════════════════════════════╝
 ```
 
-**Probing 36a (nếu có câu bắt buộc chưa trả lời):**
+**Probing 36a (if any required question is unanswered):**
 ```
-⚠️ Cảnh báo: Có [X] câu hỏi BẮT BUỘC chưa được trả lời đầy đủ:
+⚠️ Warning: There are [X] REQUIRED questions that have not been fully answered:
 
-[Danh sách câu hỏi chưa complete]
+[List of incomplete questions]
 
-Những câu hỏi này có thể ảnh hưởng đến:
-• Độ chính xác của SRS
-• Ước lượng timeline/budget
+These questions may affect:
+• The accuracy of the SRS
+• Timeline/budget estimates
 • Technical decisions
 
-Bạn có muốn:
-A) Tiếp tục trả lời những câu này ngay
-B) Tạm thời đánh dấu là [TBD] và proceed
-C) Chấp nhận risk và tiếp tục với assumptions
+Would you like to:
+A) Continue answering these questions now
+B) Temporarily mark them as [TBD] and proceed
+C) Accept the risk and continue with assumptions
 ```
 
-**Probing 36b (nếu user muốn sửa câu cũ):**
+**Probing 36b (if the user wants to edit a previous answer):**
 ```
-Không vấn đề! Cho tôi biết:
-• Câu hỏi số mấy cần sửa?
-• Thông tin cũ là gì?
-• Thông tin mới là gì?
+No problem! Tell me:
+• Which question number needs to change?
+• What was the old information?
+• What is the new information?
 
-Tôi sẽ cập nhật và cho bạn xác nhận lại.
+I'll update it and have you confirm again.
 ```
 
 ---
 
-### STEP 37: TẠO REQUIREMENTS SUMMARY (Sau khi user xác nhận "XÁC NHẬN")
+### STEP 37: GENERATE REQUIREMENTS SUMMARY (After the user confirms with "CONFIRM")
 
-**CHỈ SAU KHI USER XÁC NHẬN "XÁC NHẬN"** → Tạo tài liệu SRS:
+**ONLY AFTER THE USER CONFIRMS WITH "CONFIRM"** → Generate the SRS document:
 
 ```markdown
 # Software Requirements Specification (SRS) - [Project Name]
@@ -1754,10 +1752,10 @@ Tôi sẽ cập nhật và cho bạn xác nhận lại.
 ## 1. Introduction
 
 ### 1.1 Purpose
-[Mô tả mục đích của tài liệu này]
+[Describe the purpose of this document]
 
 ### 1.2 Scope
-[Mô tả phạm vi hệ thống]
+[Describe the scope of the system]
 
 ### 1.3 Definitions, Acronyms, and Abbreviations
 | Term | Definition |
@@ -1767,14 +1765,14 @@ Tôi sẽ cập nhật và cho bạn xác nhận lại.
 | UAT | User Acceptance Testing |
 
 ### 1.4 References
-[Tài liệu tham khảo]
+[Reference documents]
 
 ---
 
 ## 2. Overall Description
 
 ### 2.1 Product Perspective
-[Mô tả hệ thống mới trong bối cảnh]
+[Describe the new system in context]
 
 ### 2.2 System Overview
 | Component | Description |
@@ -1806,25 +1804,25 @@ Tôi sẽ cập nhật và cho bạn xác nhận lại.
 
 ### 3.1 Feature List (MoSCoW)
 
-#### Must Have (Bắt buộc - Blockers nếu thiếu)
+#### Must Have (Mandatory - blockers if missing)
 | ID | Feature | Description | Priority |
 |----|---------|-------------|----------|
 | F01 | [Feature Name] | [Description] | Must |
 | F02 | [Feature Name] | [Description] | Must |
 
-#### Should Have (Nên có - Important nhưng không block)
+#### Should Have (Important but not blocking)
 | ID | Feature | Description | Priority |
 |----|---------|-------------|----------|
 | F10 | [Feature Name] | [Description] | Should |
 
-#### Could Have (Có thể có - Nice to have)
+#### Could Have (Nice to have)
 | ID | Feature | Description | Priority |
 |----|---------|-------------|----------|
 | F20 | [Feature Name] | [Description] | Could |
 
 ### 3.2 User Interactions and Flows
 
-#### [Flow 1: Tên flow]
+#### [Flow 1: Flow name]
 ```
 Actor: [Actor name]
 Trigger: [What starts this flow]
@@ -2010,7 +2008,7 @@ Errors: [Error cases]
 
 ## Reference
 
-Sử dụng SRS_Questions_Catalogue.md để:
-- Tìm câu hỏi chi tiết hơn cho từng category
-- Tra cứu câu hỏi kỹ thuật (Technical probing)
-- Bổ sung câu hỏi nếu cần
+Use SRS_Questions_Catalogue.md to:
+- Find more detailed questions for each category
+- Look up technical questions (Technical probing)
+- Add more questions if needed

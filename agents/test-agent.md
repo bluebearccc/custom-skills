@@ -1,5 +1,5 @@
 ---
-description: Agent tạo Test Plan và Test Cases từ Acceptance Criteria trong SRS
+description: Agent that creates the Test Plan and Test Cases from Acceptance Criteria in the SRS
 mode: subagent
 permission:
   edit: allow
@@ -10,91 +10,91 @@ permission:
 
 # Test Agent
 
-## Mục đích
-Test Agent tạo **Test Plan** và **Test Cases** có cấu trúc từ Acceptance Criteria (AC) của từng Use Case trong SRS — đảm bảo mọi UC đều có test coverage trước khi development bắt đầu.
+## Purpose
+Test Agent creates a structured **Test Plan** and **Test Cases** from the Acceptance Criteria (AC) of each Use Case in the SRS — ensuring every UC has test coverage before development begins.
 
 ## Trigger
-Được spawn bởi `integration-agent` **sau khi** traceability-agent hoàn thành.
+Spawned by `integration-agent` **after** traceability-agent has completed.
 
 ```
 integration-agent
-  ├── @traceability-agent  ← chạy trước
-  └── @test-agent          ← spawn sau, đọc RTM từ traceability-agent
+  ├── @traceability-agent  ← runs first
+  └── @test-agent          ← spawned after, reads the RTM from traceability-agent
 ```
 
-## Điều kiện tiên quyết
+## Prerequisites
 
 ```
-✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md tồn tại
-✅ docs/{ProjectName}/requirements-summary.md tồn tại
-✅ docs/{ProjectName}/traceability/RTM.md tồn tại (từ traceability-agent)
-✅ docs/{ProjectName}/api/openapi.yaml tồn tại (từ api-agent)
+✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md exists
+✅ docs/{ProjectName}/requirements-summary.md exists
+✅ docs/{ProjectName}/traceability/RTM.md exists (from traceability-agent)
+✅ docs/{ProjectName}/api/openapi.yaml exists (from api-agent)
 ```
 
-## Skills sử dụng
-| Skill | Khi nào |
+## Skills Used
+| Skill | When |
 |-------|---------|
-| `test-design` | Chính — tạo test plan và test cases |
+| `test-design` | Primary — creates the test plan and test cases |
 
 ---
 
-## Quy trình
+## Process
 
-### Bước 1: Đọc SRS + RTM để lấy scope
+### Step 1: Read the SRS + RTM to determine scope
 
 ```
-Từ SRS:
-  - Danh sách UC với tên, actors, preconditions
-  - Acceptance Criteria (Section 2.3) cho từng UC
+From the SRS:
+  - List of UCs with names, actors, preconditions
+  - Acceptance Criteria (Section 2.3) for each UC
   - NFRs (Performance, Security, Reliability)
 
-Từ RTM.md:
-  - Gap list — UCs chưa có ACs → cần generate ACs trước
-  - UC → API mapping → để viết test cho API endpoints
+From RTM.md:
+  - Gap list — UCs without ACs → need to generate ACs first
+  - UC → API mapping → to write tests for API endpoints
 
-Từ api/openapi.yaml:
+From api/openapi.yaml:
   - Endpoint signatures → API test input/output
 ```
 
-### Bước 2: Tạo Test Plan tổng thể
+### Step 2: Create the overall Test Plan
 
 ```
 skill({ name: "test-design", type: "test-plan" })
 Output: test-plan/TEST-PLAN.md
 ```
 
-### Bước 3: Tạo Test Cases cho từng UC
+### Step 3: Create Test Cases for each UC
 
 ```
-Với MỖI UC trong SRS:
-  1. Đọc ACs của UC
-  2. Tạo test cases từ ACs (1 AC → 1 test case)
-  3. Thêm edge cases và boundary tests
-  4. Map test cases → API endpoint nếu có
+For EACH UC in the SRS:
+  1. Read the ACs of the UC
+  2. Create test cases from the ACs (1 AC → 1 test case)
+  3. Add edge cases and boundary tests
+  4. Map test cases → API endpoint if applicable
 
 Output per UC: test-plan/test-cases/TC-{UC-ID}-{uc-name}.md
 ```
 
-### Bước 4: Tạo API Test Suite
+### Step 4: Create the API Test Suite
 
 ```
 skill({ name: "test-design", type: "api-tests" })
-Từ openapi.yaml → tạo Postman collection + test scripts
+From openapi.yaml → create a Postman collection + test scripts
 Output: test-plan/api-tests/postman-collection.json
 ```
 
-### Bước 5: Tổng hợp Test Summary
+### Step 5: Consolidate the Test Summary
 
 ```
 Output: test-plan/TEST-SUMMARY.md
-  - Tổng số TCs
-  - Phân loại: Happy Path / Alternative / Negative / Performance
+  - Total number of TCs
+  - Classification: Happy Path / Alternative / Negative / Performance
   - Coverage vs AC count
 ```
 
 ---
 
-## Output Structure (BẮT BUỘC)
+## Output Structure (REQUIRED)
 
 ```
 docs/{ProjectName}/
@@ -111,7 +111,7 @@ docs/{ProjectName}/
 
 ---
 
-## Báo cáo kết quả cho integration-agent
+## Result Report for integration-agent
 
 ```json
 {

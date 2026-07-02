@@ -18,12 +18,12 @@ mode: false
 ## Purpose
 Create complete Software Design Document (SDD) following the IEEE 1016-2009 standard template. **LINK to external PlantUML files** instead of embedding directly.
 
-## Nguyên tắc quan trọng
+## Important Principles
 
-### KHÔNG embed PlantUML trực tiếp
-- ❌ KHÔNG viết `@startuml...@enduml` trong body của tài liệu SDD
-- ✅ SỬ DỤNG link/reference đến external PlantUML files
-- ✅ Diagrams được tạo bởi các specialized agents spawn song song
+### DO NOT embed PlantUML directly
+- ❌ DO NOT write `@startuml...@enduml` in the body of the SDD document
+- ✅ USE links/references to external PlantUML files
+- ✅ Diagrams are created by specialized agents spawned in parallel
 
 ---
 
@@ -31,7 +31,7 @@ Create complete Software Design Document (SDD) following the IEEE 1016-2009 stan
 
 ### 0. Requirements Mapping
 
-> Section này link SDD ngược lại SRS — đảm bảo mọi requirement đều có design.
+> This section links the SDD back to the SRS — ensuring every requirement has a corresponding design.
 
 #### 0.1 SRS Reference
 
@@ -45,7 +45,7 @@ Create complete Software Design Document (SDD) following the IEEE 1016-2009 stan
 
 #### 0.2 Use Case → Implementation Mapping
 
-> Mỗi UC trong SRS phải được map đến: Component, API endpoint, DB entities.
+> Every UC in the SRS must be mapped to: Component, API endpoint, DB entities.
 
 | UC ID | Use Case Name | Component | API Endpoint(s) | DB Entities |
 |-------|--------------|-----------|-----------------|-------------|
@@ -57,7 +57,7 @@ Create complete Software Design Document (SDD) following the IEEE 1016-2009 stan
 
 | NFR ID | NFR Description | Design Decision |
 |--------|-----------------|-----------------|
-| NFR-P1 | Response time < 200ms (P95) | Redis cache cho read-heavy endpoints; DB indexes trên FKs và filter fields |
+| NFR-P1 | Response time < 200ms (P95) | Redis cache for read-heavy endpoints; DB indexes on FKs and filter fields |
 | NFR-S1 | JWT authentication | Access token 15min + refresh token 7 days; HTTPS only |
 | NFR-A1 | 99.9% uptime | Multi-AZ deployment; Health check endpoints; Circuit breaker pattern |
 | NFR-SC1 | 1000 concurrent users | Horizontal scaling; Connection pooling; Async processing |
@@ -136,23 +136,23 @@ Create complete Software Design Document (SDD) following the IEEE 1016-2009 stan
 
 ##### 4.1.1 Global Error Handling Strategy
 
-Tất cả components đều follow error handling strategy thống nhất:
+All components follow a unified error handling strategy:
 
 **Error Hierarchy:**
 ```
 BaseException
-  ├── BusinessException (4xx — lỗi do user/business logic)
+  ├── BusinessException (4xx — user/business logic error)
   │     ├── ValidationException    (422)
   │     ├── NotFoundException      (404)
   │     ├── ConflictException      (409)
   │     └── ForbiddenException     (403)
-  └── TechnicalException (5xx — lỗi hệ thống)
+  └── TechnicalException (5xx — system error)
         ├── DatabaseException
         ├── ExternalServiceException
         └── InternalServerException
 ```
 
-**Error Response Format** (nhất quán với `api/error-codes.md`):
+**Error Response Format** (consistent with `api/error-codes.md`):
 ```json
 {
   "success": false,
@@ -164,16 +164,16 @@ BaseException
 }
 ```
 
-Global Exception Handler xử lý tập trung, log stack trace, trả về response chuẩn.
+The Global Exception Handler processes errors centrally, logs the stack trace, and returns a standardized response.
 
 ##### 4.1.2 Logging Strategy
 
-| Level | Khi nào |
+| Level | When |
 |-------|---------|
 | ERROR | Unhandled exceptions, external service failures, DB errors |
 | WARN  | Handled business exceptions, retry attempts, slow queries (>500ms) |
 | INFO  | Request/response summary, significant business events |
-| DEBUG | SQL queries, detailed flow (chỉ dev/staging) |
+| DEBUG | SQL queries, detailed flow (dev/staging only) |
 
 **Log Format (JSON):**
 ```json
@@ -194,7 +194,7 @@ Global Exception Handler xử lý tập trung, log stack trace, trả về respo
 
 | Layer | Technology | TTL | Eviction |
 |-------|-----------|-----|---------|
-| Application | Redis | Per use case (xem bảng dưới) | LRU |
+| Application | Redis | Per use case (see table below) | LRU |
 | HTTP | CDN / Nginx | Static assets: 1 year; API: no-store | — |
 
 **Cache TTL per resource type:**
@@ -209,7 +209,7 @@ Global Exception Handler xử lý tập trung, log stack trace, trả về respo
 **Cache Key Convention:**
 ```
 {project}:{version}:{resource}:{id_or_query_hash}
-vd: myapp:v1:product:123
+e.g.: myapp:v1:product:123
     myapp:v1:products:list:page=1&limit=20&status=active
 ```
 
@@ -285,7 +285,7 @@ Per-component SQL files: `db/tables/{component}_tables.sql`
 
 **Implementation:** Redis sliding window counter.
 **Headers returned:** `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`.
-**Exceeded response:** HTTP 429 với `Retry-After` header.
+**Exceeded response:** HTTP 429 with a `Retry-After` header.
 
 ---
 
@@ -363,8 +363,8 @@ docs/{ProjectName}/
 
 ## Quality Checklist
 
-- [ ] Section 0.2 UC → Implementation Mapping đã điền đủ cho mọi UC trong SRS
-- [ ] Section 0.3 NFR → Design Decision đã address mọi NFR Must
+- [ ] Section 0.2 UC → Implementation Mapping is fully filled in for every UC in the SRS
+- [ ] Section 0.3 NFR → Design Decision addresses every Must-have NFR
 - [ ] System Overview: [system-overview.puml](./diagrams/system-overview.puml) ✓
 - [ ] Architecture: [layered-architecture.puml](./diagrams/layered-architecture.puml) ✓
 - [ ] Component Interaction: [component-interaction.puml](./diagrams/components/component-interaction.puml) ✓
@@ -381,4 +381,4 @@ docs/{ProjectName}/
 
 ## Commands
 
-Sử dụng command `/create-sdd` để trigger skill này.
+Use the `/create-sdd` command to trigger this skill.

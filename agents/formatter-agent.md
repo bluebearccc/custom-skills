@@ -1,5 +1,5 @@
 ---
-description: Agent chuyển đổi tài liệu Markdown sang định dạng Word (.docx) hoặc PDF cho stakeholder không kỹ thuật
+description: Agent that converts Markdown documents to Word (.docx) or PDF format for non-technical stakeholders
 mode: subagent
 permission:
   edit: allow
@@ -11,38 +11,38 @@ permission:
 
 # Formatter Agent
 
-## Mục đích
-Formatter Agent chuyển đổi tài liệu SRS/SDD từ Markdown sang định dạng phù hợp để bàn giao cho stakeholder không kỹ thuật:
-- **`.docx`** — Word document (chỉnh sửa được, phù hợp ký duyệt)
-- **`.pdf`** — PDF (read-only, phù hợp distribute)
-- **`index.html`** — HTML report (browse online, embed diagrams)
+## Purpose
+Formatter Agent converts SRS/SDD documents from Markdown into a format suitable for handoff to non-technical stakeholders:
+- **`.docx`** — Word document (editable, suitable for sign-off)
+- **`.pdf`** — PDF (read-only, suitable for distribution)
+- **`index.html`** — HTML report (browse online, embedded diagrams)
 
 ## Trigger
-Được gọi bởi `doc-coordinator` khi:
-- User chạy `/export-docs {ProjectName} --format docx|pdf|html`
-- Hoặc sau `/generate-docs` nếu user đã config `auto_export: true`
+Called by `doc-coordinator` when:
+- The user runs `/export-docs {ProjectName} --format docx|pdf|html`
+- Or after `/generate-docs` if the user has configured `auto_export: true`
 
 ```
 doc-coordinator
   └── @formatter-agent (project={ProjectName}, format={docx|pdf|html})
 ```
 
-## Điều kiện tiên quyết
+## Prerequisites
 
 ```
-✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md tồn tại
-✅ docs/{ProjectName}/SDD_{ProjectName}_v*.md tồn tại
-✅ docs/{ProjectName}/index.md tồn tại
+✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md exists
+✅ docs/{ProjectName}/SDD_{ProjectName}_v*.md exists
+✅ docs/{ProjectName}/index.md exists
 ```
 
 ---
 
-## Quy trình
+## Process
 
-### Bước 1: Collect all source files
+### Step 1: Collect all source files
 
 ```
-Đọc MANIFEST.json (hoặc glob) để lấy danh sách files:
+Read MANIFEST.json (or glob) to get the list of files:
 
 Source files:
   - SRS_{ProjectName}_v*.md       → SRS document
@@ -51,11 +51,11 @@ Source files:
   - traceability/RTM.md            → Traceability matrix
   - test-plan/TEST-PLAN.md         → Test plan
 
-Diagrams (nếu format cho phép embed):
-  - diagrams/**/*.puml             → Convert sang PNG/SVG trước khi embed
+Diagrams (if the format allows embedding):
+  - diagrams/**/*.puml             → Convert to PNG/SVG before embedding
 ```
 
-### Bước 2: Pre-process Markdown
+### Step 2: Pre-process Markdown
 
 ```
 FOR EACH markdown_file:
@@ -63,10 +63,10 @@ FOR EACH markdown_file:
   1. Resolve PlantUML references:
      Pattern: [Diagram Name](./diagrams/path/file.puml)
      → Convert .puml → .png (bash: plantuml -tpng file.puml)
-     → Replace link với embedded image: ![Diagram Name](./diagrams/path/file.png)
+     → Replace the link with an embedded image: ![Diagram Name](./diagrams/path/file.png)
 
   2. Fix relative links:
-     → Convert inter-document links thành section references
+     → Convert inter-document links into section references
 
   3. Inject document metadata header:
      → Project: {ProjectName}
@@ -74,15 +74,15 @@ FOR EACH markdown_file:
      → Generated: {date}
      → Confidentiality: INTERNAL
 
-  4. Add page break markers (cho docx/pdf):
-     → Thêm <!-- pagebreak --> trước mỗi H1/H2 section lớn
+  4. Add page break markers (for docx/pdf):
+     → Insert <!-- pagebreak --> before each large H1/H2 section
 ```
 
-### Bước 3: Convert theo format
+### Step 3: Convert by format
 
 **Format: DOCX**
 ```bash
-# Dùng pandoc để convert
+# Use pandoc to convert
 pandoc {source}.md \
   --from markdown \
   --to docx \
@@ -91,7 +91,7 @@ pandoc {source}.md \
   --output exports/{ProjectName}/SRS_{ProjectName}_v{version}.docx
 
 # Template features:
-# - Cover page với project name + version
+# - Cover page with project name + version
 # - Heading styles (H1=Title, H2=Heading1, H3=Heading2)
 # - Table styling
 # - Code block monospace font
@@ -122,10 +122,10 @@ pandoc {source}.md \
   --output exports/{ProjectName}/index.html
 ```
 
-### Bước 4: Generate Package Bundle
+### Step 4: Generate Package Bundle
 
 ```
-Tạo exports/{ProjectName}/package/:
+Create exports/{ProjectName}/package/:
   - SRS_{ProjectName}_v{version}.docx    ← SRS Word
   - SDD_{ProjectName}_v{version}.docx    ← SDD Word
   - SRS_{ProjectName}_v{version}.pdf     ← SRS PDF
@@ -134,14 +134,14 @@ Tạo exports/{ProjectName}/package/:
   - index.html                           ← HTML landing page
   - assets/                              ← Embedded images/diagrams
 
-Nén thành ZIP:
+Compress into a ZIP:
   {ProjectName}_docs_v{version}_{date}.zip
 ```
 
-### Bước 5: RTM → Excel (nếu traceability/RTM.md tồn tại)
+### Step 5: RTM → Excel (if traceability/RTM.md exists)
 
 ```
-Convert RTM.md tables → Excel workbook với nhiều sheets:
+Convert RTM.md tables → Excel workbook with multiple sheets:
 
 Sheet 1: FR→UC→Component   ← Forward traceability
 Sheet 2: UC→API→DB          ← Implementation traceability
@@ -150,7 +150,7 @@ Sheet 4: NFR→Design         ← NFR traceability
 Sheet 5: Gap Register       ← Issues list
 Sheet 6: Coverage Summary   ← Statistics
 
-Format Excel:
+Excel formatting:
   - Header row: bold, blue background
   - ❌ FAIL cells: red fill
   - ⚠️ WARN cells: yellow fill
@@ -161,7 +161,7 @@ Format Excel:
 
 ---
 
-## Output Structure (BẮT BUỘC)
+## Output Structure (REQUIRED)
 
 ```
 docs/{ProjectName}/
@@ -170,8 +170,8 @@ docs/{ProjectName}/
     ├── SRS_{ProjectName}_v{version}.pdf
     ├── SDD_{ProjectName}_v{version}.docx
     ├── SDD_{ProjectName}_v{version}.pdf
-    ├── RTM_{ProjectName}_v{version}.xlsx    ← nếu có RTM
-    ├── TEST-PLAN_{ProjectName}.pdf          ← nếu có test-plan
+    ├── RTM_{ProjectName}_v{version}.xlsx    ← if RTM exists
+    ├── TEST-PLAN_{ProjectName}.pdf          ← if test-plan exists
     ├── index.html                           ← HTML landing page
     └── {ProjectName}_docs_v{version}_{date}.zip
 ```
@@ -180,7 +180,7 @@ docs/{ProjectName}/
 
 ## DOCX Template Requirements
 
-Template file `templates/docx-template.docx` phải có:
+The template file `templates/docx-template.docx` must have:
 
 ```
 Cover Page:
@@ -210,28 +210,28 @@ Footer:
 
 ---
 
-## Fallback — Nếu pandoc không khả dụng
+## Fallback — If pandoc is unavailable
 
 ```
 IF pandoc NOT INSTALLED:
 
-  1. Thông báo cho user:
-     "⚠️ pandoc chưa được cài. Formatter sẽ tạo HTML thay thế."
+  1. Notify the user:
+     "⚠️ pandoc is not installed. Formatter will generate HTML instead."
 
-  2. Tạo HTML version với embedded CSS:
+  2. Create an HTML version with embedded CSS:
      - Full-width tables
-     - Syntax highlighting cho code blocks
-     - Print-friendly CSS (Ctrl+P → PDF từ browser)
+     - Syntax highlighting for code blocks
+     - Print-friendly CSS (Ctrl+P → PDF from browser)
      - Diagram images embedded as base64
 
-  3. Hướng dẫn user:
-     "Mở file HTML trong browser → File → Print → Save as PDF
-      để có bản PDF chất lượng cao."
+  3. Instruct the user:
+     "Open the HTML file in a browser → File → Print → Save as PDF
+      to get a high-quality PDF."
 ```
 
 ---
 
-## Báo cáo kết quả cho doc-coordinator
+## Result Report for doc-coordinator
 
 ```json
 {

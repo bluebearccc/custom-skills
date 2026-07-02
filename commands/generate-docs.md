@@ -1,29 +1,29 @@
 ---
-description: Tạo toàn bộ tài liệu (SRS + SDD)
+description: Generate the full document set (SRS + SDD)
 agent: doc-coordinator
 ---
 
-Tạo toàn bộ tài liệu phần mềm bao gồm SRS và SDD.
+Generate the full set of software documentation, including SRS and SDD.
 
 Project name: $ARGUMENTS
 
-Quy trình:
+Process:
 Phase 1: Project Setup
-- Xác nhận project name: $ARGUMENTS
-- Tạo cấu trúc thư mục docs/
+- Confirm project name: $ARGUMENTS
+- Create the docs/ directory structure
 
 Phase 2: SRS
 - Spawn SRS Agent: @srs-agent
-- SRS Agent: Thu thập requirements, tạo PlantUML UC diagrams, viết SRS
+- SRS Agent: Gathers requirements, generates PlantUML UC diagrams, writes the SRS
 - Output: SRS_$ARGUMENTS_v1.0.0.md + diagrams/
 
 Phase 3: SDD
 - Spawn SDD Agent: @sdd-agent
-- SDD Agent: Đọc SRS, thiết kế architecture, tạo PlantUML diagrams, viết SDD
+- SDD Agent: Reads the SRS, designs the architecture, generates PlantUML diagrams, writes the SDD
 - Output: SDD_$ARGUMENTS_v1.0.0.md + diagrams/ + db/ + api/
 
 Phase 4: Package
-- Cross-reference SRS và SDD
+- Cross-reference the SRS and SDD
 - Generate index.md
 - Final verification
 

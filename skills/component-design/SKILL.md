@@ -1,15 +1,15 @@
 ---
 name: component-design
 description: |
-  Thiết kế chi tiết một component/module trong SDD: class diagrams (backend + frontend),
-  sequence diagram, state diagram, và database tables.
+  Detailed design of a single component/module within the SDD: class diagrams (backend + frontend),
+  sequence diagram, state diagram, and database tables.
 
-  SỬ DỤNG KHI:
-  - component-agent được spawn để thiết kế 1 component cụ thể
-  - Cần tạo đủ 5 artifacts bắt buộc cho mỗi component
-  - Cần PlantUML templates nhất quán theo convention của framework
+  USE WHEN:
+  - component-agent is spawned to design a specific component
+  - You need to produce all 5 mandatory artifacts for each component
+  - You need PlantUML templates that are consistent with the framework's convention
 
-  MỖI COMPONENT = 5 FILES BẮT BUỘC:
+  EACH COMPONENT = 5 MANDATORY FILES:
   1. {component}-class-backend.puml
   2. {component}-class-frontend.puml
   3. {component}-sequence.puml
@@ -22,8 +22,8 @@ mode: false
 
 # Component Design Skill v1.0.0
 
-## Mục đích
-Hướng dẫn `component-agent` thiết kế MỘT component hoàn chỉnh với đầy đủ 5 artifacts theo đúng convention của AgentCode Framework.
+## Purpose
+Guide `component-agent` in designing ONE complete component with all 5 artifacts, following the AgentCode Framework convention exactly.
 
 ---
 
@@ -31,15 +31,15 @@ Hướng dẫn `component-agent` thiết kế MỘT component hoàn chỉnh vớ
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|
-| `component_name` | ✅ | Tên component (VD: AuthModule, ProductModule) |
-| `project_name` | ✅ | Tên dự án |
-| `use_cases` | ✅ | Danh sách UC IDs mà component này handle |
-| `entities` | ✅ | Danh sách data entities liên quan |
-| `dependencies` | ⚠️ | Các components khác mà component này phụ thuộc |
+| `component_name` | ✅ | Component name (e.g., AuthModule, ProductModule) |
+| `project_name` | ✅ | Project name |
+| `use_cases` | ✅ | List of UC IDs handled by this component |
+| `entities` | ✅ | List of related data entities |
+| `dependencies` | ⚠️ | Other components that this component depends on |
 
 ---
 
-## Output Structure (BẮT BUỘC — 5 files)
+## Output Structure (MANDATORY — 5 files)
 
 ```
 docs/{ProjectName}/
@@ -56,15 +56,15 @@ docs/{ProjectName}/
 ```
 
 **Naming Convention:**
-- `component-name` trong thư mục: kebab-case (vd: `auth-module`, `product-module`)
-- `component` trong file name: kebab-case prefix (vd: `auth-module-class-backend.puml`)
-- `component` trong SQL: snake_case prefix (vd: `auth_module_tables.sql`)
+- `component-name` in the folder: kebab-case (e.g., `auth-module`, `product-module`)
+- `component` in the file name: kebab-case prefix (e.g., `auth-module-class-backend.puml`)
+- `component` in SQL: snake_case prefix (e.g., `auth_module_tables.sql`)
 
 ---
 
 ## Artifact 1: Class Diagram — Backend
 
-**Mục đích:** Mô tả cấu trúc lớp phía backend (Controller, Service, Repository, Entity)
+**Purpose:** Describe the backend-side class structure (Controller, Service, Repository, Entity)
 
 **Template:**
 ```plantuml
@@ -153,7 +153,7 @@ package "{component}.dto" {
 
 ## Artifact 2: Class Diagram — Frontend
 
-**Mục đích:** Mô tả cấu trúc components phía frontend (Page, Component, Hook, Service)
+**Purpose:** Describe the frontend-side component structure (Page, Component, Hook, Service)
 
 **Template:**
 ```plantuml
@@ -253,7 +253,7 @@ use{ComponentName}Form --> {ComponentName}ApiService
 
 ## Artifact 3: Sequence Diagram
 
-**Mục đích:** Mô tả luồng tương tác end-to-end từ User → Frontend → Backend → DB cho operation chính
+**Purpose:** Describe the end-to-end interaction flow from User → Frontend → Backend → DB for the main operation
 
 **Template:**
 ```plantuml
@@ -329,7 +329,7 @@ FE -->> User : inline field errors
 
 ## Artifact 4: State Diagram
 
-**Mục đích:** Mô tả vòng đời (lifecycle) của entity chính trong component
+**Purpose:** Describe the lifecycle of the component's main entity
 
 **Template:**
 ```plantuml
@@ -392,7 +392,7 @@ end note
 @enduml
 ```
 
-> **Hướng dẫn tùy chỉnh:** Điều chỉnh states phù hợp với business logic của component cụ thể. Ví dụ:
+> **Customization guide:** Adjust the states to match the specific component's business logic. Examples:
 > - OrderModule: `Pending → Confirmed → Processing → Shipped → Delivered → Completed / Cancelled`
 > - AuthModule: `Unverified → Active → Suspended → Deactivated`
 > - PaymentModule: `Initiated → Processing → Completed → Refunded / Failed`
@@ -401,7 +401,7 @@ end note
 
 ## Artifact 5: Database Tables SQL
 
-**Mục đích:** DDL cho tất cả tables thuộc component này
+**Purpose:** DDL for all tables belonging to this component
 
 **Template:**
 ```sql
@@ -452,22 +452,22 @@ CREATE INDEX idx_{related_table}_{table_id} ON {related_table}({table_id});
 
 ---
 
-## Quality Checklist — sau khi tạo xong component
+## Quality Checklist — after finishing the component
 
-Trước khi báo cáo hoàn thành cho sdd-agent, kiểm tra:
+Before reporting completion to sdd-agent, verify:
 
 ```
-✅ {component}-class-backend.puml  — tồn tại, có @startuml/@enduml
-✅ {component}-class-frontend.puml — tồn tại, có @startuml/@enduml
-✅ {component}-sequence.puml       — tồn tại, có @startuml/@enduml
-✅ {component}-state.puml          — tồn tại, có @startuml/@enduml
-✅ db/tables/{component}_tables.sql — tồn tại, có ít nhất 1 CREATE TABLE
+✅ {component}-class-backend.puml  — exists, contains @startuml/@enduml
+✅ {component}-class-frontend.puml — exists, contains @startuml/@enduml
+✅ {component}-sequence.puml       — exists, contains @startuml/@enduml
+✅ {component}-state.puml          — exists, contains @startuml/@enduml
+✅ db/tables/{component}_tables.sql — exists, contains at least 1 CREATE TABLE
 
-✅ Class diagrams có đủ: Controller, Service, Repository, Entity (backend)
-✅ Class diagrams có đủ: Page, Component, Hook, Service (frontend)
-✅ Sequence diagram cover ít nhất: Create + Read + Error flows
-✅ State diagram cover vòng đời đầy đủ với [*] start và end states
-✅ SQL có: PRIMARY KEY, timestamps, indexes, foreign key constraints
+✅ Class diagrams include: Controller, Service, Repository, Entity (backend)
+✅ Class diagrams include: Page, Component, Hook, Service (frontend)
+✅ Sequence diagram covers at least: Create + Read + Error flows
+✅ State diagram covers the full lifecycle with [*] start and end states
+✅ SQL includes: PRIMARY KEY, timestamps, indexes, foreign key constraints
 ```
 
 ---

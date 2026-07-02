@@ -1,6 +1,6 @@
 ---
 name: create-diagram
-description: Tạo UML diagram từ mô tả text
+description: Generate a UML diagram from a text description
 syntax: /create-diagram [type] --name [name] --description [desc]
 examples:
   - "/create-diagram use-case --name OrderProcess --description 'Customer orders product'"
@@ -16,10 +16,10 @@ types:
 
 # Tool: create-diagram
 
-## Mô tả
-Tạo UML diagram sử dụng Mermaid syntax từ mô tả text.
+## Description
+Generate a UML diagram using Mermaid syntax from a text description.
 
-## Các loại Diagram
+## Diagram Types
 
 ### 1. Use Case Diagram
 ```mermaid
@@ -65,14 +65,14 @@ graph TD
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| type | string | Yes | Loại diagram |
-| name | string | Yes | Tên diagram |
-| description | string | Yes | Mô tả chi tiết |
-| output | string | No | Đường dẫn output |
+| type | string | Yes | Diagram type |
+| name | string | Yes | Diagram name |
+| description | string | Yes | Detailed description |
+| output | string | No | Output path |
 
 ## Output
 
-Mermaid code và preview (nếu hỗ trợ)
+Mermaid code and preview (if supported)
 
 ## Usage Example
 
@@ -93,3 +93,4 @@ sequenceDiagram
     System-->>User: Login success
 ```
 ```
+</output>

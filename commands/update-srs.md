@@ -1,6 +1,6 @@
 ---
 name: update-srs
-description: Cập nhật SRS đã có — thêm/sửa/xóa requirements với semantic versioning và change tracking
+description: Update an existing SRS — add/modify/remove requirements with semantic versioning and change tracking
 syntax: /update-srs [project_name] [--scope <scope>]
 examples:
   - "/update-srs MyProject"
@@ -12,80 +12,80 @@ agent: doc-coordinator
 
 # Command: /update-srs
 
-## Mục đích
-Cập nhật **tài liệu SRS đã tồn tại** với delta changes — không tạo lại từ đầu. Tự động bump version theo semantic versioning và ghi CHANGELOG.
+## Purpose
+Update an **existing SRS document** with delta changes — without regenerating from scratch. Automatically bumps the version according to semantic versioning and records the CHANGELOG.
 
-## Điều kiện tiên quyết
+## Prerequisites
 
 ```
-✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md PHẢI tồn tại
-✅ docs/{ProjectName}/requirements-summary.md PHẢI tồn tại
+✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md MUST exist
+✅ docs/{ProjectName}/requirements-summary.md MUST exist
 
-NẾU THIẾU → Hướng dẫn user chạy /create-srs {ProjectName} trước
+IF MISSING → Instruct the user to run /create-srs {ProjectName} first
 ```
 
 ---
 
 ## Scope Options
 
-| Scope | Ý nghĩa | Version Bump |
+| Scope | Meaning | Version Bump |
 |-------|---------|--------------|
-| `uc` | Thêm/sửa/xóa Use Case | MINOR (1.0.0 → 1.1.0) |
-| `feature` | Thêm/sửa Feature, FR | MINOR (1.0.0 → 1.1.0) |
-| `nfr` | Sửa Non-Functional Requirements | PATCH (1.0.0 → 1.0.1) |
-| `actor` | Thêm/sửa Actor | MINOR (1.0.0 → 1.1.0) |
-| `fix` | Sửa lỗi typo, clarification | PATCH (1.0.0 → 1.0.1) |
-| (none) | Interview toàn bộ — major revision | MAJOR (1.0.0 → 2.0.0) |
+| `uc` | Add/modify/remove a Use Case | MINOR (1.0.0 → 1.1.0) |
+| `feature` | Add/modify a Feature, FR | MINOR (1.0.0 → 1.1.0) |
+| `nfr` | Modify Non-Functional Requirements | PATCH (1.0.0 → 1.0.1) |
+| `actor` | Add/modify an Actor | MINOR (1.0.0 → 1.1.0) |
+| `fix` | Fix typos, clarification | PATCH (1.0.0 → 1.0.1) |
+| (none) | Full interview — major revision | MAJOR (1.0.0 → 2.0.0) |
 
 ---
 
-## Quy trình
+## Process
 
-### Bước 1: Xác định current version
+### Step 1: Determine the current version
 
 ```
-Đọc SRS_{ProjectName}_v{X.Y.Z}.md
-Extract current version từ frontmatter hoặc filename
-Hiển thị:
-  "📄 SRS hiện tại: v{X.Y.Z} ({date})
+Read SRS_{ProjectName}_v{X.Y.Z}.md
+Extract the current version from the frontmatter or filename
+Display:
+  "📄 Current SRS: v{X.Y.Z} ({date})
    Scope: {scope}
-   Version sau khi update: v{X'.Y'.Z'}"
+   Version after update: v{X'.Y'.Z'}"
 ```
 
-### Bước 2: Thu thập delta changes (không phỏng vấn lại từ đầu)
+### Step 2: Gather delta changes (no full re-interview)
 
 ```
-Hiển thị cho user:
+Show the user:
 ╔══════════════════════════════════════════════════════════════╗
 ║  📝 UPDATE SRS — {ProjectName} v{X.Y.Z} → v{X'.Y'.Z'}      ║
 ║                                                              ║
-║  Chỉ hỏi về những thay đổi MỚI hoặc CẦN SỬA.              ║
-║  Không cần trả lời lại những gì đã có.                     ║
+║  Only ask about NEW changes or things that NEED FIXING.    ║
+║  No need to re-answer what already exists.                 ║
 ╚══════════════════════════════════════════════════════════════╝
 
-Câu hỏi 1: Bạn muốn THÊM / SỬA / XÓA gì?
-  → Describe thay đổi
+Question 1: What do you want to ADD / MODIFY / REMOVE?
+  → Describe the change
 
-Câu hỏi 2 (nếu scope=uc): Use case nào bị ảnh hưởng?
-  → Danh sách UC IDs
+Question 2 (if scope=uc): Which use case is affected?
+  → List of UC IDs
 
-Câu hỏi 3: Có requirements nào khác bị ảnh hưởng bởi thay đổi này?
+Question 3: Are any other requirements affected by this change?
   → Cross-impact analysis
 
-Câu hỏi 4: Acceptance Criteria mới/cập nhật cho UC bị thay đổi?
+Question 4: New/updated Acceptance Criteria for the changed UC?
 
-XÁC NHẬN: "Gõ XÁC NHẬN để tiến hành update"
+CONFIRM: "Type CONFIRM to proceed with the update"
 ```
 
-### Bước 3: Tạo change record
+### Step 3: Create a change record
 
 ```
-Tạo change record trước khi chỉnh sửa:
+Create a change record before making edits:
 
 docs/{ProjectName}/changes/
 └── change-{timestamp}-{scope}.md
 
-Nội dung:
+Contents:
   - Change ID: CHG-{YYYYMMDD}-{seq}
   - Timestamp
   - Scope
@@ -95,46 +95,46 @@ Nội dung:
   - Author: user/agent
 ```
 
-### Bước 4: Apply delta changes
+### Step 4: Apply delta changes
 
 ```
 IF scope == "uc" OR "actor" OR "feature":
-  → Spawn @srs-agent với mode=UPDATE
-  → srs-agent đọc file hiện có
-  → Chỉ UPDATE sections bị ảnh hưởng
-  → Giữ nguyên sections không liên quan
-  → Spawn @uc-diagram-agent CHỈ cho UCs bị thay đổi
+  → Spawn @srs-agent with mode=UPDATE
+  → srs-agent reads the existing file
+  → Only UPDATE the affected sections
+  → Leave unrelated sections unchanged
+  → Spawn @uc-diagram-agent ONLY for the changed UCs
 
 IF scope == "nfr" OR "fix":
-  → Edit trực tiếp các sections cụ thể
-  → Không cần spawn uc-diagram-agent
+  → Edit the specific sections directly
+  → No need to spawn uc-diagram-agent
 ```
 
-### Bước 5: Version bump và CHANGELOG
+### Step 5: Version bump and CHANGELOG
 
 ```
 Rename file:
   SRS_{ProjectName}_v{X.Y.Z}.md → SRS_{ProjectName}_v{X'.Y'.Z'}.md
 
-Update Record of Changes table (đầu document):
+Update the Record of Changes table (top of the document):
   | v{X'.Y'.Z'} | {date} | M | AgentCode | {change description} |
 
 Update CHANGELOG.md:
   ## v{X'.Y'.Z'} — {date}
   ### Changed
   - {description of change}
-  ### Added (nếu có)
+  ### Added (if any)
   - {new items}
-  ### Removed (nếu có)
+  ### Removed (if any)
   - {removed items}
 ```
 
-### Bước 6: Re-run quality-agent
+### Step 6: Re-run quality-agent
 
 ```
-@quality-agent → kiểm tra SRS mới không có inconsistency
-Nếu PASS → Update index.md, MANIFEST.json
-Nếu FAIL → Fix và retry
+@quality-agent → check that the new SRS has no inconsistencies
+If PASS → Update index.md, MANIFEST.json
+If FAIL → Fix and retry
 ```
 
 ---
@@ -145,19 +145,19 @@ Nếu FAIL → Fix và retry
 MAJOR.MINOR.PATCH
 
 MAJOR bump (X.0.0):
-  - Thay đổi fundamental scope của dự án
-  - Xóa UC/Feature lớn
-  - Thay đổi kiến trúc cốt lõi
+  - Fundamental change to the project scope
+  - Remove a large UC/Feature
+  - Change the core architecture
 
 MINOR bump (X.Y.0):
-  - Thêm UC mới
-  - Thêm Actor mới
-  - Thêm Feature/FR mới
-  - Sửa AC đáng kể
+  - Add a new UC
+  - Add a new Actor
+  - Add a new Feature/FR
+  - Significant AC changes
 
 PATCH bump (X.Y.Z):
-  - Sửa lỗi mô tả (clarification)
-  - Cập nhật NFR values
+  - Fix a description (clarification)
+  - Update NFR values
   - Fix typos
   - Minor wording improvements
 ```
@@ -174,5 +174,5 @@ docs/{ProjectName}/
     └── change-{timestamp}-{scope}.md    ← Delta record
 ```
 
-> File SRS cũ được GIỮ LẠI (không xóa) để có thể rollback.
-> Nếu muốn dọn dẹp, dùng: `/archive-docs {ProjectName}`
+> The old SRS file is KEPT (not deleted) so it can be rolled back.
+> To clean up, use: `/archive-docs {ProjectName}`

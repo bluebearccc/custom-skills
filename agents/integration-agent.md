@@ -1,5 +1,5 @@
 ---
-description: Agent tổng hợp, đóng gói và tạo index cho toàn bộ tài liệu SRS + SDD
+description: Agent that consolidates, packages, and creates the index for the entire SRS + SDD documentation
 mode: subagent
 permission:
   edit: allow
@@ -10,106 +10,106 @@ permission:
 
 # Integration Agent
 
-## Mục đích
-Integration Agent chịu trách nhiệm **tổng hợp và đóng gói** toàn bộ tài liệu sau khi cả SRS Agent và SDD Agent hoàn thành — tạo index, kiểm tra cross-document consistency, và tạo package hoàn chỉnh bàn giao.
+## Purpose
+Integration Agent is responsible for **consolidating and packaging** all documentation after both the SRS Agent and SDD Agent have finished — creating an index, checking cross-document consistency, and building the final handoff package.
 
 ## Trigger
-Được spawn bởi `doc-coordinator` khi lệnh `/generate-docs` và **cả hai** srs-agent và sdd-agent đã báo hoàn thành.
+Spawned by `doc-coordinator` when the `/generate-docs` command is run and **both** srs-agent and sdd-agent have reported completion.
 
 ```
 doc-coordinator
   ├── @srs-agent ─── COMPLETED ✅
   ├── @sdd-agent ─── COMPLETED ✅
-  └── @integration-agent  ← spawn sau khi cả 2 xong
+  └── @integration-agent  ← spawned after both are done
 ```
 
-## Điều kiện tiên quyết
+## Prerequisites
 
 ```
-BẮT BUỘC kiểm tra trước khi bắt đầu:
-✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md tồn tại
-✅ docs/{ProjectName}/SDD_{ProjectName}_v*.md tồn tại
-✅ docs/{ProjectName}/requirements-summary.md tồn tại
-✅ docs/{ProjectName}/api/openapi.yaml tồn tại
-✅ docs/{ProjectName}/db/schema.sql tồn tại
+MUST verify before starting:
+✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md exists
+✅ docs/{ProjectName}/SDD_{ProjectName}_v*.md exists
+✅ docs/{ProjectName}/requirements-summary.md exists
+✅ docs/{ProjectName}/api/openapi.yaml exists
+✅ docs/{ProjectName}/db/schema.sql exists
 
-NẾU THIẾU → Báo lỗi chi tiết cho doc-coordinator
+IF MISSING → Report a detailed error to doc-coordinator
 ```
 
 ---
 
-## Quy trình
+## Process
 
-### Bước 0: QUALITY GATE — Spawn @quality-agent (BẮT BUỘC, chạy ĐẦU TIÊN)
+### Step 0: QUALITY GATE — Spawn @quality-agent (REQUIRED, runs FIRST)
 ```
 @quality-agent (project={ProjectName})
 
-quality-agent kiểm tra 4 chiều và ghi quality-gate-report.md:
-  1. Artifact Coverage   — mọi file bắt buộc tồn tại (glob)
-  2. Cross-doc Consistency — SRS vs SDD không mâu thuẫn
-  3. Diagram Syntax      — tất cả .puml có @startuml/@enduml hợp lệ
-  4. Content Completeness — không còn placeholder [...] / TBD / TODO
+quality-agent checks 4 dimensions and writes quality-gate-report.md:
+  1. Artifact Coverage   — every required file exists (glob)
+  2. Cross-doc Consistency — SRS vs SDD do not conflict
+  3. Diagram Syntax      — all .puml files have valid @startuml/@enduml
+  4. Content Completeness — no remaining placeholders [...] / TBD / TODO
 
-IF kết quả = FAIL:
-   → Báo doc-coordinator respawn agent cụ thể để fix
-   → RE-RUN @quality-agent đến khi PASS hoặc WARN
+IF result = FAIL:
+   → Report to doc-coordinator to respawn the specific agent to fix it
+   → RE-RUN @quality-agent until PASS or WARN
 IF PASS/WARN:
-   → Tiếp tục Bước 1
+   → Proceed to Step 1
 ```
 
-### Bước 1: Cross-document Consistency Check
+### Step 1: Cross-document Consistency Check
 ```
-Kiểm tra SRS vs SDD:
+Check SRS vs SDD:
 
 1. UC Coverage:
-   Đọc list UCs từ SRS
-   Kiểm tra SDD có section cho từng UC
-   Flag: UCs trong SRS không có implementation trong SDD
+   Read the list of UCs from the SRS
+   Check that the SDD has a section for each UC
+   Flag: UCs in the SRS with no implementation in the SDD
 
 2. Diagram Coverage:
    glob("diagrams/uc-*/*.puml") → list all UC diagrams
-   So sánh với UC list trong SRS
-   Flag: UC có trong SRS nhưng không có diagrams
+   Compare against the UC list in the SRS
+   Flag: a UC exists in the SRS but has no diagrams
 
 3. Component Coverage:
-   Đọc components từ SDD
-   Kiểm tra mỗi component có đủ 4 diagram files + 1 sql file
-   Flag: component thiếu artifacts
+   Read components from the SDD
+   Check that each component has all 4 diagram files + 1 sql file
+   Flag: component missing artifacts
 
 4. API Coverage:
-   Đọc use cases từ SRS
-   Kiểm tra openapi.yaml có paths tương ứng
-   Flag: UCs chưa có API endpoint
+   Read use cases from the SRS
+   Check that openapi.yaml has corresponding paths
+   Flag: UCs without an API endpoint
 
 Output: docs/{ProjectName}/quality-report.md
 ```
 
-### Bước 2: Tạo Master Index
+### Step 2: Create Master Index
 ```
-Tạo docs/{ProjectName}/index.md
+Create docs/{ProjectName}/index.md
 
-Nội dung:
-- Project overview (từ requirements-summary.md)
-- Bảng documents với links
-- Bảng diagrams với links và mô tả
-- Bảng API endpoints (summary từ openapi.yaml)
-- Bảng database tables (từ schema.sql)
+Contents:
+- Project overview (from requirements-summary.md)
+- Table of documents with links
+- Table of diagrams with links and descriptions
+- Table of API endpoints (summary from openapi.yaml)
+- Table of database tables (from schema.sql)
 - Quality gate results
 ```
 
-### Bước 3: Tạo Changelog
+### Step 3: Create Changelog
 ```
-Tạo docs/{ProjectName}/CHANGELOG.md
+Create docs/{ProjectName}/CHANGELOG.md
 
 Version: 1.0.0
 Date: {timestamp}
 Generated by: AgentCode Framework
-Contents: danh sách tất cả files được tạo
+Contents: list of all files created
 ```
 
-### Bước 4: Tạo Package Manifest
+### Step 4: Create Package Manifest
 ```
-Tạo docs/{ProjectName}/MANIFEST.json
+Create docs/{ProjectName}/MANIFEST.json
 
 {
   "project": "{ProjectName}",
@@ -143,11 +143,11 @@ Tạo docs/{ProjectName}/MANIFEST.json
 
 ---
 
-## Output Structure (BẮT BUỘC)
+## Output Structure (REQUIRED)
 
 ```
 docs/{ProjectName}/
-├── quality-gate-report.md    ← @quality-agent (Bước 0)
+├── quality-gate-report.md    ← @quality-agent (Step 0)
 ├── index.md                  ← Master index
 ├── CHANGELOG.md              ← Change history
 ├── MANIFEST.json             ← Package manifest + statistics
@@ -278,13 +278,13 @@ docs/{ProjectName}/
 | Auth | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 ### Issues Found
-- [ ] (nếu có) UC03 thiếu 2 diagrams
-- [ ] (nếu có) OrderModule thiếu state.puml
+- [ ] (if any) UC03 is missing 2 diagrams
+- [ ] (if any) OrderModule is missing state.puml
 ```
 
 ---
 
-## Báo cáo kết quả cho doc-coordinator
+## Result Report for doc-coordinator
 
 ```json
 {

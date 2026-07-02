@@ -1,6 +1,6 @@
 ---
 name: create-srs-template
-description: Tạo template SRS rỗng theo chuẩn IEEE
+description: Generate an empty SRS template following the IEEE standard
 syntax: /create-srs-template [project_name]
 examples:
   - "/create-srs-template MyProject"
@@ -8,8 +8,8 @@ examples:
 
 # Tool: create-srs-template
 
-## Mục đích
-Tạo file SRS template rỗng theo chuẩn IEEE để người dùng điền thông tin.
+## Purpose
+Generate an empty SRS template file following the IEEE standard for the user to fill in.
 
 ## Template Output
 
@@ -32,13 +32,13 @@ Tạo file SRS template rỗng theo chuẩn IEEE để người dùng điền th
 ### 1. Product Overview
 
 **1.1 Purpose**
-> [Mô tả mục đích của tài liệu và sản phẩm]
+> [Description of the purpose of the document and the product]
 
 **1.2 Product Scope**
-> [Phạm vi của sản phẩm, các tính năng chính]
+> [Scope of the product, key features]
 
 **1.3 Target Users**
-> [Người dùng mục tiêu]
+> [Target users]
 
 ---
 
@@ -64,7 +64,7 @@ Tạo file SRS template rỗng theo chuẩn IEEE để người dùng điền th
 ### 3. Software Features
 
 **3.1 Functional Overview**
-> [Tổng quan các chức năng]
+> [Overview of the functions]
 
 **3.2 <<Feature Name 1>>**
 
@@ -97,16 +97,16 @@ Tạo file SRS template rỗng theo chuẩn IEEE để người dùng điền th
 **4.1 External Interfaces**
 
 *4.1.1 User Interfaces*
-> [Mô tả giao diện]
+> [Interface description]
 
 *4.1.2 Hardware Interfaces*
-> [Phần cứng cần thiết]
+> [Required hardware]
 
 *4.1.3 Software Interfaces*
-> [Phần mềm liên quan]
+> [Related software]
 
 *4.1.4 Communication Interfaces*
-> [Giao tiếp]
+> [Communication]
 
 **4.2 Quality Attributes**
 
@@ -141,7 +141,7 @@ Tạo file SRS template rỗng theo chuẩn IEEE để người dùng điền th
 | | | |
 
 **5.4 Other Requirements**
-> [Các yêu cầu khác]
+> [Other requirements]
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-description: Agent chuyên tạo PlantUML diagrams cho từng use case
+description: Agent specialized in creating PlantUML diagrams for each use case
 mode: subagent
 permission:
   edit: allow
@@ -11,31 +11,31 @@ permission:
 
 # UC-Diagram Agent
 
-## Mục đích
-UC-Diagram Agent chịu trách nhiệm tạo PlantUML diagrams cho MỘT use case cụ thể. Nhiều instances có thể chạy SONG SONG để tạo diagrams cho nhiều use cases cùng lúc.
+## Purpose
+UC-Diagram Agent is responsible for creating PlantUML diagrams for ONE specific use case. Multiple instances can run IN PARALLEL to create diagrams for multiple use cases at the same time.
 
-## Khi nào spawn nhiều instances
+## When to spawn multiple instances
 ```
-doc-coordinator hoặc srs-agent
+doc-coordinator or srs-agent
   ├── @uc-diagram-agent (uc: UC01-Login)
   ├── @uc-diagram-agent (uc: UC02-Register)
   ├── @uc-diagram-agent (uc: UC03-ViewProduct)
   └── @uc-diagram-agent (uc: UC04-PlaceOrder)
 ```
 
-## Nhiệm vụ chính:
-1. Tạo Use Case Diagram cho use case cụ thể
-2. Tạo Screen Flow Diagram
-3. Tạo Stage/State Diagram
-4. Tạo Sequence Diagram (Backend)
-5. Tạo Sequence Diagram (Frontend)
+## Main tasks:
+1. Create the Use Case Diagram for the specific use case
+2. Create the Screen Flow Diagram
+3. Create the Stage/State Diagram
+4. Create the Sequence Diagram (Backend)
+5. Create the Sequence Diagram (Frontend)
 
 ## Input Parameters:
-- `uc_id`: ID của use case (VD: UC01, UC02)
-- `uc_name`: Tên use case (VD: Login, Register)
-- `project_name`: Tên dự án
+- `uc_id`: Use case ID (e.g., UC01, UC02)
+- `uc_name`: Use case name (e.g., Login, Register)
+- `project_name`: Project name
 
-## Diagrams tạo cho MỖI use case:
+## Diagrams created for EACH use case:
 ```
 diagrams/uc-{id}/
 ├── uc-{id}-use-case.puml        # Use case diagram
@@ -46,9 +46,9 @@ diagrams/uc-{id}/
 └── uc-{id}-class-frontend.puml  # Frontend class diagram
 ```
 
-**QUAN TRỌNG: MỖI agent phải tạo ĐỦ 6 diagrams cho use case được gán.**
+**IMPORTANT: EACH agent must produce ALL 6 diagrams for its assigned use case.**
 
-## PlantUML Templates (6 diagrams bắt buộc cho MỖI UC):
+## PlantUML Templates (6 required diagrams for EACH UC):
 
 ### 1. Use Case Diagram:
 ```plantuml
@@ -223,13 +223,13 @@ package "frontend" {
 ```
 
 ## Output:
-Các file PlantUML được lưu vào:
+The PlantUML files are saved to:
 ```
 docs/{ProjectName}/diagrams/uc-{id}/
 ```
 
-## Nguyên tắc:
-- MỖI agent instance chỉ tạo diagrams cho MỘT use case
-- Tất cả diagrams phải có @startuml/@enduml delimiters
-- Đặt tên file theo convention: `uc-{id}-{type}.puml`
-- Sử dụng PlantUML config từ PlantUML/config.cfg
+## Principles:
+- EACH agent instance creates diagrams for only ONE use case
+- All diagrams must have @startuml/@enduml delimiters
+- Name files according to the convention: `uc-{id}-{type}.puml`
+- Use the PlantUML config from PlantUML/config.cfg

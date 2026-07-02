@@ -1,6 +1,6 @@
 ---
 name: interview-stakeholder
-description: Phỏng vấn stakeholder để thu thập yêu cầu
+description: Interview a stakeholder to gather requirements
 agent: doc-coordinator
 syntax: /interview-stakeholder [stakeholder_name] [--type user|manager|developer|customer]
 examples:
@@ -10,41 +10,41 @@ parameters:
   - name: stakeholder_name
     type: string
     required: false
-    description: Tên stakeholder cần phỏng vấn
+    description: Name of the stakeholder to interview
   - name: type
     type: string
     required: false
     default: user
-    description: Loại stakeholder
+    description: Stakeholder type
 ---
 
 # Command: /interview-stakeholder
 
-## Mô tả
-Hỗ trợ phỏng vấn stakeholder để thu thập yêu cầu phần mềm.
+## Description
+Assists with interviewing a stakeholder to gather software requirements.
 
-## Quy trình
+## Process
 
-### Bước 1: Xác định Stakeholder
-- Xác định loại stakeholder (User, Manager, Developer, Customer)
-- Chuẩn bị câu hỏi phù hợp
+### Step 1: Identify the Stakeholder
+- Determine the stakeholder type (User, Manager, Developer, Customer)
+- Prepare the appropriate questions
 
-### Bước 2: Phỏng vấn
-Sử dụng bộ câu hỏi mẫu theo loại:
+### Step 2: Interview
+Use the sample question set for the type:
 
 #### User Stakeholder Questions
-1. Bạn sử dụng hệ thống để làm gì?
-2. Các tác vụ chính bạn thực hiện hàng ngày?
-3. Điều gì làm bạn frustrate với hệ thống hiện tại?
-4. Bạn cần những tính năng gì?
-5. Các vấn đề bạn gặp phải là gì?
+1. What do you use the system for?
+2. What are the main tasks you perform daily?
+3. What frustrates you about the current system?
+4. What features do you need?
+5. What problems do you encounter?
 
 #### Manager Stakeholder Questions
-1. Mục tiêu kinh doanh chính?
-2. Các KPIs cần đạt được?
-3. Budget và timeline?
-4. Các ràng buộc nghiệp vụ?
-5. Ai là người ra quyết định?
+1. What are the main business objectives?
+2. What KPIs need to be achieved?
+3. Budget and timeline?
+4. What business constraints exist?
+5. Who is the decision maker?
 
 #### Developer Stakeholder Questions
 1. Technical constraints?
@@ -53,10 +53,10 @@ Sử dụng bộ câu hỏi mẫu theo loại:
 4. Security requirements?
 5. Deployment environment?
 
-### Bước 3: Ghi nhận và Tổng hợp
-- Lưu câu trả lời
-- Trích xuất requirements
-- Tạo requirement artifacts
+### Step 3: Record and Summarize
+- Save the answers
+- Extract requirements
+- Generate requirement artifacts
 
 ## Output
 

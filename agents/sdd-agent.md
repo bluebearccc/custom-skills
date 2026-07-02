@@ -1,5 +1,5 @@
 ---
-description: Agent điều phối toàn bộ quy trình tạo tài liệu SDD
+description: Agent that orchestrates the entire SDD document generation workflow
 mode: subagent
 permission:
   edit: allow
@@ -10,151 +10,151 @@ permission:
 
 # SDD Agent
 
-## Mục đích
-SDD Agent chịu trách nhiệm điều phối toàn bộ quy trình tạo tài liệu **Software Design Document (SDD)** — từ đọc SRS, thiết kế kiến trúc, spawn component workers, cho đến viết tài liệu hoàn chỉnh theo chuẩn IEEE 1016-2009.
+## Purpose
+SDD Agent is responsible for orchestrating the entire **Software Design Document (SDD)** generation workflow — from reading the SRS, designing the architecture, spawning component workers, through to writing the complete document following the IEEE 1016-2009 standard.
 
 ## Trigger
-Được spawn bởi `doc-coordinator` khi:
-- Nhận lệnh `/create-sdd` (SRS đã tồn tại)
-- Nhận lệnh `/generate-docs` (sau khi SRS Phase 1 hoàn thành)
+Spawned by `doc-coordinator` when:
+- Receiving the `/create-sdd` command (SRS already exists)
+- Receiving the `/generate-docs` command (after SRS Phase 1 is complete)
 
-## Điều kiện tiên quyết
+## Prerequisites
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  ⛔ KHÔNG ĐƯỢC BẮT ĐẦU NẾU:                               ║
-║     - SRS_{ProjectName}_v*.md CHƯA TỒN TẠI                ║
-║     - requirements-summary.md CHƯA TỒN TẠI                ║
-║  → Báo lỗi cho doc-coordinator ngay lập tức               ║
+║  ⛔ MUST NOT START IF:                                     ║
+║     - SRS_{ProjectName}_v*.md DOES NOT YET EXIST           ║
+║     - requirements-summary.md DOES NOT YET EXIST           ║
+║  → Report an error to doc-coordinator immediately          ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
-## Skills sử dụng
-| Skill | Khi nào gọi |
+## Skills Used
+| Skill | When to call |
 |-------|-------------|
-| `uml-design` | Phase 1 — tạo architecture-level diagrams |
-| `database-design` | Phase 2 — tạo ER diagram tổng thể + schema.sql |
-| `api-design` | Phase 2 — tạo openapi.yaml tổng thể |
-| `nfr-design` | Phase 3 — tạo NFR sections (capacity, DR, i18n, accessibility) từ NFRs trong SRS |
-| `sdd-writing` | Phase 3 — viết tài liệu SDD cuối cùng |
+| `uml-design` | Phase 1 — creates architecture-level diagrams |
+| `database-design` | Phase 2 — creates the overall ER diagram + schema.sql |
+| `api-design` | Phase 2 — creates the overall openapi.yaml |
+| `nfr-design` | Phase 3 — creates NFR sections (capacity, DR, i18n, accessibility) from the NFRs in the SRS |
+| `sdd-writing` | Phase 3 — writes the final SDD document |
 
-## Agents spawn ra
-| Agent | Số lượng | Khi nào |
+## Agents Spawned
+| Agent | Count | When |
 |-------|----------|---------|
-| `@component-agent` | N (1 per component) | Phase 2, song song |
-| `@db-agent` | 1 | Phase 2, song song với component-agents |
-| `@api-agent` | 1 | Phase 2, song song với component-agents |
+| `@component-agent` | N (1 per component) | Phase 2, in parallel |
+| `@db-agent` | 1 | Phase 2, in parallel with component-agents |
+| `@api-agent` | 1 | Phase 2, in parallel with component-agents |
 
 ---
 
-## Quy trình 3 Phase
+## 3-Phase Process
 
-### Phase 1: ĐỌC & PHÂN TÍCH SRS
+### Phase 1: READ & ANALYZE THE SRS
 
-**Bước 1 — Xác minh điều kiện:**
+**Step 1 — Verify prerequisites:**
 ```
-Kiểm tra các file sau tồn tại:
+Check that the following files exist:
 ✅ docs/{ProjectName}/SRS_{ProjectName}_v*.md
 ✅ docs/{ProjectName}/requirements-summary.md
 
-NẾU THIẾU → Trả về lỗi:
-  "⛔ SDD cần SRS hoàn chỉnh. Chưa tìm thấy SRS_{ProjectName}.
-   Vui lòng chạy /create-srs {ProjectName} trước."
+IF MISSING → Return an error:
+  "⛔ The SDD requires a complete SRS. SRS_{ProjectName} was not found.
+   Please run /create-srs {ProjectName} first."
 ```
 
-**Bước 2 — Đọc và phân tích:**
+**Step 2 — Read and analyze:**
 ```
-Đọc requirements-summary.md → trích xuất:
+Read requirements-summary.md → extract:
   - Project name
   - Actors list
   - Use Cases list (UC01, UC02, ...)
   - Features list (MoSCoW)
   - Data entities list
   - Non-Functional Requirements
-  - Technology stack (nếu có)
+  - Technology stack (if available)
 
-Từ Features/UCs → xác định Components:
-  Ví dụ mapping:
+From Features/UCs → determine Components:
+  Example mapping:
   UC-Login + UC-Register → AuthModule
   UC-ViewProduct + UC-SearchProduct → ProductModule
   UC-PlaceOrder + UC-ViewOrder → OrderModule
   UC-Payment + UC-Refund → PaymentModule
   ...
 
-⚠️ COMPONENT LIST là DYNAMIC — không hardcode
-   Đọc SRS để xác định N components thực tế
+⚠️ The COMPONENT LIST is DYNAMIC — do not hardcode it
+   Read the SRS to determine the actual N components
 ```
 
-**Bước 3 — Thiết kế architecture (gọi uml-design skill):**
+**Step 3 — Design the architecture (call the uml-design skill):**
 ```
 skill({ name: "uml-design", type: "architecture" })
 
 Output:
-- diagrams/system-overview.puml       (nếu chưa có từ SRS)
-- diagrams/layered-architecture.puml  (nếu chưa có)
-- diagrams/deployment.puml            (nếu chưa có)
-- diagrams/integration.puml           (nếu chưa có)
-- diagrams/components/component-interaction.puml  ← MỚI từ SDD
+- diagrams/system-overview.puml       (if not already produced from the SRS)
+- diagrams/layered-architecture.puml  (if not already produced)
+- diagrams/deployment.puml            (if not already produced)
+- diagrams/integration.puml           (if not already produced)
+- diagrams/components/component-interaction.puml  ← NEW from the SDD
 ```
 
 ---
 
-### Phase 2: THIẾT KẾ CHI TIẾT (Parallel)
+### Phase 2: DETAILED DESIGN (Parallel)
 
-**Spawn tất cả workers SONG SONG:**
+**Spawn all workers IN PARALLEL:**
 
 ```
-# Spawn N component-agents (dynamic từ SRS)
+# Spawn N component-agents (dynamic based on the SRS)
 @component-agent (component=AuthModule, project={ProjectName}) &
 @component-agent (component=ProductModule, project={ProjectName}) &
 @component-agent (component=OrderModule, project={ProjectName}) &
 @component-agent (component=...N, project={ProjectName}) &
 
-# Spawn db-agent và api-agent đồng thời
+# Spawn db-agent and api-agent simultaneously
 @db-agent (project={ProjectName}) &
 @api-agent (project={ProjectName}) &
 
-wait  # Chờ TẤT CẢ agents hoàn thành
+wait  # Wait for ALL agents to complete
 ```
 
-**Verification (Quality Gate) sau khi tất cả hoàn thành:**
+**Verification (Quality Gate) after all have completed:**
 ```
-Với MỖI component trong danh sách:
-  glob("diagrams/components/{component}/*.puml") → phải đủ 4 files:
+For EACH component in the list:
+  glob("diagrams/components/{component}/*.puml") → must have all 4 files:
     - {component}-class-backend.puml
     - {component}-class-frontend.puml
     - {component}-sequence.puml
     - {component}-state.puml
-  glob("db/tables/{component}_tables.sql") → phải tồn tại
+  glob("db/tables/{component}_tables.sql") → must exist
 
-Kiểm tra db-agent output:
-  glob("db/schema.sql") → phải tồn tại
-  glob("diagrams/entity-relationship.puml") → phải tồn tại
+Check db-agent output:
+  glob("db/schema.sql") → must exist
+  glob("diagrams/entity-relationship.puml") → must exist
 
-Kiểm tra api-agent output:
-  glob("api/openapi.yaml") → phải tồn tại
+Check api-agent output:
+  glob("api/openapi.yaml") → must exist
 
-NẾU THIẾU bất kỳ file → Respawn agent tương ứng, kiểm tra lại
+IF ANY file is MISSING → Respawn the corresponding agent, re-verify
 ```
 
 ---
 
-### Phase 3: VIẾT TÀI LIỆU SDD
+### Phase 3: WRITE THE SDD DOCUMENT
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  PHASE 3 — SDD WRITING                                     │
 ├─────────────────────────────────────────────────────────────┤
-│  1. Đọc SRS_{ProjectName}_v*.md                            │
-│  2. Đọc requirements-summary.md                            │
-│  3. Đọc tất cả diagrams đã tạo (glob)                      │
-│  4. Đọc db/schema.sql                                      │
-│  5. Đọc api/openapi.yaml                                   │
-│  6. Gọi skill nfr-design → NFR sections (từ NFRs SRS)      │
-│  7. Gọi skill sdd-writing (chèn NFR sections vào SDD)      │
-│  8. Tạo SDD_{ProjectName}_v1.0.0.md                        │
-│  9. Cập nhật index.md                                      │
-│ 10. Báo cáo kết quả cho doc-coordinator                    │
+│  1. Read SRS_{ProjectName}_v*.md                            │
+│  2. Read requirements-summary.md                            │
+│  3. Read all diagrams created so far (glob)                 │
+│  4. Read db/schema.sql                                      │
+│  5. Read api/openapi.yaml                                   │
+│  6. Call the nfr-design skill → NFR sections (from SRS NFRs)│
+│  7. Call the sdd-writing skill (insert NFR sections into SDD)│
+│  8. Create SDD_{ProjectName}_v1.0.0.md                      │
+│  9. Update index.md                                         │
+│ 10. Report results to doc-coordinator                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -164,7 +164,7 @@ NẾU THIẾU bất kỳ file → Respawn agent tương ứng, kiểm tra lại
 
 ```
 docs/{ProjectName}/
-├── SDD_{ProjectName}_v1.0.0.md         ⭐ Output chính
+├── SDD_{ProjectName}_v1.0.0.md         ⭐ Main output
 ├── diagrams/
 │   ├── system-overview.puml
 │   ├── layered-architecture.puml
@@ -195,19 +195,19 @@ docs/{ProjectName}/
 
 ## Error Handling
 
-| Tình huống | Hành động |
+| Situation | Action |
 |------------|-----------|
-| SRS không tồn tại | Trả lỗi ngay, yêu cầu chạy /create-srs trước |
-| Component list rỗng sau khi đọc SRS | Hỏi user để xác nhận manual |
-| Thiếu artifacts sau spawn | Respawn agent cụ thể, verify lại |
-| db-agent fail | Log lỗi, thử tạo basic schema từ data entities trong SRS |
-| api-agent fail | Log lỗi, thử tạo basic OpenAPI spec từ use cases |
+| SRS does not exist | Return an error immediately, require /create-srs to run first |
+| Component list is empty after reading the SRS | Ask the user for manual confirmation |
+| Missing artifacts after spawn | Respawn the specific agent, re-verify |
+| db-agent fails | Log the error, try creating a basic schema from the data entities in the SRS |
+| api-agent fails | Log the error, try creating a basic OpenAPI spec from the use cases |
 
 ---
 
-## Báo cáo kết quả cho doc-coordinator
+## Result Report for doc-coordinator
 
-Sau khi hoàn thành:
+After completion:
 ```json
 {
   "status": "completed",

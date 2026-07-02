@@ -1,16 +1,16 @@
 ---
 name: traceability
 description: |
-  Tạo Requirements Traceability Matrix (RTM) mapping FR → UC → Component → API → DB → Test.
+  Create a Requirements Traceability Matrix (RTM) mapping FR → UC → Component → API → DB → Test.
   
-  SỬ DỤNG KHI:
-  - traceability-agent được spawn để tạo RTM
-  - Cần kiểm tra coverage giữa SRS và SDD
-  - Cần xác định gaps (requirements chưa được implement)
+  USE WHEN:
+  - traceability-agent is spawned to create the RTM
+  - Coverage between the SRS and SDD needs to be checked
+  - Gaps (requirements not yet implemented) need to be identified
 
-  OUTPUT BẮT BUỘC (2 files):
-  1. traceability/RTM.md       — Full matrix với tất cả mappings
-  2. traceability/coverage.md  — Coverage % và gap list
+  MANDATORY OUTPUT (2 files):
+  1. traceability/RTM.md       — Full matrix with all mappings
+  2. traceability/coverage.md  — Coverage % and gap list
 version: "1.0.0"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep"]
 mode: false
@@ -18,34 +18,34 @@ mode: false
 
 # Traceability Skill v1.0.0
 
-## Mục đích
-Tạo Requirements Traceability Matrix (RTM) đầy đủ theo chuẩn IEEE 830, linking mọi requirement từ SRS đến thiết kế trong SDD.
+## Purpose
+Create a complete Requirements Traceability Matrix (RTM) following the IEEE 830 standard, linking every requirement from the SRS to its design in the SDD.
 
 ---
 
-## Bước 1 — Collect & Index tất cả IDs
+## Step 1 — Collect & Index all IDs
 
-### Thu thập FRs từ SRS
-Grep trong SRS document:
+### Collect FRs from the SRS
+Grep the SRS document:
 ```
-Tìm các patterns: FR-X.X, FR-XX, Functional Requirement #
+Find patterns: FR-X.X, FR-XX, Functional Requirement #
 ```
 
-### Thu thập UCs từ SRS
+### Collect UCs from the SRS
 Grep patterns: `UC-XX`, `UC-01`, `Use Case XX`
 
-### Thu thập Components từ SDD
-Grep patterns: `COMP-`, Component Name trong Section 4
+### Collect Components from the SDD
+Grep patterns: `COMP-`, Component Name in Section 4
 
-### Thu thập API Endpoints từ openapi.yaml
-Parse tất cả `paths:` entries → method + path
+### Collect API Endpoints from openapi.yaml
+Parse all `paths:` entries → method + path
 
-### Thu thập DB Tables từ schema.sql
-Parse tất cả `CREATE TABLE` statements → table names
+### Collect DB Tables from schema.sql
+Parse all `CREATE TABLE` statements → table names
 
 ---
 
-## Bước 2 — RTM.md Template
+## Step 2 — RTM.md Template
 
 ```markdown
 # Requirements Traceability Matrix (RTM)
@@ -59,17 +59,17 @@ Parse tất cả `CREATE TABLE` statements → table names
 
 ## 1. Forward Traceability — FR → UC → Component
 
-> Đọc từ trái sang phải: "FR này được cover bởi UC nào, implement bởi Component nào?"
+> Read left to right: "Which UC covers this FR, and which Component implements it?"
 
 | FR ID | Functional Requirement | Priority | UC ID(s) | Component(s) | Status |
 |-------|----------------------|----------|----------|--------------|--------|
-| FR-1.1 | User có thể đăng ký tài khoản bằng email + password | Must | UC-01 | AuthModule | ✅ Designed |
-| FR-1.2 | User có thể đăng nhập và nhận JWT token | Must | UC-02 | AuthModule | ✅ Designed |
-| FR-1.3 | User có thể đặt lại mật khẩu qua email OTP | Must | UC-03 | AuthModule | ✅ Designed |
-| FR-2.1 | User có thể xem danh sách sản phẩm (có phân trang) | Must | UC-04 | ProductModule | ✅ Designed |
-| FR-2.2 | User có thể tìm kiếm sản phẩm theo tên | Should | UC-05 | ProductModule | ✅ Designed |
-| FR-3.1 | User có thể thêm sản phẩm vào giỏ hàng | Must | UC-06 | CartModule | ✅ Designed |
-| FR-3.2 | User có thể đặt hàng từ giỏ hàng | Must | UC-07 | OrderModule | ✅ Designed |
+| FR-1.1 | User can register an account with email + password | Must | UC-01 | AuthModule | ✅ Designed |
+| FR-1.2 | User can log in and receive a JWT token | Must | UC-02 | AuthModule | ✅ Designed |
+| FR-1.3 | User can reset their password via email OTP | Must | UC-03 | AuthModule | ✅ Designed |
+| FR-2.1 | User can view the product list (paginated) | Must | UC-04 | ProductModule | ✅ Designed |
+| FR-2.2 | User can search products by name | Should | UC-05 | ProductModule | ✅ Designed |
+| FR-3.1 | User can add products to the cart | Must | UC-06 | CartModule | ✅ Designed |
+| FR-3.2 | User can place an order from the cart | Must | UC-07 | OrderModule | ✅ Designed |
 | ... | ... | ... | ... | ... | ... |
 | FR-N.N | {Unfulfilled FR} | Must | — | — | ❌ GAP |
 
@@ -79,7 +79,7 @@ Parse tất cả `CREATE TABLE` statements → table names
 
 ## 2. Backward Traceability — Component → FR/UC
 
-> Đọc ngược: "Component này implement những gì?"
+> Read in reverse: "What does this Component implement?"
 
 | Component | Purpose | UC(s) Covered | FR(s) Covered |
 |-----------|---------|---------------|---------------|
@@ -94,7 +94,7 @@ Parse tất cả `CREATE TABLE` statements → table names
 
 ## 3. API Traceability — UC → API Endpoint
 
-> "UC này được implement qua API endpoint nào?"
+> "Which API endpoint implements this UC?"
 
 | UC ID | Use Case Name | HTTP Method | API Endpoint | Auth Required |
 |-------|--------------|-------------|--------------|---------------|
@@ -114,7 +114,7 @@ Parse tất cả `CREATE TABLE` statements → table names
 
 ## 4. Data Traceability — UC → DB Tables
 
-> "UC này đọc/ghi vào tables nào?"
+> "Which tables does this UC read from/write to?"
 
 | UC ID | Use Case Name | DB Tables (Read) | DB Tables (Write) |
 |-------|--------------|------------------|-------------------|
@@ -131,8 +131,8 @@ Parse tất cả `CREATE TABLE` statements → table names
 
 ## 5. Test Traceability — UC → Test Cases
 
-> "UC này được test bởi test cases nào?"
-> *Điền sau khi test-agent hoàn thành.*
+> "Which test cases test this UC?"
+> *Fill in after test-agent has completed.*
 
 | UC ID | Use Case Name | Test Case IDs | Coverage |
 |-------|--------------|---------------|----------|
@@ -178,20 +178,20 @@ Parse tất cả `CREATE TABLE` statements → table names
 
 ## 8. Gap Register
 
-> Danh sách tất cả gaps cần giải quyết trước khi sign-off.
+> List of all gaps that must be resolved before sign-off.
 
 | Gap ID | Type | Description | Severity | Action Required |
 |--------|------|-------------|----------|-----------------|
-| GAP-001 | Missing Design | FR-N.N không có Component | 🔴 High | Thêm vào SDD Section 4 |
-| GAP-002 | Missing API | UC-N không có endpoint trong openapi.yaml | 🔴 High | Thêm vào api-agent |
-| GAP-003 | Missing Test | UC-04 chưa có test cases | 🟡 Medium | Chạy test-agent |
-| GAP-004 | Partial AC | UC-03 chỉ có 1/3 ACs | 🟡 Medium | Bổ sung AC trong SRS |
+| GAP-001 | Missing Design | FR-N.N has no Component | 🔴 High | Add to SDD Section 4 |
+| GAP-002 | Missing API | UC-N has no endpoint in openapi.yaml | 🔴 High | Add to api-agent |
+| GAP-003 | Missing Test | UC-04 has no test cases yet | 🟡 Medium | Run test-agent |
+| GAP-004 | Partial AC | UC-03 has only 1/3 ACs | 🟡 Medium | Add more ACs in the SRS |
 | ... | ... | ... | ... | ... |
 ```
 
 ---
 
-## Bước 3 — coverage.md Template
+## Step 3 — coverage.md Template
 
 ```markdown
 # Coverage Report — {ProjectName}
@@ -211,13 +211,13 @@ Parse tất cả `CREATE TABLE` statements → table names
 | **Overall** | | | **{%}%** |
 
 ## 🔴 Critical Gaps (must fix before release)
-{danh sách GAP-00X severity High}
+{list of GAP-00X with severity High}
 
 ## 🟡 Medium Gaps (should fix)
-{danh sách GAP-00X severity Medium}
+{list of GAP-00X with severity Medium}
 
 ## 🟢 Minor Gaps (optional)
-{danh sách GAP-00X severity Low}
+{list of GAP-00X with severity Low}
 
 ## Recommendations
 1. {action 1}

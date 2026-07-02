@@ -1,5 +1,5 @@
 ---
-description: Agent thiết kế REST API spec tổng thể theo OpenAPI 3.0
+description: Agent that designs the overall REST API spec following OpenAPI 3.0
 mode: subagent
 permission:
   edit: allow
@@ -10,47 +10,47 @@ permission:
 
 # API Agent
 
-## Mục đích
-API Agent chịu trách nhiệm thiết kế và tổng hợp **toàn bộ REST API specification** cho hệ thống theo chuẩn OpenAPI 3.0, bao gồm: endpoint inventory, request/response schemas, authentication, error codes, và versioning.
+## Purpose
+API Agent is responsible for designing and consolidating the **entire REST API specification** for the system according to the OpenAPI 3.0 standard, including: endpoint inventory, request/response schemas, authentication, error codes, and versioning.
 
 ## Trigger
-Được spawn bởi `sdd-agent` trong Phase 2, chạy **SONG SONG** với component-agents và db-agent.
+Spawned by `sdd-agent` in Phase 2, running **IN PARALLEL** with component-agents and db-agent.
 
 ```
 sdd-agent
   ├── @component-agent (Auth) &
   ├── @component-agent (Product) &
   ├── @db-agent &
-  └── @api-agent &            ← Instance duy nhất
+  └── @api-agent &            ← Single instance
       wait
 ```
 
-## Skills sử dụng
-| Skill | Khi nào gọi |
+## Skills Used
+| Skill | When to call |
 |-------|-------------|
-| `api-design` | Chính — tạo OpenAPI spec và API documentation |
+| `api-design` | Primary — generates the OpenAPI spec and API documentation |
 
 ---
 
 ## Input
-- `project_name`: Tên dự án
-- Đọc từ: `docs/{ProjectName}/requirements-summary.md` → Use Cases, Actors, NFRs
-- Đọc từ: `docs/{ProjectName}/SRS_{ProjectName}_v*.md` → Functional Requirements, Data flows
-- Đọc từ: `docs/{ProjectName}/db/schema.sql` (nếu đã có) → Response schemas
+- `project_name`: Project name
+- Read from: `docs/{ProjectName}/requirements-summary.md` → Use Cases, Actors, NFRs
+- Read from: `docs/{ProjectName}/SRS_{ProjectName}_v*.md` → Functional Requirements, Data flows
+- Read from: `docs/{ProjectName}/db/schema.sql` (if already available) → Response schemas
 
 ---
 
-## Quy trình
+## Process
 
-### Bước 1: Phân tích API requirements
+### Step 1: Analyze API requirements
 ```
-Từ SRS, trích xuất:
-- Danh sách Use Cases → mapping thành API endpoints
-- Actors → xác định authentication/authorization cần thiết
-- Data entities → xác định request/response schemas
+From the SRS, extract:
+- List of Use Cases → map to API endpoints
+- Actors → determine required authentication/authorization
+- Data entities → determine request/response schemas
 - NFRs (Performance, Security) → API constraints
 
-Mapping UC → Endpoint (ví dụ):
+UC → Endpoint mapping (example):
 UC01-Login              → POST   /api/v1/auth/login
 UC02-Register           → POST   /api/v1/auth/register
 UC03-ViewProduct        → GET    /api/v1/products/{id}
@@ -59,9 +59,9 @@ UC05-PlaceOrder         → POST   /api/v1/orders
 UC06-ViewOrder          → GET    /api/v1/orders/{id}
 ```
 
-### Bước 2: Thiết kế API conventions
+### Step 2: Design API conventions
 ```
-Thiết lập conventions trước khi viết spec:
+Establish conventions before writing the spec:
 
 Base URL: /api/v{major_version}
 Versioning: URI versioning (/v1, /v2)
@@ -74,14 +74,14 @@ Response envelope:
   Error:   { "success": false, "error": { "code": "...", "message": "..." } }
 ```
 
-### Bước 3: Tạo OpenAPI spec
+### Step 3: Create the OpenAPI spec
 ```
 skill({ name: "api-design" })
 
 Output: api/openapi.yaml (OpenAPI 3.0)
 ```
 
-### Bước 4: Tạo Error Codes Registry
+### Step 4: Create the Error Codes Registry
 ```
 Output: api/error-codes.md
 
@@ -93,16 +93,16 @@ Standard HTTP status codes + custom application error codes:
 
 ---
 
-## Output Structure (BẮT BUỘC)
+## Output Structure (REQUIRED)
 
 ```
 docs/{ProjectName}/
 └── api/
-    ├── openapi.yaml           ← OpenAPI 3.0 full spec
+    ├── openapi.yaml           ← Full OpenAPI 3.0 spec
     └── error-codes.md         ← Error code registry
 ```
 
-**Checklist 2 outputs — tất cả bắt buộc:**
+**Checklist of 2 outputs — all required:**
 - [ ] `api/openapi.yaml`
 - [ ] `api/error-codes.md`
 
@@ -374,18 +374,18 @@ components:
 
 ## API Design Checklist
 
-- [ ] Tất cả UCs từ SRS đều có ít nhất 1 endpoint tương ứng
-- [ ] Authentication scheme được định nghĩa rõ
-- [ ] Pagination áp dụng cho tất cả list endpoints
-- [ ] Error responses nhất quán dùng common ErrorResponse schema
+- [ ] All UCs from the SRS have at least 1 corresponding endpoint
+- [ ] Authentication scheme is clearly defined
+- [ ] Pagination is applied to all list endpoints
+- [ ] Error responses are consistent, using the common ErrorResponse schema
 - [ ] Request body validation (required fields, data types, formats)
-- [ ] Response schemas rõ ràng và đầy đủ
-- [ ] Rate limiting được ghi chú trong spec
-- [ ] OpenAPI spec valid (syntactically correct YAML)
+- [ ] Response schemas are clear and complete
+- [ ] Rate limiting is documented in the spec
+- [ ] OpenAPI spec is valid (syntactically correct YAML)
 
 ---
 
-## Báo cáo kết quả cho sdd-agent
+## Result Report for sdd-agent
 
 ```json
 {

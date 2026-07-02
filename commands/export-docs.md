@@ -1,6 +1,6 @@
 ---
 name: export-docs
-description: Xuất tài liệu SRS/SDD sang định dạng Word, PDF, HTML để bàn giao stakeholder
+description: Export SRS/SDD documents to Word, PDF, HTML formats for stakeholder handoff
 syntax: /export-docs [project_name] [--format <docx|pdf|html|all>] [--docs <srs|sdd|all>]
 examples:
   - "/export-docs MyProject"
@@ -12,32 +12,32 @@ agent: doc-coordinator
 
 # Command: /export-docs
 
-## Mục đích
-Chuyển đổi tài liệu Markdown sang định dạng phù hợp để bàn giao cho stakeholder không kỹ thuật.
+## Purpose
+Convert Markdown documents into a format suitable for handoff to non-technical stakeholders.
 
 ## Parameters
 
-| Parameter | Default | Mô tả |
+| Parameter | Default | Description |
 |-----------|---------|-------|
-| `project_name` | required | Tên dự án |
+| `project_name` | required | Project name |
 | `--format` | `all` | `docx` / `pdf` / `html` / `all` |
 | `--docs` | `all` | `srs` / `sdd` / `rtm` / `test` / `all` |
 
-## Quy trình
+## Process
 
 ```
-1. Kiểm tra docs/{ProjectName} tồn tại
-2. Kiểm tra docs đã có (SRS, SDD)
-3. Spawn @formatter-agent với params
-4. Formatter-agent tạo exports/
-5. Thông báo kết quả và đường dẫn files
+1. Check that docs/{ProjectName} exists
+2. Check which docs already exist (SRS, SDD)
+3. Spawn @formatter-agent with params
+4. Formatter-agent creates exports/
+5. Report the result and file paths
 ```
 
 ## Output Message
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  ✅ EXPORT HOÀN THÀNH — {ProjectName} v{version}           ║
+║  ✅ EXPORT COMPLETE — {ProjectName} v{version}              ║
 ╠══════════════════════════════════════════════════════════════╣
 ║  📄 SRS:                                                    ║
 ║     → exports/SRS_{ProjectName}_v{version}.docx            ║

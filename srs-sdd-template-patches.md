@@ -1,73 +1,73 @@
 # Sprint 2 — SRS & SDD Template Patches
 
-> Áp dụng các bổ sung này vào `skills/srs-writing/SKILL.md` và `skills/sdd-writing/SKILL.md`.
+> Apply these additions to `skills/srs-writing/SKILL.md` and `skills/sdd-writing/SKILL.md`.
 
 ---
 
 ## PATCH 1 — srs-writing/SKILL.md
 
-### Thêm vào Section 2 "User Requirements" — sau 2.2 Use Cases
+### Add to Section 2 "User Requirements" — after 2.2 Use Cases
 
-Chèn sub-section mới **2.3 Acceptance Criteria per Use Case**:
+Insert a new sub-section **2.3 Acceptance Criteria per Use Case**:
 
 ```markdown
 ### 2.3 Acceptance Criteria per Use Case
 
-> Mỗi Use Case **PHẢI** có ít nhất 3 Acceptance Criteria (AC) ở dạng Given-When-Then.
-> ACs này sẽ trở thành test cases trong `test-plan/`.
+> Each Use Case **MUST** have at least 3 Acceptance Criteria (AC) in Given-When-Then form.
+> These ACs become test cases in `test-plan/`.
 
 #### 2.3.X UC-XX — {Use Case Name}
 
 **AC-XX-01 (Happy Path):**
 ```
-Given: {precondition — trạng thái hệ thống ban đầu}
-When:  {actor thực hiện hành động}
-Then:  {kết quả mong đợi}
-And:   {side effects bổ sung nếu có}
+Given: {precondition — initial system state}
+When:  {actor performs an action}
+Then:  {expected result}
+And:   {additional side effects, if any}
 ```
 
 **AC-XX-02 (Alternative Flow):**
 ```
-Given: {precondition khác}
-When:  {cùng hoặc khác hành động}
-Then:  {kết quả khác nhau}
+Given: {a different precondition}
+When:  {same or different action}
+Then:  {different result}
 ```
 
 **AC-XX-03 (Error / Boundary):**
 ```
-Given: {dữ liệu không hợp lệ hoặc điều kiện lỗi}
-When:  {actor thực hiện hành động}
-Then:  {lỗi cụ thể được hiển thị / hệ thống phản hồi đúng}
+Given: {invalid data or error condition}
+When:  {actor performs an action}
+Then:  {a specific error is shown / the system responds correctly}
 ```
 
-> **Ví dụ UC-01 Login:**
+> **Example UC-01 Login:**
 >
 > AC-01-01 (Happy Path):
-> Given: User chưa đăng nhập, tài khoản active và email đã verify
-> When:  User nhập email + password đúng và submit
-> Then:  Hệ thống trả về access_token và refresh_token
-> And:   User được chuyển đến Dashboard
+> Given: User is not logged in, the account is active and the email is verified
+> When:  User enters the correct email + password and submits
+> Then:  The system returns an access_token and refresh_token
+> And:   User is redirected to the Dashboard
 >
 > AC-01-02 (Wrong Password):
-> Given: User chưa đăng nhập
-> When:  User nhập đúng email nhưng sai password
-> Then:  Hệ thống hiển thị lỗi "Email hoặc mật khẩu không đúng"
-> And:   Không tiết lộ field nào sai
+> Given: User is not logged in
+> When:  User enters the correct email but the wrong password
+> Then:  The system displays the error "Incorrect email or password"
+> And:   It does not reveal which field is wrong
 >
 > AC-01-03 (Account Disabled):
-> Given: Tài khoản bị disable (is_active = false)
-> When:  User nhập đúng email + password
-> Then:  Hệ thống hiển thị "Tài khoản đã bị vô hiệu hóa"
+> Given: The account is disabled (is_active = false)
+> When:  User enters the correct email + password
+> Then:  The system displays "This account has been disabled"
 ```
 
 ---
 
-### Thêm vào Section 5 "Requirement Appendix" — thêm sub-section 5.5
+### Add to Section 5 "Requirement Appendix" — add sub-section 5.5
 
 ```markdown
 ### 5.5 Requirements Traceability Index (RTI)
 
-> Bảng tóm tắt linking — chi tiết đầy đủ xem `traceability/RTM.md`.
+> Summary linking table — see `traceability/RTM.md` for full details.
 
 | FR ID | Feature | UC | Priority | Status |
 |-------|---------|-----|----------|--------|
@@ -75,19 +75,19 @@ Then:  {lỗi cụ thể được hiển thị / hệ thống phản hồi đún
 | FR-1.2 | {Feature name} | UC-03 | Must | Draft |
 | FR-2.1 | {Feature name} | UC-04 | Should | Draft |
 
-*Cột Status: Draft → Reviewed → Approved → Implemented → Tested → Done*
+*Status column: Draft → Reviewed → Approved → Implemented → Tested → Done*
 ```
 
 ---
 
 ## PATCH 2 — sdd-writing/SKILL.md
 
-### Thêm Section 0 — Requirements Mapping (TRƯỚC Section 1 Introduction)
+### Add Section 0 — Requirements Mapping (BEFORE Section 1 Introduction)
 
 ```markdown
 ## 0. Requirements Mapping
 
-> Section này link SDD ngược lại SRS — đảm bảo mọi requirement đều có design.
+> This section links the SDD back to the SRS — ensuring every requirement has a design.
 
 ### 0.1 SRS Reference
 
@@ -101,7 +101,7 @@ Then:  {lỗi cụ thể được hiển thị / hệ thống phản hồi đún
 
 ### 0.2 Use Case → Implementation Mapping
 
-> Mỗi UC trong SRS phải được map đến: Component, API endpoint, DB entities.
+> Each UC in the SRS must be mapped to: a Component, API endpoint, and DB entities.
 
 | UC ID | Use Case Name | Component | API Endpoint(s) | DB Entities |
 |-------|--------------|-----------|-----------------|-------------|
@@ -113,7 +113,7 @@ Then:  {lỗi cụ thể được hiển thị / hệ thống phản hồi đún
 
 | NFR ID | NFR Description | Design Decision |
 |--------|-----------------|-----------------|
-| NFR-P1 | Response time < 200ms (P95) | Redis cache cho read-heavy endpoints; DB indexes trên FKs và filter fields |
+| NFR-P1 | Response time < 200ms (P95) | Redis cache for read-heavy endpoints; DB indexes on FKs and filter fields |
 | NFR-S1 | JWT authentication | Access token 15min + refresh token 7 days; HTTPS only |
 | NFR-A1 | 99.9% uptime | Multi-AZ deployment; Health check endpoints; Circuit breaker pattern |
 | NFR-SC1 | 1000 concurrent users | Horizontal scaling; Connection pooling (HikariCP); Async processing |
@@ -121,30 +121,30 @@ Then:  {lỗi cụ thể được hiển thị / hệ thống phản hồi đún
 
 ---
 
-### Thêm Section 4.1.X — Error Handling Strategy (vào đầu Section 4 Detailed Component Design)
+### Add Section 4.1.X — Error Handling Strategy (at the start of Section 4 Detailed Component Design)
 
 ```markdown
 ### 4.1 Common Design
 
 #### 4.1.1 Global Error Handling Strategy
 
-Tất cả components đều follow error handling strategy thống nhất:
+All components follow a unified error handling strategy:
 
 **Error Hierarchy:**
 ```
 BaseException
-  ├── BusinessException (4xx — lỗi do user/business logic)
+  ├── BusinessException (4xx — user/business logic errors)
   │     ├── ValidationException    (422)
   │     ├── NotFoundException      (404)
   │     ├── ConflictException      (409)
   │     └── ForbiddenException     (403)
-  └── TechnicalException (5xx — lỗi hệ thống)
+  └── TechnicalException (5xx — system errors)
         ├── DatabaseException
         ├── ExternalServiceException
         └── InternalServerException
 ```
 
-**Error Response Format** (nhất quán với `api/error-codes.md`):
+**Error Response Format** (consistent with `api/error-codes.md`):
 ```json
 {
   "success": false,
@@ -156,16 +156,16 @@ BaseException
 }
 ```
 
-**Global Exception Handler** xử lý tập trung, log stack trace, trả về response chuẩn.
+The **Global Exception Handler** handles errors centrally, logs the stack trace, and returns a standard response.
 
 #### 4.1.2 Logging Strategy
 
-| Level | Khi nào |
+| Level | When |
 |-------|---------|
 | ERROR | Unhandled exceptions, external service failures, DB errors |
 | WARN  | Handled business exceptions, retry attempts, slow queries (>500ms) |
 | INFO  | Request/response summary, significant business events |
-| DEBUG | SQL queries, detailed flow (chỉ dev/staging) |
+| DEBUG | SQL queries, detailed flow (dev/staging only) |
 
 **Log Format (JSON):**
 ```json
@@ -186,7 +186,7 @@ BaseException
 
 | Layer | Technology | TTL | Eviction |
 |-------|-----------|-----|---------|
-| Application | Redis | Per use case (xem bảng dưới) | LRU |
+| Application | Redis | Per use case (see table below) | LRU |
 | HTTP | CDN / Nginx | Static assets: 1 year; API: no-store | — |
 | DB | Connection Pool | N/A | N/A |
 
@@ -203,14 +203,14 @@ BaseException
 **Cache Key Convention:**
 ```
 {project}:{version}:{resource}:{id_or_query_hash}
-vd: myapp:v1:product:123
-    myapp:v1:products:list:page=1&limit=20&status=active
+e.g.: myapp:v1:product:123
+      myapp:v1:products:list:page=1&limit=20&status=active
 ```
 ```
 
 ---
 
-### Thêm vào cuối Section 6 API Design — 6.X Rate Limiting Design
+### Add to the end of Section 6 API Design — 6.X Rate Limiting Design
 
 ```markdown
 ### 6.X Rate Limiting Design
@@ -224,5 +224,5 @@ vd: myapp:v1:product:123
 
 **Implementation:** Redis sliding window counter.
 **Headers returned:** `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`.
-**Exceeded response:** HTTP 429 với `Retry-After` header.
+**Exceeded response:** HTTP 429 with a `Retry-After` header.
 ```

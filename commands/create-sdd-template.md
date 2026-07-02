@@ -1,6 +1,6 @@
 ---
 name: create-sdd-template
-description: Tạo template SDD rỗng theo chuẩn IEEE
+description: Generate an empty SDD template following the IEEE standard
 syntax: /create-sdd-template [project_name]
 examples:
   - "/create-sdd-template MyProject"
@@ -8,8 +8,8 @@ examples:
 
 # Tool: create-sdd-template
 
-## Mục đích
-Tạo file SDD template rỗng theo chuẩn IEEE để người dùng điền thông tin.
+## Purpose
+Generate an empty SDD template file following the IEEE standard for the user to fill in.
 
 ## Template Output
 
@@ -22,7 +22,7 @@ Tạo file SDD template rỗng theo chuẩn IEEE để người dùng điền th
 ## 1. Introduction
 
 **1.1 Purpose**
-> [Mục đích của tài liệu]
+> [Purpose of the document]
 
 **1.2 Definitions, Acronyms and Abbreviations**
 
@@ -41,10 +41,10 @@ Tạo file SDD template rỗng theo chuẩn IEEE để người dùng điền th
 ## 2. System Architecture
 
 **2.1 System Overview**
-> [Tổng quan hệ thống]
+> [System overview]
 
 **2.2 Architectural Patterns**
-> [Các pattern sử dụng]
+> [Patterns used]
 
 **2.3 Assumptions**
 
@@ -64,7 +64,7 @@ Tạo file SDD template rỗng theo chuẩn IEEE để người dùng điền th
 ## 3. Software Architecture Design
 
 **3.1 Architectural Representation**
-> [Biểu diễn kiến trúc]
+> [Architecture representation]
 
 **3.2 Software Architecture**
 
@@ -181,7 +181,7 @@ CREATE TABLE table_name (
 ```
 
 **6.3 Authentication & Authorization**
-> [Chi tiết auth mechanism]
+> [Auth mechanism details]
 
 ---
 

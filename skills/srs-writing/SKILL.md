@@ -1,13 +1,13 @@
 ---
 name: srs-writing
 description: |
-  Viết tài liệu Software Requirement Specification (SRS) theo chuẩn IEEE, LINK đến external PlantUML files thay vì embed trực tiếp.
+  Write a Software Requirement Specification (SRS) document following the IEEE standard, LINKing to external PlantUML files instead of embedding them directly.
 
-  SỬ DỤNG KHI:
-  - Cần tạo tài liệu SRS từ đầu
-  - Cần hoàn thiện tài liệu SRS đã thu thập
-  - Cần review SRS
-  - Dự án phần mềm cần tài liệu yêu cầu
+  USE WHEN:
+  - You need to create an SRS document from scratch
+  - You need to finalize a partially-gathered SRS document
+  - You need to review an SRS
+  - A software project needs a requirements document
 version: "4.0.0"
 allowed-tools: ["Read", "Write", "Edit", "Glob"]
 mode: false
@@ -15,25 +15,25 @@ mode: false
 
 # SRS Writing Skill
 
-## Mục đích
-Viết tài liệu Software Requirement Specification (SRS) hoàn chỉnh theo template chuẩn IEEE. **LINK đến external PlantUML files** thay vì embed trực tiếp vào tài liệu.
+## Purpose
+Write a complete Software Requirement Specification (SRS) document following the standard IEEE template. **LINK to external PlantUML files** instead of embedding them directly into the document.
 
-## Nguyên tắc quan trọng
+## Important Principles
 
-### KHÔNG embed PlantUML trực tiếp
-- ❌ KHÔNG viết `@startuml...@enduml` trong body của tài liệu SRS
-- ✅ SỬ DỤNG link/reference đến external PlantUML files
-- ✅ Diagrams được tạo bởi các `uc-diagram-agent` spawn song song
+### DO NOT embed PlantUML directly
+- ❌ DO NOT write `@startuml...@enduml` in the body of the SRS document
+- ✅ USE links/references to external PlantUML files
+- ✅ Diagrams are created by `uc-diagram-agent` instances spawned in parallel
 
-### Lý do:
-1. Tách biệt concerns: SRS document = text, Diagrams = PlantUML files
-2. Parallel generation: N agents tạo diagrams song song, không blocking nhau
-3. Maintainability: Dễ update diagrams riêng lẻ
-4. Renderability: IDE/plugin render PlantUML từ file riêng
+### Rationale:
+1. Separation of concerns: SRS document = text, Diagrams = PlantUML files
+2. Parallel generation: N agents create diagrams in parallel, without blocking each other
+3. Maintainability: Easy to update individual diagrams
+4. Renderability: IDE/plugin renders PlantUML from a separate file
 
 ---
 
-## Template SRS với External Links
+## SRS Template with External Links
 
 ### I. Record of Changes
 
@@ -50,23 +50,23 @@ Viết tài liệu Software Requirement Specification (SRS) hoàn chỉnh theo t
 ## 1. Product Overview
 
 **1.1 Purpose**
-- Mô tả mục đích của tài liệu
-- Mô tả sản phẩm được phát triển
-- Giới hạn của tài liệu
+- Describe the purpose of the document
+- Describe the product being developed
+- Describe the document's limitations
 
 **1.2 Product Scope**
-- Tên sản phẩm
-- Các tính năng chính
-- Mục tiêu kinh doanh
+- Product name
+- Key features
+- Business objectives
 
 **1.3 Target Users**
-- Người dùng cuối
-- Quản trị viên
-- Nhân viên hỗ trợ
+- End users
+- Administrators
+- Support staff
 
 **1.4 Context Diagram**
 
-*Xem chi tiết:* [Context Diagram](./diagrams/context-diagram.puml)
+*See details:* [Context Diagram](./diagrams/context-diagram.puml)
 
 ---
 
@@ -108,56 +108,56 @@ Viết tài liệu Software Requirement Specification (SRS) hoàn chỉnh theo t
 
 ### 2.3 Acceptance Criteria per Use Case
 
-> Mỗi Use Case **PHẢI** có ít nhất 3 Acceptance Criteria (AC) ở dạng Given-When-Then.
-> ACs này sẽ trở thành test cases trong `test-plan/`.
+> Every Use Case **MUST** have at least 3 Acceptance Criteria (AC) in Given-When-Then form.
+> These ACs will become test cases in `test-plan/`.
 
 #### 2.3.X UC-XX — {Use Case Name}
 
 **AC-XX-01 (Happy Path):**
 ```
-Given: {precondition — trạng thái hệ thống ban đầu}
-When:  {actor thực hiện hành động}
-Then:  {kết quả mong đợi}
-And:   {side effects bổ sung nếu có}
+Given: {precondition — initial system state}
+When:  {actor performs an action}
+Then:  {expected result}
+And:   {additional side effects, if any}
 ```
 
 **AC-XX-02 (Alternative Flow):**
 ```
-Given: {precondition khác}
-When:  {cùng hoặc khác hành động}
-Then:  {kết quả khác nhau}
+Given: {a different precondition}
+When:  {the same or a different action}
+Then:  {a different result}
 ```
 
 **AC-XX-03 (Error / Boundary):**
 ```
-Given: {dữ liệu không hợp lệ hoặc điều kiện lỗi}
-When:  {actor thực hiện hành động}
-Then:  {lỗi cụ thể được hiển thị / hệ thống phản hồi đúng}
+Given: {invalid data or an error condition}
+When:  {actor performs an action}
+Then:  {specific error is displayed / system responds correctly}
 ```
 
-> **Ví dụ UC-01 Login:**
+> **Example UC-01 Login:**
 >
 > **AC-01-01 (Happy Path):**
 > ```
-> Given: User chưa đăng nhập, tài khoản active và email đã verify
-> When:  User nhập email + password đúng và submit
-> Then:  Hệ thống trả về access_token và refresh_token
-> And:   User được chuyển đến Dashboard
+> Given: User is not logged in, account is active, and email is verified
+> When:  User enters the correct email + password and submits
+> Then:  System returns access_token and refresh_token
+> And:   User is redirected to the Dashboard
 > ```
 >
 > **AC-01-02 (Wrong Password):**
 > ```
-> Given: User chưa đăng nhập
-> When:  User nhập đúng email nhưng sai password
-> Then:  Hệ thống hiển thị lỗi "Email hoặc mật khẩu không đúng"
-> And:   Không tiết lộ field nào sai
+> Given: User is not logged in
+> When:  User enters the correct email but the wrong password
+> Then:  System displays the error "Incorrect email or password"
+> And:   Does not reveal which field is wrong
 > ```
 >
 > **AC-01-03 (Account Disabled):**
 > ```
-> Given: Tài khoản bị disable (is_active = false)
-> When:  User nhập đúng email + password
-> Then:  Hệ thống hiển thị "Tài khoản đã bị vô hiệu hóa"
+> Given: Account is disabled (is_active = false)
+> When:  User enters the correct email + password
+> Then:  System displays "This account has been disabled"
 > ```
 
 ---
@@ -228,11 +228,11 @@ Then:  {lỗi cụ thể được hiển thị / hệ thống phản hồi đún
 | | | |
 
 **5.4 Other Requirements**
-> [Các yêu cầu khác]
+> [Other requirements]
 
 ### 5.5 Requirements Traceability Index (RTI)
 
-> Bảng tóm tắt linking — chi tiết đầy đủ xem `traceability/RTM.md`.
+> Summary linking table — see `traceability/RTM.md` for full details.
 
 | FR ID | Feature | UC | Priority | Status |
 |-------|---------|-----|----------|--------|
@@ -240,12 +240,12 @@ Then:  {lỗi cụ thể được hiển thị / hệ thống phản hồi đún
 | FR-1.2 | {Feature name} | UC-03 | Must | Draft |
 | FR-2.1 | {Feature name} | UC-04 | Should | Draft |
 
-*Cột Status: Draft → Reviewed → Approved → Implemented → Tested → Done*
+*Status column: Draft → Reviewed → Approved → Implemented → Tested → Done*
 
 ---
 
 ## Output File
-Tài liệu SRS được lưu với format: `SRS_{ProjectName}_v{Version}.md`
+The SRS document is saved in the format: `SRS_{ProjectName}_v{Version}.md`
 
 ## Diagrams Directory Structure
 
@@ -268,18 +268,18 @@ diagrams/
 
 ## Quality Checklist
 
-- [ ] Tất cả stakeholders đã được phỏng vấn
-- [ ] Tất cả actors đã được xác định
+- [ ] All stakeholders have been interviewed
+- [ ] All actors have been identified
 - [ ] Context Diagram: [context-diagram.puml](./diagrams/context-diagram.puml) ✓
 - [ ] ER Diagram: [entity-relationship.puml](./diagrams/entity-relationship.puml) ✓
 - [ ] Screen Flow: [screen-flow.puml](./diagrams/screen-flow.puml) ✓
-- [ ] Mỗi UC có đầy đủ 6 diagram files
-- [ ] Mỗi UC có ít nhất 3 Acceptance Criteria (Given-When-Then)
-- [ ] Functional requirements đầy đủ
-- [ ] Non-functional requirements cụ thể, đo lường được
-- [ ] Section 5.5 RTI đã điền đủ FR → UC mapping
-- [ ] Tài liệu đã được review bởi stakeholders
+- [ ] Each UC has all 6 diagram files
+- [ ] Each UC has at least 3 Acceptance Criteria (Given-When-Then)
+- [ ] Functional requirements are complete
+- [ ] Non-functional requirements are concrete and measurable
+- [ ] Section 5.5 RTI is fully filled in with the FR → UC mapping
+- [ ] The document has been reviewed by stakeholders
 
 ## Commands
 
-Sử dụng command `/create-srs` để trigger skill này.
+Use the `/create-srs` command to trigger this skill.

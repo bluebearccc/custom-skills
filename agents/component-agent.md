@@ -1,5 +1,5 @@
 ---
-description: Agent chuyên thiết kế chi tiết từng component/module trong SDD
+description: Agent specialized in designing individual component/module details in the SDD
 mode: subagent
 permission:
   edit: allow
@@ -10,10 +10,10 @@ permission:
 
 # Component Agent
 
-## Mục đích
-Component Agent chịu trách nhiệm thiết kế chi tiết cho MỘT component/module cụ thể trong hệ thống. Nhiều instances có thể chạy SONG SONG để thiết kế nhiều components cùng lúc.
+## Purpose
+Component Agent is responsible for the detailed design of a SINGLE specific component/module in the system. Multiple instances can run IN PARALLEL to design multiple components at the same time.
 
-## Khi nào spawn nhiều instances
+## When to spawn multiple instances
 ```
 sdd-agent
   ├── @component-agent (component: AuthModule)
@@ -22,16 +22,16 @@ sdd-agent
   └── @component-agent (component: PaymentModule)
 ```
 
-## Nhiệm vụ chính (PHẢI tạo đủ 5 artifacts):
-1. Thiết kế class diagram (Backend) → {component}-class-backend.puml
-2. Thiết kế class diagram (Frontend) → {component}-class-frontend.puml
-3. Thiết kế sequence diagram → {component}-sequence.puml
-4. Thiết kế state diagram → {component}-state.puml
-5. Thiết kế database schema → db/tables/{component}_tables.sql
+## Main tasks (MUST produce all 5 artifacts):
+1. Design class diagram (Backend) → {component}-class-backend.puml
+2. Design class diagram (Frontend) → {component}-class-frontend.puml
+3. Design sequence diagram → {component}-sequence.puml
+4. Design state diagram → {component}-state.puml
+5. Design database schema → db/tables/{component}_tables.sql
 
 ## Input Parameters:
-- `component_name`: Tên component (VD: AuthModule, ProductModule)
-- `project_name`: Tên dự án
+- `component_name`: Component name (e.g., AuthModule, ProductModule)
+- `project_name`: Project name
 
 ## Component Design Template:
 
@@ -41,10 +41,10 @@ sdd-agent
 |------|-------------|
 | Component ID | COMP-{XX} |
 | Component Name | {ComponentName} |
-| Purpose | Mô tả chức năng chính |
-| Public Interface | API/Methods được expose |
-| Dependencies | Các component khác phụ thuộc |
-| Processing Flow | Luồng xử lý chính |
+| Purpose | Description of the main functionality |
+| Public Interface | API/Methods exposed |
+| Dependencies | Other components it depends on |
+| Processing Flow | Main processing flow |
 
 ### Class Design (Backend):
 ```plantuml
@@ -74,7 +74,7 @@ C -->> User : Response
 ```
 
 ## Output Structure (REQUIRED):
-Component design artifacts PHẢI được tạo đầy đủ cho mỗi component:
+Component design artifacts MUST be fully created for each component:
 
 ```
 diagrams/components/{component-name}/
@@ -83,10 +83,10 @@ diagrams/components/{component-name}/
 ├── {component}-sequence.puml         (PlantUML sequence diagram - interactions)
 └── {component}-state.puml            (PlantUML state diagram - state machine)
 
-db/tables/{component}_tables.sql      (MySQL DDL cho component's tables)
+db/tables/{component}_tables.sql      (MySQL DDL for the component's tables)
 ```
 
-**LƯU Ý QUAN TRỌNG: MỖI component-agent PHẢI tạo đủ 5 files trên.**
+**IMPORTANT NOTE: EACH component-agent MUST create all 5 files listed above.**
 
 ### Frontend Class Diagram Template:
 ```plantuml
@@ -136,10 +136,10 @@ CREATE TABLE {component}_table (
 CREATE INDEX idx_{component}_name ON {component}_table(name);
 ```
 
-## Nguyên tắc:
-- MỖI agent instance chỉ thiết kế MỘT component
-- Phải tạo ĐỦ 5 files artifacts (không thiếu file nào)
-- Phải định nghĩa rõ public interfaces
-- Xác định dependencies với các component khác
-- Bao gồm error handling và edge cases
-- KHÔNG được bỏ qua bất kỳ artifact nào trong 5 artifacts trên
+## Principles:
+- EACH agent instance designs only ONE component
+- Must produce ALL 5 artifact files (none missing)
+- Must clearly define public interfaces
+- Identify dependencies with other components
+- Include error handling and edge cases
+- Do NOT skip any of the 5 artifacts listed above

@@ -1,5 +1,5 @@
 ---
-description: Agent thiết kế database schema tổng thể cho toàn bộ hệ thống
+description: Agent that designs the overall database schema for the whole system
 mode: subagent
 permission:
   edit: allow
@@ -10,93 +10,93 @@ permission:
 
 # DB Agent
 
-## Mục đích
-DB Agent chịu trách nhiệm thiết kế và tổng hợp **toàn bộ database schema** cho hệ thống, bao gồm: ER diagram tổng thể, consolidated schema SQL, và các migration scripts.
+## Purpose
+DB Agent is responsible for designing and consolidating the **entire database schema** for the system, including: the overall ER diagram, consolidated schema SQL, and migration scripts.
 
 ## Trigger
-Được spawn bởi `sdd-agent` trong Phase 2, chạy **SONG SONG** với component-agents và api-agent.
+Spawned by `sdd-agent` in Phase 2, running **IN PARALLEL** with component-agents and api-agent.
 
 ```
 sdd-agent
   ├── @component-agent (Auth) &
   ├── @component-agent (Product) &
-  ├── @db-agent &            ← Instance duy nhất
+  ├── @db-agent &            ← Single instance
   └── @api-agent &
       wait
 ```
 
-## Skills sử dụng
-| Skill | Khi nào gọi |
+## Skills Used
+| Skill | When to call |
 |-------|-------------|
-| `database-design` | Chính — tạo ER diagram và schema SQL |
+| `database-design` | Primary — generates the ER diagram and schema SQL |
 
 ---
 
 ## Input
-- `project_name`: Tên dự án
-- Đọc từ: `docs/{ProjectName}/requirements-summary.md` → Data Entities section
-- Đọc từ: `docs/{ProjectName}/SRS_{ProjectName}_v*.md` → Functional Requirements, Data Handling
-- Đọc từ: `docs/{ProjectName}/db/tables/*.sql` (nếu component-agents đã tạo một phần)
+- `project_name`: Project name
+- Read from: `docs/{ProjectName}/requirements-summary.md` → Data Entities section
+- Read from: `docs/{ProjectName}/SRS_{ProjectName}_v*.md` → Functional Requirements, Data Handling
+- Read from: `docs/{ProjectName}/db/tables/*.sql` (if component-agents have already created part of it)
 
 ---
 
-## Quy trình
+## Process
 
-### Bước 1: Đọc data requirements
+### Step 1: Read data requirements
 ```
-Từ requirements-summary.md, trích xuất:
-- Data entities và attributes
-- Relationships giữa entities
-- Business rules ảnh hưởng đến schema
+From requirements-summary.md, extract:
+- Data entities and attributes
+- Relationships between entities
+- Business rules affecting the schema
 - Estimated data volume
 - Retention policies
 
-Từ SRS, trích xuất thêm:
+From the SRS, extract additionally:
 - Data validation rules
 - Unique constraints
 - Foreign key relationships
-- Indexing requirements (từ NFR Performance)
+- Indexing requirements (from NFR Performance)
 ```
 
-### Bước 2: Thiết kế ER Diagram
+### Step 2: Design the ER Diagram
 ```
 skill({ name: "database-design", type: "er-diagram" })
 
-Tạo: diagrams/entity-relationship.puml
+Create: diagrams/entity-relationship.puml
 
-Bao gồm:
-- Tất cả entities với attributes
-- Primary keys (*) và Foreign keys (FK)
+Includes:
+- All entities with attributes
+- Primary keys (*) and Foreign keys (FK)
 - Cardinality relationships (||--o{, etc.)
 - Index hints
 ```
 
-### Bước 3: Tạo Consolidated Schema
+### Step 3: Create the Consolidated Schema
 ```
-Tổng hợp từ:
-1. Các {component}_tables.sql đã được tạo bởi component-agents
-2. Thêm các tables crosscutting (audit_logs, sessions, notifications, ...)
-3. Thêm JOIN tables nếu có M:N relationships
-4. Thêm indexes tổng thể
+Consolidate from:
+1. The {component}_tables.sql files already created by component-agents
+2. Add crosscutting tables (audit_logs, sessions, notifications, ...)
+3. Add JOIN tables if there are M:N relationships
+4. Add overall indexes
 
 Output: db/schema.sql
 ```
 
-### Bước 4: Tạo Migration Scripts
+### Step 4: Create Migration Scripts
 ```
 Output: db/migrations/
-  - V1.0.0__initial_schema.sql   (toàn bộ DDL)
+  - V1.0.0__initial_schema.sql   (full DDL)
   - V1.0.0__seed_data.sql        (lookup tables, default values)
 ```
 
 ---
 
-## Output Structure (BẮT BUỘC)
+## Output Structure (REQUIRED)
 
 ```
 docs/{ProjectName}/
 ├── diagrams/
-│   └── entity-relationship.puml     ← ER diagram tổng thể (PlantUML)
+│   └── entity-relationship.puml     ← Overall ER diagram (PlantUML)
 └── db/
     ├── schema.sql                   ← Consolidated DDL (CREATE TABLE + INDEX)
     └── migrations/
@@ -104,7 +104,7 @@ docs/{ProjectName}/
         └── V1.0.0__seed_data.sql
 ```
 
-**Checklist 4 outputs — tất cả bắt buộc:**
+**Checklist of 4 outputs — all required:**
 - [ ] `diagrams/entity-relationship.puml`
 - [ ] `db/schema.sql`
 - [ ] `db/migrations/V1.0.0__initial_schema.sql`
@@ -120,16 +120,16 @@ docs/{ProjectName}/
 CREATE TABLE user_accounts (...);
 CREATE TABLE product_categories (...);
 
--- Primary Keys: id BIGINT hoặc UUID
+-- Primary Keys: id BIGINT or UUID
 id BIGINT PRIMARY KEY AUTO_INCREMENT,
--- hoặc
+-- or
 id VARCHAR(36) PRIMARY KEY DEFAULT (UUID()),
 
 -- Foreign Keys: {table_singular}_id
 user_id BIGINT NOT NULL,
 product_id BIGINT NOT NULL,
 
--- Timestamps: bắt buộc trên tất cả tables
+-- Timestamps: required on all tables
 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 deleted_at TIMESTAMP NULL DEFAULT NULL,  -- Soft delete
@@ -141,10 +141,10 @@ is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
 
 ### Index Conventions
 ```sql
--- Index cho foreign keys
+-- Index for foreign keys
 CREATE INDEX idx_{table}_{column} ON {table}({column});
 
--- Composite index cho query patterns
+-- Composite index for query patterns
 CREATE INDEX idx_{table}_{col1}_{col2} ON {table}({col1}, {col2});
 
 -- Unique constraint
@@ -174,10 +174,10 @@ CREATE INDEX idx_{table_name}_{fk_col} ON {table_name}({fk_col});
 
 ---
 
-## Các crosscutting tables bắt buộc
+## Required Crosscutting Tables
 
 ```sql
--- Audit log — track mọi thay đổi dữ liệu quan trọng
+-- Audit log — track every important data change
 CREATE TABLE audit_logs (
     id          BIGINT PRIMARY KEY AUTO_INCREMENT,
     table_name  VARCHAR(100) NOT NULL,
@@ -219,15 +219,15 @@ CREATE TABLE system_configs (
 
 ## Error Handling
 
-| Tình huống | Hành động |
+| Situation | Action |
 |------------|-----------|
-| requirements-summary.md thiếu data entities | Infer từ use cases trong SRS |
-| component_tables.sql thiếu | Tạo schema dựa trên data entities từ SRS |
-| Conflict giữa các component tables | Log conflict, resolve với naming prefix |
+| requirements-summary.md is missing data entities | Infer from use cases in the SRS |
+| component_tables.sql is missing | Create schema based on data entities from the SRS |
+| Conflict between component tables | Log the conflict, resolve with a naming prefix |
 
 ---
 
-## Báo cáo kết quả cho sdd-agent
+## Result Report for sdd-agent
 
 ```json
 {

@@ -1,19 +1,19 @@
 ---
 name: uml-design
 description: |
-  Tạo các sơ đồ UML cho tài liệu thiết kế phần mềm bằng PlantUML.
+  Create UML diagrams for software design documentation using PlantUML.
   
-  SỬ DỤNG KHI:
-  - Cần tạo use case diagram
-  - Cần tạo screen flow diagram
-  - Cần tạo stage/state diagram
-  - Cần tạo entity relationship diagram
-  - Cần tạo sequence diagram
-  - Cần tạo deployment diagram
-  - Cần tạo integration diagram
-  - Cần tạo component interaction diagram
-  - Cần tạo deployment topology per environment
-  - Cần tạo data flow diagram (DFD)
+  USE WHEN:
+  - Need to create a use case diagram
+  - Need to create a screen flow diagram
+  - Need to create a stage/state diagram
+  - Need to create an entity relationship diagram
+  - Need to create a sequence diagram
+  - Need to create a deployment diagram
+  - Need to create an integration diagram
+  - Need to create a component interaction diagram
+  - Need to create a deployment topology per environment
+  - Need to create a data flow diagram (DFD)
 version: "3.0.0"
 allowed-tools: ["Read", "Write", "Glob"]
 mode: false
@@ -21,20 +21,20 @@ mode: false
 
 # UML Design Skill (PlantUML)
 
-## Mục đích
-Tạo các sơ đồ UML chuyên nghiệp bằng PlantUML cho tài liệu SRS và SDD.
+## Purpose
+Create professional UML diagrams using PlantUML for SRS and SDD documentation.
 
 ## Output Format
 
-Tất cả UML diagrams được tạo bằng **PlantUML**. Mỗi diagram bao gồm:
+All UML diagrams are created using **PlantUML**. Each diagram includes:
 - `@startuml` / `@enduml` delimiters
-- Diagram code có thể copy-paste trực tiếp vào PlantUML renderer
+- Diagram code that can be copy-pasted directly into a PlantUML renderer
 
 ## Output Files Convention
 
-**QUAN TRỌNG**: Mỗi diagram phải được lưu trong **FILE RIÊNG BIỆT** (.puml). KHÔNG gộp nhiều diagram vào một file.
+**IMPORTANT**: Each diagram must be saved in a **SEPARATE FILE** (.puml). DO NOT combine multiple diagrams into one file.
 
-### Per-UC Diagrams Structure (Theo từng Use Case):
+### Per-UC Diagrams Structure (By Use Case):
 ```
 diagrams/
 ├── uc-01-login/
@@ -53,7 +53,7 @@ diagrams/
 │   └── uc-02-sequence.puml
 ├── uc-03-forgot-password/
 │   └── ...
-└── README.md (index của tất cả diagrams)
+└── README.md (index of all diagrams)
 ```
 
 ### System-Level Diagrams:
@@ -81,16 +81,16 @@ diagrams/
 - System diagrams: `context-diagram`, `system-overview`, `entity-relationship`, `layered-architecture`, `client-server`, `integration`, `deployment`
 
 ### Required Deliverables:
-1. **Mỗi diagram = 1 file .puml riêng** với @startuml/@enduml delimiters
-2. **Index README.md** liệt kê tất cả diagrams đã tạo
-3. **System-level diagrams** cho tổng quan kiến trúc
-4. **Per-UC diagrams** cho chi tiết từng use case
+1. **Each diagram = 1 separate .puml file** with @startuml/@enduml delimiters
+2. **Index README.md** listing all created diagrams
+3. **System-level diagrams** for architecture overview
+4. **Per-UC diagrams** for individual use case details
 
-## Các loại Diagram
+## Diagram Types
 
 ### 1. Use Case Diagram
 
-**Mục đích**: Mô tả các chức năng hệ thống từ góc nhìn người dùng
+**Purpose**: Describe system functionality from the user's perspective
 
 **Template**:
 ```
@@ -106,7 +106,7 @@ rectangle System {
 @enduml
 ```
 
-**Ví dụ hoàn chỉnh**:
+**Complete example**:
 ```
 @startuml
 left to right direction
@@ -125,9 +125,9 @@ rectangle System {
 @enduml
 ```
 
-**Các thành phần**:
-- `actor` - Actor người dùng hoặc hệ thống bên ngoài
-- `rectangle System` - Phạm vi hệ thống
+**Components**:
+- `actor` - User actor or external system
+- `rectangle System` - System scope
 - `-->` - Association relationship
 - `(text)` - Use case
 
@@ -135,7 +135,7 @@ rectangle System {
 
 ### 2. Screen Flow Diagram (Activity)
 
-**Mục đích**: Mô tả luồng điều hướng màn hình và logic nghiệp vụ
+**Purpose**: Describe screen navigation flow and business logic
 
 **Template**:
 ```
@@ -152,7 +152,7 @@ stop
 @enduml
 ```
 
-**Ví dụ hoàn chỉnh**:
+**Complete example**:
 ```
 @startuml
 skinparam activityDotColor red
@@ -186,17 +186,17 @@ stop
 @enduml
 ```
 
-**Các thành phần**:
-- `start` / `stop` - Điểm bắt đầu/kết thúc
-- `:` activity `;` - Hành động
-- `if` / `then` / `else` / `endif` - Điều kiện rẽ nhánh
-- `fork` / `end fork` - Xử lý song song
+**Components**:
+- `start` / `stop` - Start/end point
+- `:` activity `;` - Action
+- `if` / `then` / `else` / `endif` - Branching condition
+- `fork` / `end fork` - Parallel processing
 
 ---
 
 ### 3. State Diagram
 
-**Mục đích**: Mô tả vòng đời của một entity (trạng thái và chuyển đổi)
+**Purpose**: Describe the lifecycle of an entity (states and transitions)
 
 **Template**:
 ```
@@ -207,7 +207,7 @@ State2 --> [*] : Done
 @enduml
 ```
 
-**Ví dụ hoàn chỉnh**:
+**Complete example**:
 ```
 @startuml
 title Order State Machine
@@ -236,7 +236,7 @@ end note
 
 ### 4. Class Diagram — Backend
 
-**Mục đích**: Mô tả cấu trúc lớp phía backend
+**Purpose**: Describe the backend class structure
 
 **Template**:
 ```
@@ -249,7 +249,7 @@ ClassA --> ClassB
 @enduml
 ```
 
-**Ví dụ hoàn chỉnh**:
+**Complete example**:
 ```
 @startuml
 skinparam classAttributeIconSize 0
@@ -299,7 +299,7 @@ UserRepository --> User
 
 ### 5. Class Diagram — Frontend
 
-**Mục đích**: Mô tả cấu trúc components phía frontend
+**Purpose**: Describe the frontend component structure
 
 **Template**:
 ```
@@ -312,7 +312,7 @@ class ComponentName {
 @enduml
 ```
 
-**Ví dụ hoàn chỉnh**:
+**Complete example**:
 ```
 @startuml
 skinparam classAttributeIconSize 0
@@ -345,7 +345,7 @@ useAuth --> AuthApiService
 
 ### 6. Sequence Diagram
 
-**Mục đích**: Mô tả luồng tương tác giữa các thành phần theo thời gian
+**Purpose**: Describe the interaction flow between components over time
 
 **Template**:
 ```
@@ -364,7 +364,7 @@ Frontend -->> User: Display
 @enduml
 ```
 
-**Ví dụ hoàn chỉnh**:
+**Complete example**:
 ```
 @startuml
 actor Customer
@@ -394,9 +394,9 @@ web -->> Customer : Order Confirmation
 
 ### 7. ER Diagram
 
-**Mục đích**: Mô tả cấu trúc database và quan hệ giữa các bảng
+**Purpose**: Describe the database structure and relationships between tables
 
-**Ví dụ**:
+**Example**:
 ```
 @startuml
 entity "Customer" as c {
@@ -438,9 +438,9 @@ p ||--o{ oi : ordered
 
 ### 8. Component Interaction Diagram
 
-**Mục đích:** Mô tả cách các components/modules giao tiếp với nhau ở runtime — ai gọi ai, qua giao thức gì, theo hướng nào.
+**Purpose:** Describe how components/modules communicate with each other at runtime — who calls whom, over what protocol, in which direction.
 
-**Khi nào tạo:** Được tạo bởi `sdd-agent` trong Phase 1, sau khi danh sách components đã xác định từ SRS.
+**When to create:** Created by `sdd-agent` in Phase 1, after the component list has been determined from the SRS.
 
 **Output file:** `diagrams/components/component-interaction.puml`
 
@@ -545,19 +545,19 @@ endlegend
 ```
 
 **Checklist:**
-- [ ] Tất cả components đã được xác định trong SDD Section 4 đều có mặt
-- [ ] Arrows có label mô tả protocol + data type
-- [ ] External services được nhóm riêng
-- [ ] Sync vs async calls được phân biệt (solid vs dashed)
-- [ ] Data layer (DB, Cache, MQ) được thể hiện
+- [ ] All components identified in SDD Section 4 are present
+- [ ] Arrows have labels describing protocol + data type
+- [ ] External services are grouped separately
+- [ ] Sync vs async calls are distinguished (solid vs dashed)
+- [ ] Data layer (DB, Cache, MQ) is represented
 
 ---
 
 ### 9. Deployment Topology (Multi-Environment)
 
-**Mục đích:** Mô tả chi tiết hạ tầng triển khai cho từng môi trường (dev/staging/prod) — servers, containers, networks, load balancers.
+**Purpose:** Describe the deployment infrastructure in detail for each environment (dev/staging/prod) — servers, containers, networks, load balancers.
 
-**Khi nào tạo:** Được tạo bởi `sdd-agent`, thay thế/bổ sung cho `deployment.puml` cơ bản.
+**When to create:** Created by `sdd-agent`, replacing/supplementing the basic `deployment.puml`.
 
 **Output files:**
 - `diagrams/deployment-dev.puml`
@@ -700,15 +700,15 @@ end note
 
 ### 10. Data Flow Diagram (DFD)
 
-**Mục đích:** Mô tả luồng dữ liệu qua hệ thống — data đến từ đâu, được xử lý ở đâu, lưu ở đâu, đi đến đâu. Không phải sequence (không có thời gian), chỉ có data flows.
+**Purpose:** Describe the flow of data through the system — where data comes from, where it is processed, where it is stored, where it goes. Not a sequence (no timing), only data flows.
 
 **Levels:**
-- **DFD Level 0** (Context Diagram) — toàn bộ system như 1 hộp đen
-- **DFD Level 1** — major processes bên trong system
-- **DFD Level 2** — detail của từng process (optional)
+- **DFD Level 0** (Context Diagram) — the entire system as 1 black box
+- **DFD Level 1** — major processes inside the system
+- **DFD Level 2** — detail of each process (optional)
 
 **Output files:**
-- `diagrams/dfd-level0.puml` (Context — thường đã có từ context-diagram.puml)
+- `diagrams/dfd-level0.puml` (Context — usually already available from context-diagram.puml)
 - `diagrams/dfd-level1.puml`
 
 **Template DFD Level 1:**
@@ -816,17 +816,17 @@ endlegend
 
 ## Rendering PlantUML
 
-Để xem PlantUML diagrams:
-1. **VS Code**: Cài extension "PlantUML"
+To view PlantUML diagrams:
+1. **VS Code**: Install the "PlantUML" extension
 2. **Online**: https://www.plantuml.com/plantuml/uml/
-3. **GitHub**: Sử dụng GitHub Actions với plantuml-action
-4. **Markdown**: Dùng plugin hỗ trợ PlantUML
+3. **GitHub**: Use GitHub Actions with plantuml-action
+4. **Markdown**: Use a plugin that supports PlantUML
 
 ## Best Practices
 
-1. **Consistent Naming**: Sử dụng naming convention nhất quán
-2. **Appropriate Level**: Chi tiết vừa đủ, không over-engineer
-3. **Clear Boundaries**: Xác định rõ phạm vi system boundary
-4. **Proper Stereotypes**: Sử dụng <<client>>, <<server>>, <<external>>
-5. **Include Notes**: Thêm notes để giải thích quan trọng
-6. **Align with SRS**: Diagrams phải nhất quán với requirements
+1. **Consistent Naming**: Use a consistent naming convention
+2. **Appropriate Level**: Just enough detail, don't over-engineer
+3. **Clear Boundaries**: Clearly define the system boundary scope
+4. **Proper Stereotypes**: Use <<client>>, <<server>>, <<external>>
+5. **Include Notes**: Add notes to explain important points
+6. **Align with SRS**: Diagrams must be consistent with requirements

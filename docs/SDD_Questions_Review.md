@@ -1,4 +1,4 @@
-# SDD Questions Catalogue - Báo cáo Đánh giá
+# SDD Questions Catalogue - Review Report
 
 **File reviewed**: `SDD_Questions_Catalogue.md`  
 **Date**: 2026-03-23  
@@ -6,164 +6,164 @@
 
 ---
 
-## 1. Đánh giá TỔNG QUAN
+## 1. OVERALL ASSESSMENT
 
-| Tiêu chí | Kết quả | Điểm số |
+| Criterion | Result | Score |
 |----------|---------|---------|
-| **1. Luồng câu hỏi (Flow)** | ⚠️ Pass with concerns | 7/10 |
-| **2. Tính đầy đủ (Completeness)** | ⚠️ Pass with concerns | 7/10 |
-| **3. Tính khả dụng (Usability)** | ⚠️ Pass with concerns | 6/10 |
-| **4. Sự nhất quán (Consistency)** | ⚠️ Pass with concerns | 7/10 |
-| **5. Gợi ý trả lời (Answer Quality)** | ⚠️ Pass with concerns | 7/10 |
-| **6. Mối liên kết SRS-SDD** | ❌ Fail | 4/10 |
-| **TỔNG HỢP** | **⚠️ PASS WITH CONCERNS** | **6.3/10** |
+| **1. Question Flow** | ⚠️ Pass with concerns | 7/10 |
+| **2. Completeness** | ⚠️ Pass with concerns | 7/10 |
+| **3. Usability** | ⚠️ Pass with concerns | 6/10 |
+| **4. Consistency** | ⚠️ Pass with concerns | 7/10 |
+| **5. Answer Quality** | ⚠️ Pass with concerns | 7/10 |
+| **6. SRS-SDD Linkage** | ❌ Fail | 4/10 |
+| **OVERALL** | **⚠️ PASS WITH CONCERNS** | **6.3/10** |
 
 ---
 
-## 2. VẤN ĐỀ CỤ THỂ CẦN SỬA
+## 2. SPECIFIC ISSUES TO FIX
 
-### 2.1 LUỒNG CÂU HỎI (Flow Analysis) - Điểm: 7/10
+### 2.1 QUESTION FLOW (Flow Analysis) - Score: 7/10
 
-#### Vấn đề phát hiện:
+#### Issues found:
 
-**a) Thiếu phần "Per-Use-Case Design Details"**
-- Hiện tại không có section nào hỏi về thiết kế chi tiết theo từng Use Case
-- SDD cần phải mô tả cách mỗi Use Case từ SRS được triển khai thành các components
-- Cần bổ sung: "Use Case Implementation Mapping"
+**a) Missing a "Per-Use-Case Design Details" section**
+- Currently there is no section asking about the detailed design for each Use Case
+- The SDD needs to describe how each Use Case from the SRS is implemented as components
+- Should add: "Use Case Implementation Mapping"
 
-**b) Thứ tự questions nên có step nhỏ hơn**
-- 1.1 → 1.2 → 1.3 → 1.4 (tốt)
-- Nhưng nên thêm một overview diagram request ở đầu section 1
+**b) The question order should use smaller steps**
+- 1.1 → 1.2 → 1.3 → 1.4 (good)
+- But an overview diagram request should be added at the start of section 1
 
-**c) Security nên đến sau Backend-Database**
-- Theo luồng thiết kế, Security nên được hỏi SAU khi đã hiểu Data và Business logic
-- Đề xuất: Deployment → Security → Integration (thay vì Security → Integration → Deployment)
+**c) Security should come after Backend-Database**
+- Following the design flow, Security should be asked about AFTER Data and Business logic are understood
+- Proposal: Deployment → Security → Integration (instead of Security → Integration → Deployment)
 
 ---
 
-### 2.2 TÍNH ĐẦY ĐỦ (Completeness) - Điểm: 7/10
+### 2.2 COMPLETENESS - Score: 7/10
 
-#### Thiếu các câu hỏi quan trọng:
+#### Missing important questions:
 
-| STT | Câu hỏi thiếu | Nơi cần bổ sung | Lý do |
+| # | Missing question | Where to add it | Reason |
 |-----|---------------|-----------------|-------|
-| 1 | **Business Rules / Domain Logic** | Section 3 (Backend) | Thiếu chỗ hỏi về validation rules, workflow logic, business constraints |
-| 2 | **Error Handling Design** | Section 3.2 (API Design) hoặc 9.2 | Chỉ hỏi retry/circuit breaker, thiếu error code taxonomy |
-| 3 | **File Upload / Storage Design** | Section 6.5 hoặc 3.x | Cần hỏi về file storage strategy, max size, allowed types |
-| 4 | **Notification System Design** | Section 6.x | Fragmented trong 3.4.4, cần section riêng |
-| 5 | **API Endpoint Inventory** | Section 3.2 | Chỉ hỏi pattern, không hỏi specific endpoints/resources |
-| 6 | **Data Migration Strategy** | Section 7.x | Thiếu câu hỏi về DB versioning, migration approach |
-| 7 | **Feature Toggles** | Section 7.3.4 đã có, nhưng thiếu use case | Cần hỏi thêm về toggle categories |
-| 8 | **Localization / i18n** | Thiếu hoàn toàn | Cần cho ứng dụng quốc tế |
-| 9 | **Analytics / Tracking** | Thiếu hoàn toàn | User behavior tracking, conversion tracking |
-| 10 | **Session Management** | Section 5.3 có nhưng chung chung | Cần tách riêng session timeout, concurrent sessions |
+| 1 | **Business Rules / Domain Logic** | Section 3 (Backend) | No place asking about validation rules, workflow logic, business constraints |
+| 2 | **Error Handling Design** | Section 3.2 (API Design) or 9.2 | Only asks about retry/circuit breaker, missing an error code taxonomy |
+| 3 | **File Upload / Storage Design** | Section 6.5 or 3.x | Needs a question about file storage strategy, max size, allowed types |
+| 4 | **Notification System Design** | Section 6.x | Fragmented across 3.4.4, needs its own section |
+| 5 | **API Endpoint Inventory** | Section 3.2 | Only asks about patterns, not specific endpoints/resources |
+| 6 | **Data Migration Strategy** | Section 7.x | Missing a question about DB versioning, migration approach |
+| 7 | **Feature Toggles** | Already in Section 7.3.4, but missing a use case | Needs a further question about toggle categories |
+| 8 | **Localization / i18n** | Completely missing | Needed for international applications |
+| 9 | **Analytics / Tracking** | Completely missing | User behavior tracking, conversion tracking |
+| 10 | **Session Management** | Section 5.3 exists but is too generic | Should separate session timeout and concurrent sessions |
 
-#### Câu hỏi thừa hoặc không cần thiết:
+#### Redundant or unnecessary questions:
 
-| STT | Câu hỏi | Vấn đề | Đề xuất |
+| # | Question | Issue | Suggestion |
 |-----|---------|--------|---------|
-| 1 | 3.3.5 Password policy + 5.1.4 Password reset | Overlap với 5.1.x | Gộp vào 5.1.x |
-| 2 | 3.3.6 Account lockout policy | Overlap với Security section | Gộp vào 5.1.x |
-| 3 | 7.2.4 Helm charts hay Kustomize | Quá chi tiết cho questionnaire | Chuyển thành Optional |
-| 4 | 10.1.4 Code complexity limits | Quá kỹ thuật cho stakeholder | Loại bỏ hoặc đánh dấu [T] rõ ràng |
+| 1 | 3.3.5 Password policy + 5.1.4 Password reset | Overlaps with 5.1.x | Merge into 5.1.x |
+| 2 | 3.3.6 Account lockout policy | Overlaps with the Security section | Merge into 5.1.x |
+| 3 | 7.2.4 Helm charts or Kustomize | Too detailed for a questionnaire | Make it Optional |
+| 4 | 10.1.4 Code complexity limits | Too technical for a stakeholder | Remove or clearly mark as [T] |
 
 ---
 
-### 2.3 TÍNH KHẢ DỤNG (Usability) - Điểm: 6/10
+### 2.3 USABILITY - Score: 6/10
 
-#### Vấn đề:
+#### Issues:
 
-**a) Câu hỏi quá kỹ thuật cho Business Stakeholders:**
+**a) Questions too technical for Business Stakeholders:**
 
-| Câu hỏi | Vấn đề | Đề xuất |
+| Question | Issue | Suggestion |
 |---------|--------|---------|
-| 1.4.3 "Service Discovery mechanism" | Kỹ thuật microservices sâu | Thêm giải thích ngắn |
-| 3.4.2 "Cache invalidation strategy" | Cần background knowledge | Thêm ví dụ đơn giản |
-| 5.2.1 "RBAC/ABAC/PBAC" | Kỹ thuật access control | Thêm "hoặc tự mô tả" |
-| 6.4.2 "Event schema registry" | Quá chuyên biệt | Đánh dấu [T] |
-| 9.4.6 "SLO/SLI definitions" | Cần giải thích | Thêm note |
-| 10.2.8 "Mutation testing" | Quá niche | Loại bỏ khỏi main list |
+| 1.4.3 "Service Discovery mechanism" | Deep microservices technicality | Add a short explanation |
+| 3.4.2 "Cache invalidation strategy" | Requires background knowledge | Add a simple example |
+| 5.2.1 "RBAC/ABAC/PBAC" | Access-control technicality | Add "or describe in your own words" |
+| 6.4.2 "Event schema registry" | Too specialized | Mark as [T] |
+| 9.4.6 "SLO/SLI definitions" | Needs explanation | Add a note |
+| 10.2.8 "Mutation testing" | Too niche | Remove from the main list |
 
-**b) Thiếu context/ngữ cảnh:**
-- Không có phần giới thiệu tổng quan về tài liệu
-- Không có hướng dẫn cách trả lời
-- Không có example về 1 câu hỏi đã trả lời
+**b) Missing context:**
+- No overview introduction to the document
+- No guidance on how to answer
+- No example of an already-answered question
 
 **c) Mixed language:**
-- Line 214: "user只能访问自己的数据" - Chinese text không nhất quán
-- Nên thống nhất Tiếng Việt hoặc English
+- Line 214: "user只能访问自己的数据" — inconsistent Chinese text
+- Should be standardized to a single language
 
 ---
 
-### 2.4 SỰ NHẤT QUÁN (Consistency) - Điểm: 7/10
+### 2.4 CONSISTENCY - Score: 7/10
 
-#### Vấn đề:
+#### Issues:
 
-**a) Answer format không nhất quán:**
+**a) Inconsistent answer format:**
 
-| Câu hỏi | Answer Format | Vấn đề |
+| Question | Answer Format | Issue |
 |---------|--------------|---------|
-| 1.1.1 | "Monolithic / Layered / MVC / Microservices" | Đầy đủ |
-| 1.2.1 | "Cloud (AWS/Azure/GCP) / On-premise" | Tốt |
-| 3.3.2 | "Access token: 15 min / Refresh token: 7 days" | Tốt |
-| 8.1.1 | "X users đồng thời" | Quá vague, không có example |
-| 9.5.2 | "X minutes / X hours" | Cần số cụ thể |
+| 1.1.1 | "Monolithic / Layered / MVC / Microservices" | Complete |
+| 1.2.1 | "Cloud (AWS/Azure/GCP) / On-premise" | Good |
+| 3.3.2 | "Access token: 15 min / Refresh token: 7 days" | Good |
+| 8.1.1 | "X concurrent users" | Too vague, no example |
+| 9.5.2 | "X minutes / X hours" | Needs a concrete number |
 
-**b) Trùng lặp [B]/[T] marking:**
-- 5.1.x và 3.3.x có overlap về authentication/password
-- 9.4.x và 7.5.x có overlap về monitoring
+**b) Duplicate [B]/[T] marking:**
+- 5.1.x and 3.3.x overlap on authentication/password
+- 9.4.x and 7.5.x overlap on monitoring
 
-**c) Số thứ tự không liên tục trong một số section:**
-- 3.2 có 7 câu hỏi (1.1 → 1.7)
-- Nên renumber nếu có thêm
+**c) Non-continuous numbering in some sections:**
+- 3.2 has 7 questions (1.1 → 1.7)
+- Should be renumbered if more are added
 
 ---
 
-### 2.5 GỢI Ý TRẢ LỜI (Answer Quality) - Điểm: 7/10
+### 2.5 ANSWER QUALITY - Score: 7/10
 
-#### Thiếu sót:
+#### Shortcomings:
 
-**a) Không có Tech Stack Options cụ thể cho:**
+**a) No concrete Tech Stack Options for:**
 
-| Area | Hiện tại | Cần thêm |
+| Area | Currently | Needs to add |
 |------|---------|---------|
-| Monitoring | "Prometheus, Datadog" | Thêm giá tham chiếu: "Enterprise: Datadog/New Relic; Open source: Prometheus+Grafana" |
-| Message Queue | "Kafka, RabbitMQ" | Thêm so sánh ngắn: "High throughput: Kafka; Simple task: RabbitMQ/SQS" |
-| API Gateway | "Kong, AWS API Gateway" | Thêm use-case recommendation |
-| Database | List dài | Phân loại: "OLTP vs OLAP, ACID vs BASE" |
+| Monitoring | "Prometheus, Datadog" | Add reference guidance: "Enterprise: Datadog/New Relic; Open source: Prometheus+Grafana" |
+| Message Queue | "Kafka, RabbitMQ" | Add a short comparison: "High throughput: Kafka; Simple task: RabbitMQ/SQS" |
+| API Gateway | "Kong, AWS API Gateway" | Add use-case recommendations |
+| Database | Long list | Categorize: "OLTP vs OLAP, ACID vs BASE" |
 
-**b) Examples thiếu:**
+**b) Missing examples:**
 
-| Câu hỏi | Cần thêm example |
+| Question | Example needed |
 |---------|-----------------|
-| 8.2.1 Response time SLA | "vd: p95 < 200ms, p99 < 500ms" |
-| 8.1.1 Concurrent users | "vd: 1000 users đồng thời" |
-| 9.5.2 RTO | "vd: < 4 giờ" |
+| 8.2.1 Response time SLA | "e.g. p95 < 200ms, p99 < 500ms" |
+| 8.1.1 Concurrent users | "e.g. 1000 concurrent users" |
+| 9.5.2 RTO | "e.g. < 4 hours" |
 
-**c) Tech stack recommendations theo project size:**
+**c) Tech stack recommendations by project size:**
 
-Nên thêm bảng reference:
-- Small project (< 6 tháng): Tech X, Y, Z
-- Medium (6-12 tháng): Tech A, B, C  
+Should add a reference table:
+- Small project (< 6 months): Tech X, Y, Z
+- Medium (6-12 months): Tech A, B, C  
 - Large enterprise: Tech 1, 2, 3
 
 ---
 
-### 2.6 MỐI LIÊN KẾT SRS-SDD - Điểm: 4/10
+### 2.6 SRS-SDD LINKAGE - Score: 4/10
 
-#### Vấn đề nghiêm trọng:
+#### Serious issue:
 
-**a) Không có Reference đến SRS Use Cases:**
+**a) No reference to SRS Use Cases:**
 
-|缺失 | Tác động |
+| Missing | Impact |
 |-----|---------|
-| Không hỏi "Use Case nào từ SRS?" | SDD không link được với requirements |
-| Không hỏi "Actor nào?" | Thiếu context cho architecture |
-| Không hỏi "Functional requirements nào?" | Design có thể không cover đủ |
+| Doesn't ask "Which Use Case from the SRS?" | The SDD cannot be linked to requirements |
+| Doesn't ask "Which Actor?" | Missing context for the architecture |
+| Doesn't ask "Which functional requirements?" | The design may not cover everything |
 
-**b) Không có Cross-reference mechanism:**
+**b) No cross-reference mechanism:**
 
-Cần bổ sung:
+Should add:
 ```
 ## 0. REQUIREMENTS MAPPING (NEW SECTION)
 
@@ -179,25 +179,25 @@ Cần bổ sung:
 | UC-02 Browse Products | Product Service | GET /products |
 ```
 
-**c) Appendix không liên kết với SRS:**
+**c) The Appendix isn't linked to the SRS:**
 
-"Appendix: Quick Reference" section 512-546 nên include:
-- Link đến Use Cases
-- Traceability matrix
+The "Appendix: Quick Reference" section (lines 512-546) should include:
+- Links to Use Cases
+- A traceability matrix
 - Requirements ID mapping
 
 ---
 
-## 3. ĐỀ XUẤT CẢI TIẾN CỤ THỂ
+## 3. SPECIFIC IMPROVEMENT SUGGESTIONS
 
-### 3.1 CẤU TRÚC LẠI LUỒNG (Flow Restructure)
+### 3.1 FLOW RESTRUCTURE
 
-**Thứ tự hiện tại:**
+**Current order:**
 ```
 1. Architecture → 2. Frontend → 3. Backend → 4. DB → 5. Security → 6. Integration → 7. Deployment → 8. Performance → 9. Reliability → 10. Dev Workflow
 ```
 
-**Thứ tự đề xuất:**
+**Proposed order:**
 ```
 0. REQUIREMENTS MAPPING (NEW - link to SRS)
 1. Architecture Overview (high-level)
@@ -213,19 +213,19 @@ Cần bổ sung:
 11. Development Workflow
 ```
 
-### 3.2 BỔ SUNG SECTION MỚI
+### 3.2 ADD A NEW SECTION
 
 **NEW: Section 0 - Requirements Mapping**
 ```markdown
 ## 0. REQUIREMENTS MAPPING
 
 ### 0.1 SRS Reference
-| Câu hỏi | Loại | Gợi ý câu trả lời |
+| Question | Type | Suggested answer |
 |---------|------|-------------------|
-| 0.1.1 | SRS document đã hoàn thành? | [B] | Có (version X.X) / Chưa |
-| 0.1.2 | Các Use Cases cần triển khai? | [B] | UC-01, UC-02, ... |
+| 0.1.1 | Has the SRS document been completed? | [B] | Yes (version X.X) / Not yet |
+| 0.1.2 | Which Use Cases need to be implemented? | [B] | UC-01, UC-02, ... |
 | 0.1.3 | Key functional requirements? | [B] | FR-1.1, FR-2.3, ... |
-| 0.1.4 | Non-functional requirements từ SRS? | [B] | NFR-1 (Performance), NFR-2 (Security), ... |
+| 0.1.4 | Non-functional requirements from the SRS? | [B] | NFR-1 (Performance), NFR-2 (Security), ... |
 ```
 
 **NEW: Section 2.5 - Use Case Implementation Mapping**
@@ -238,36 +238,36 @@ Cần bổ sung:
 | UC-02 Browse | Product Service | GET /products | Products | 404, 500 |
 ```
 
-### 3.3 SỬA ĐỔI NGÔN NGỮ
+### 3.3 LANGUAGE FIX
 
-**Issue: Line 214 có Chinese text**
+**Issue: Line 214 contains Chinese text**
 ```markdown
-# TRƯỚC:
-| 5.2.3 | Có cần resource-level permissions không? | [T] | Có (user只能访问自己的数据) / Không / Cần tư vấn |
+# BEFORE:
+| 5.2.3 | Are resource-level permissions needed? | [T] | Yes (user只能访问自己的数据) / No / Needs consultation |
 
-# SAU:
-| 5.2.3 | Có cần resource-level permissions không? | [T] | Có (user chỉ truy cập dữ liệu của mình) / Không / Cần tư vấn |
+# AFTER:
+| 5.2.3 | Are resource-level permissions needed? | [T] | Yes (user can only access their own data) / No / Needs consultation |
 ```
 
-### 3.4 THÊM QUICK START GUIDE
+### 3.4 ADD A QUICK START GUIDE
 
-**Bổ sung sau header:**
+**Add after the header:**
 ```markdown
-> **Hướng dẫn sử dụng nhanh**:
-> 1. Đọc hết 1 lượt để hiểu scope
-> 2. Trả lời các câu [B] trước (khoảng 30-40 câu)
-> 3. Đánh dấu các câu [T] tùy theo complexity
-> 4. Đối với mỗi câu trả lời, cung cấp càng chi tiết càng tốt
-> 5. Tham khảo "Questions by Project Type" để biết focus areas
+> **Quick usage guide**:
+> 1. Read through once to understand the scope
+> 2. Answer the [B] questions first (about 30-40 questions)
+> 3. Mark the [T] questions depending on complexity
+> 4. For each answer, provide as much detail as possible
+> 5. See "Questions by Project Type" for focus areas
 ```
 
-### 3.5 CẢI THIỆN ANSWER SUGGESTIONS
+### 3.5 IMPROVE ANSWER SUGGESTIONS
 
-**Thêm Tech Stack Comparison Table vào Appendix:**
+**Add a Tech Stack Comparison Table to the Appendix:**
 ```markdown
 ### Tech Stack Selection Guide
 
-| Nhu cầu | Small Project | Medium Project | Enterprise |
+| Need | Small Project | Medium Project | Enterprise |
 |---------|---------------|-----------------|------------|
 | API | REST | REST + GraphQL | REST + gRPC |
 | Database | PostgreSQL | PostgreSQL + Redis | Multi-DB + Sharding |
@@ -279,33 +279,33 @@ Cần bổ sung:
 
 ---
 
-## 4. ĐÁNH GIÁ CHI TIẾT TỪNG DANH MỤC
+## 4. DETAILED ASSESSMENT BY CATEGORY
 
 ### 4.1 SYSTEM ARCHITECTURE (1.x) - 8/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| Architectural Pattern (1.1) | Tốt, cover đủ các pattern phổ biến |
-| Deployment Architecture (1.2) | Tốt, có cả cloud/on-premise |
-| High-Level Components (1.3) | Cần bổ sung component responsibility matrix |
-| Communication Patterns (1.4) | Tốt, cover sync/async |
+| Architectural Pattern (1.1) | Good, covers all common patterns |
+| Deployment Architecture (1.2) | Good, covers both cloud/on-premise |
+| High-Level Components (1.3) | Should add a component responsibility matrix |
+| Communication Patterns (1.4) | Good, covers sync/async |
 
-**Điểm mạnh**: Phân loại [B]/[T] rõ ràng  
-**Cần cải thiện**: Thêm visual architecture request (diagram)
+**Strength**: Clear [B]/[T] classification  
+**Needs improvement**: Add a visual architecture diagram request
 
 ---
 
 ### 4.2 FRONTEND ARCHITECTURE (2.x) - 7/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| Technology Stack (2.1) | Đầy đủ |
-| Component Architecture (2.2) | Thiếu atomic design detail |
-| State Management (2.3) | Tốt |
-| Routing & Navigation (2.4) | Tốt |
-| Responsive & PWA (2.5) | Thiếu accessibility (a11y) |
+| Technology Stack (2.1) | Complete |
+| Component Architecture (2.2) | Missing atomic-design detail |
+| State Management (2.3) | Good |
+| Routing & Navigation (2.4) | Good |
+| Responsive & PWA (2.5) | Missing accessibility (a11y) |
 
-**Thiếu**: 
+**Missing**: 
 - Accessibility requirements (WCAG compliance)
 - Internationalization (i18n)
 - Performance budgets (JS bundle size limit)
@@ -314,59 +314,59 @@ Cần bổ sung:
 
 ### 4.3 BACKEND ARCHITECTURE (3.x) - 7/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| Technology Stack (3.1) | Tốt |
-| API Design (3.2) | Tốt, thiếu endpoint inventory |
-| Authentication (3.3) | Overlap với Security 5.x |
-| Caching & Queue (3.4) | Tốt |
+| Technology Stack (3.1) | Good |
+| API Design (3.2) | Good, missing an endpoint inventory |
+| Authentication (3.3) | Overlaps with Security 5.x |
+| Caching & Queue (3.4) | Good |
 
-**Overlaps cần resolve**:
-- 3.3.x với 5.1.x (authentication)
-- 3.4.x với 8.3.x (caching)
+**Overlaps to resolve**:
+- 3.3.x with 5.1.x (authentication)
+- 3.4.x with 8.3.x (caching)
 
 ---
 
 ### 4.4 DATABASE DESIGN (4.x) - 8/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| Database Type (4.1) | Tốt |
-| Schema Design (4.2) | Tốt |
-| Indexing & Performance (4.3) | Tốt |
-| Data Partitioning (4.4) | Tốt |
+| Database Type (4.1) | Good |
+| Schema Design (4.2) | Good |
+| Indexing & Performance (4.3) | Good |
+| Data Partitioning (4.4) | Good |
 
-**Điểm mạnh**: Cover đầy đủ SQL/NoSQL, ORM options  
-**Cần thêm**: Data lifecycle management, archival strategy chi tiết hơn
+**Strength**: Fully covers SQL/NoSQL, ORM options  
+**Needs adding**: Data lifecycle management, a more detailed archival strategy
 
 ---
 
 ### 4.5 SECURITY ARCHITECTURE (5.x) - 8/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| Authentication & Identity (5.1) | Tốt |
-| Authorization Model (5.2) | Tốt |
-| Data Protection (5.3) | Tốt |
-| API & Application Security (5.4) | Tốt, cover OWASP top 10 |
-| Compliance & Audit (5.5) | Tốt |
+| Authentication & Identity (5.1) | Good |
+| Authorization Model (5.2) | Good |
+| Data Protection (5.3) | Good |
+| API & Application Security (5.4) | Good, covers OWASP top 10 |
+| Compliance & Audit (5.5) | Good |
 
-**Điểm mạnh**: Cover đầy đủ compliance requirements  
-**Cần cải thiện**: Thêm security architecture diagram request
+**Strength**: Fully covers compliance requirements  
+**Needs improvement**: Add a security architecture diagram request
 
 ---
 
 ### 4.6 INTEGRATION ARCHITECTURE (6.x) - 7/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| Third-Party Services (6.1) | Tốt |
-| Payment Integration (6.2) | Chi tiết và đầy đủ |
-| Authentication Providers (6.3) | Tốt |
-| Event-Driven & Messaging (6.4) | Tốt |
-| External System Integration (6.5) | Tốt |
+| Third-Party Services (6.1) | Good |
+| Payment Integration (6.2) | Detailed and complete |
+| Authentication Providers (6.3) | Good |
+| Event-Driven & Messaging (6.4) | Good |
+| External System Integration (6.5) | Good |
 
-**Thiếu**: 
+**Missing**: 
 - Integration with internal legacy systems
 - Data format transformation/ETL considerations
 
@@ -374,85 +374,85 @@ Cần bổ sung:
 
 ### 4.7 DEPLOYMENT & INFRASTRUCTURE (7.x) - 8/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| CI/CD Pipeline (7.1) | Tốt |
-| Containerization (7.2) | Tốt |
-| Environment Configuration (7.3) | Tốt |
-| Infrastructure as Code (7.4) | Tốt |
-| Monitoring & Logging (7.5) | Tốt |
+| CI/CD Pipeline (7.1) | Good |
+| Containerization (7.2) | Good |
+| Environment Configuration (7.3) | Good |
+| Infrastructure as Code (7.4) | Good |
+| Monitoring & Logging (7.5) | Good |
 
-**Điểm mạnh**: Cover đầy đủ DevOps lifecycle  
-**Cần thêm**: Cost estimation/budget considerations
+**Strength**: Fully covers the DevOps lifecycle  
+**Needs adding**: Cost estimation/budget considerations
 
 ---
 
 ### 4.8 PERFORMANCE & SCALABILITY (8.x) - 7/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| Capacity Planning (8.1) | Tốt, cần concrete numbers |
-| Performance Requirements (8.2) | Thiếu concrete SLAs |
-| Caching Strategy (8.3) | Tốt |
-| Scalability (8.4) | Tốt |
+| Capacity Planning (8.1) | Good, needs concrete numbers |
+| Performance Requirements (8.2) | Missing concrete SLAs |
+| Caching Strategy (8.3) | Good |
+| Scalability (8.4) | Good |
 
-**Cần cải thiện**: 
-- Thêm reference values (industry benchmarks)
+**Needs improvement**: 
+- Add reference values (industry benchmarks)
 - Database query performance budgets
 
 ---
 
 ### 4.9 RELIABILITY & MONITORING (9.x) - 8/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| Availability & SLA (9.1) | Tốt |
-| Error Handling (9.2) | Tốt |
-| Logging Strategy (9.3) | Tốt |
-| Monitoring & Alerting (9.4) | Tốt |
-| Disaster Recovery (9.5) | Rất chi tiết |
+| Availability & SLA (9.1) | Good |
+| Error Handling (9.2) | Good |
+| Logging Strategy (9.3) | Good |
+| Monitoring & Alerting (9.4) | Good |
+| Disaster Recovery (9.5) | Very detailed |
 
-**Điểm mạnh**: DR section rất comprehensive  
-**Cần thêm**: Chaos engineering considerations
+**Strength**: The DR section is very comprehensive  
+**Needs adding**: Chaos engineering considerations
 
 ---
 
 ### 4.10 DEVELOPMENT WORKFLOW (10.x) - 7/10
 
-| Tiêu chí | Đánh giá |
+| Criterion | Assessment |
 |----------|----------|
-| Code Quality (10.1) | Tốt |
-| Testing Requirements (10.2) | Tốt, có test pyramid |
-| Code Review (10.3) | Tốt |
-| Version Control (10.4) | Tốt |
-| Documentation (10.5) | Tốt |
+| Code Quality (10.1) | Good |
+| Testing Requirements (10.2) | Good, includes a test pyramid |
+| Code Review (10.3) | Good |
+| Version Control (10.4) | Good |
+| Documentation (10.5) | Good |
 
-**Thiếu**:
+**Missing**:
 - Definition of Done (DoD) criteria
 - Definition of Ready (DoR) criteria
 - Technical debt management
 
 ---
 
-## 5. TỔNG KẾT VÀ KHUYẾN NGHỊ
+## 5. SUMMARY AND RECOMMENDATIONS
 
-### 5.1 ƯU TIÊN SỬA ĐỔI
+### 5.1 REVISION PRIORITIES
 
 | Priority | Issue | Effort | Impact |
 |----------|-------|--------|--------|
-| **P0** | Thêm Section 0: Requirements Mapping | Medium | High |
-| **P0** | Thêm Use Case → Component mapping | Medium | High |
+| **P0** | Add Section 0: Requirements Mapping | Medium | High |
+| **P0** | Add Use Case → Component mapping | Medium | High |
 | **P1** | Fix mixed language (line 214) | Low | Medium |
-| **P1** | Thêm concrete examples trong answer suggestions | Low | High |
-| **P2** | Resolve overlap 3.3.x và 5.1.x | Medium | Medium |
-| **P2** | Thêm i18n, accessibility sections | Low | Medium |
+| **P1** | Add concrete examples to answer suggestions | Low | High |
+| **P2** | Resolve the overlap between 3.3.x and 5.1.x | Medium | Medium |
+| **P2** | Add i18n and accessibility sections | Low | Medium |
 | **P2** | Restructure flow: Security after DB | Medium | Medium |
 
 ### 5.2 RECOMMENDED ACTIONS
 
-1. **Ngay lập tức**: Thêm Section 0 để link SRS-SDD
-2. **Tuần này**: Fix language inconsistency và thêm examples
-3. **Sprint sau**: Restructure flow và resolve overlaps
+1. **Immediately**: Add Section 0 to link SRS-SDD
+2. **This week**: Fix the language inconsistency and add examples
+3. **Next sprint**: Restructure the flow and resolve overlaps
 
 ### 5.3 FINAL SCORECARD
 
@@ -490,7 +490,7 @@ Cần bổ sung:
 
 | # | Section | Line | Issue | Fix Required |
 |---|---------|------|-------|---------------|
-| 1 | 5.2.3 | 214 | Chinese text "user只能访问自己的数据" | Change to Vietnamese |
+| 1 | 5.2.3 | 214 | Chinese text "user只能访问自己的数据" | Change to English |
 | 2 | ALL | - | No SRS Use Case reference | Add Section 0 |
 | 3 | - | - | No use case → component mapping | Add section 2.5 |
 
@@ -498,7 +498,7 @@ Cần bổ sung:
 
 | # | Section | Issue | Fix |
 |---|---------|-------|-----|
-| 1 | 3.3.x, 5.1.x | Overlap authentication | Merge or cross-reference |
+| 1 | 3.3.x, 5.1.x | Overlapping authentication | Merge or cross-reference |
 | 2 | 2.5 | Missing i18n | Add 2.5.6 Internationalization |
 | 3 | 2.x | Missing accessibility | Add 2.6 Accessibility |
 | 4 | 8.x | Vague SLAs | Add industry reference values |
@@ -508,11 +508,12 @@ Cần bổ sung:
 
 | # | Section | Issue | Suggestion |
 |---|---------|-------|------------|
-| 1 | Header | No usage guide | Add quick start guide |
-| 2 | Appendix | No tech stack guide | Add comparison table |
+| 1 | Header | No usage guide | Add a quick start guide |
+| 2 | Appendix | No tech stack guide | Add a comparison table |
 | 3 | 7.x | No cost estimation | Add budget considerations |
 | 4 | 9.x | No chaos engineering | Add resilience testing |
 
 ---
 
-*Báo cáo này được tạo tự động bởi Architecture & UX Review System*
+*This report was generated automatically by the Architecture & UX Review System*
+</content>

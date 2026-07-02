@@ -1,13 +1,13 @@
 ---
 name: database-design
 description: |
-  Thiết kế database cho hệ thống phần mềm.
+  Design the database for the software system.
   
-  SỬ DỤNG KHI:
-  - Cần thiết kế database schema
-  - Cần tạo ER diagram
-  - Cần viết DDL statements
-  - Cần tối ưu hóa database
+  USE WHEN:
+  - Need to design a database schema
+  - Need to create an ER diagram
+  - Need to write DDL statements
+  - Need to optimize the database
 version: "1.0.0"
 allowed-tools: ["Read", "Write", "Glob", "Grep"]
 mode: false
@@ -15,19 +15,19 @@ mode: false
 
 # Database Design Skill
 
-## Mục đích
-Thiết kế database schema hoàn chỉnh bao gồm ER diagram và DDL statements.
+## Purpose
+Design a complete database schema including ER diagram and DDL statements.
 
-## Quy trình Thiết kế
+## Design Process
 
-### Bước 1: Phân tích Yêu cầu Dữ liệu
-- Xác định entities (đối tượng thực thể)
-- Xác định attributes (thuộc tính)
-- Xác định relationships (quan hệ)
+### Step 1: Analyze Data Requirements
+- Identify entities (entity objects)
+- Identify attributes (properties)
+- Identify relationships (associations)
 
-### Bước 2: Thiết kế Conceptual Schema (ER Diagram)
+### Step 2: Design Conceptual Schema (ER Diagram)
 
-**Ký hiệu ER**:
+**ER Notation**:
 ```
 Entity (Rectangle)
     │
@@ -39,7 +39,7 @@ Entity (Rectangle)
          └─ Cardinality (1:1, 1:N, M:N)
 ```
 
-**Ví dụ ER**:
+**ER Example**:
 ```
     ┌─────────────┐         ┌─────────────┐
     │   Customer  │         │    Order    │
@@ -51,15 +51,15 @@ Entity (Rectangle)
     └─────────────┘         └─────────────┘
 ```
 
-### Bước 3: Thiết kế Logical Schema
+### Step 3: Design Logical Schema
 
-**Chuẩn hóa (Normalization)**:
+**Normalization**:
 - 1NF: Atomic values
 - 2NF: No partial dependencies
 - 3NF: No transitive dependencies
 - BCNF: Boyce-Codd Normal Form
 
-### Bước 4: Thiết kế Physical Schema
+### Step 4: Design Physical Schema
 
 **Table Definitions (SQL)**:
 
@@ -97,7 +97,7 @@ CREATE TABLE order_items (
 );
 ```
 
-### Bước 5: Tạo Indexes
+### Step 5: Create Indexes
 
 ```sql
 -- Indexes for performance
@@ -107,7 +107,7 @@ CREATE INDEX idx_order_items_order ON order_items(order_id);
 CREATE INDEX idx_order_items_product ON order_items(product_id);
 ```
 
-## Output Format cho SDD
+## Output Format for SDD
 
 ### 5. Database Design
 
@@ -747,7 +747,7 @@ CREATE INDEX idx_stock_adjustments_product ON stock_adjustments(product_id);
 1. **Naming Conventions**:
    - Tables: plural, snake_case (customers, order_items)
    - Columns: snake_case (customer_id, order_date)
-   - Primary Keys: {table}_id hoặc id
+   - Primary Keys: {table}_id or id
    - Foreign Keys: {referenced_table}_id
 
 2. **Data Types**:
@@ -762,4 +762,4 @@ CREATE INDEX idx_stock_adjustments_product ON stock_adjustments(product_id);
    - CHECK for validation rules
 
 4. **Soft Deletes**:
-   - Use `deleted_at` column thay vì DELETE
+   - Use `deleted_at` column instead of DELETE

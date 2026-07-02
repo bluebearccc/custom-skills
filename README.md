@@ -1,31 +1,31 @@
 # AgentCode Framework
 
-AI Agent Coding Framework với hệ thống **Agent**, **Skill**, **Command** để tự động hóa tạo tài liệu phần mềm (SRS, SDD, RTM, Test Plan) theo chuẩn IEEE / ISO.
+An AI Agent Coding Framework with an **Agent**, **Skill**, **Command** system to automate the creation of software documentation (SRS, SDD, RTM, Test Plan) according to IEEE / ISO standards.
 
-## Tổng quan
+## Overview
 
-| Thành phần | Vai trò |
+| Component | Role |
 |------------|---------|
-| **Agents** | Điều phối workflow, spawn worker song song, gọi skills |
-| **Skills** | Quy trình chi tiết (phỏng vấn, viết SRS/SDD, UML, DB, API, RTM, test) |
-| **Commands** | Entry point cho người dùng (`/create-srs`, `/generate-docs`, …) |
+| **Agents** | Coordinate the workflow, spawn workers in parallel, call skills |
+| **Skills** | Detailed procedures (interviewing, writing SRS/SDD, UML, DB, API, RTM, test) |
+| **Commands** | Entry points for the user (`/create-srs`, `/generate-docs`, …) |
 
-**Luồng chính:** User → `doc-coordinator` → `@srs-agent` / `@sdd-agent` → worker agents → skills → artifacts trong `docs/{ProjectName}/`.
+**Main flow:** User → `doc-coordinator` → `@srs-agent` / `@sdd-agent` → worker agents → skills → artifacts in `docs/{ProjectName}/`.
 
-Chi tiết workflow: [AGENTS.md](AGENTS.md), [docs/user-flow.md](docs/user-flow.md), [MANIFEST.md](MANIFEST.md).
+Workflow details: [AGENTS.md](AGENTS.md), [docs/user-flow.md](docs/user-flow.md), [MANIFEST.md](MANIFEST.md).
 
 ---
 
-## Cấu trúc thư mục
+## Directory Structure
 
 ```
 agent-doc/
-├── README.md                 # Tài liệu này
+├── README.md                 # This document
 ├── AGENTS.md                 # Workflow, @mention, quality checklist (canonical)
 ├── MANIFEST.md               # Manifest & quick start
 ├── srs-sdd-template-patches.md
 ├── agents/                   # 13 agent definitions
-├── skills/                   # 10 skills (mỗi skill = SKILL.md)
+├── skills/                   # 10 skills (each skill = SKILL.md)
 ├── commands/                 # 10 slash commands
 ├── docs/                     # Catalogues, user flow, question reviews
 ├── diagrams/workflow/        # PlantUML workflow diagrams
@@ -38,38 +38,38 @@ agent-doc/
 
 ### Primary & coordinators
 
-| Agent | Mode | Mô tả | Gọi bởi |
+| Agent | Mode | Description | Invoked by |
 |-------|------|--------|---------|
-| `doc-coordinator` | primary | Điều phối toàn bộ SRS + SDD; xử lý commands; spawn sub-agents | User |
-| `srs-agent` | subagent | Điều phối workflow SRS (phỏng vấn → diagrams → viết SRS) | doc-coordinator |
-| `sdd-agent` | subagent | Điều phối workflow SDD (đọc SRS → components/DB/API → viết SDD) | doc-coordinator |
+| `doc-coordinator` | primary | Coordinates the whole SRS + SDD process; handles commands; spawns sub-agents | User |
+| `srs-agent` | subagent | Coordinates the SRS workflow (interview → diagrams → write SRS) | doc-coordinator |
+| `sdd-agent` | subagent | Coordinates the SDD workflow (reads SRS → components/DB/API → write SDD) | doc-coordinator |
 
 ### Worker agents (SRS path)
 
-| Agent | Spawn nhiều? | Mô tả | Gọi bởi |
+| Agent | Multi-spawn? | Description | Invoked by |
 |-------|----------------|--------|---------|
-| `requirements-agent` | **Có** (theo actor/UC) | Thu thập requirements cho từng actor hoặc use case | srs-agent |
-| `uc-diagram-agent` | **Có** (theo UC) | Tạo 6 PlantUML diagrams bắt buộc cho mỗi use case | srs-agent |
+| `requirements-agent` | **Yes** (per actor/UC) | Gathers requirements for each actor or use case | srs-agent |
+| `uc-diagram-agent` | **Yes** (per UC) | Creates the 6 mandatory PlantUML diagrams for each use case | srs-agent |
 
 ### Worker agents (SDD path)
 
-| Agent | Spawn nhiều? | Mô tả | Gọi bởi |
+| Agent | Multi-spawn? | Description | Invoked by |
 |-------|----------------|--------|---------|
-| `component-agent` | **Có** (theo component) | Thiết kế chi tiết 1 module: 5 artifacts (class BE/FE, sequence, state, SQL) | sdd-agent |
-| `db-agent` | Không | Schema tổng thể, ER diagram, DDL, migrations | sdd-agent |
-| `api-agent` | Không | REST API tổng thể: OpenAPI 3.0, error codes registry | sdd-agent |
+| `component-agent` | **Yes** (per component) | Designs 1 module in detail: 5 artifacts (class BE/FE, sequence, state, SQL) | sdd-agent |
+| `db-agent` | No | Overall schema, ER diagram, DDL, migrations | sdd-agent |
+| `api-agent` | No | Overall REST API: OpenAPI 3.0, error codes registry | sdd-agent |
 
-### Post-processing (sau SRS + SDD)
+### Post-processing (after SRS + SDD)
 
-| Agent | Spawn nhiều? | Mô tả | Gọi bởi |
+| Agent | Multi-spawn? | Description | Invoked by |
 |-------|----------------|--------|---------|
-| `integration-agent` | Không | Cross-check consistency, `index.md`, changelog, package manifest, quality report | doc-coordinator |
-| `quality-agent` | Không | Quality gate: artifact coverage, cross-doc consistency, diagram syntax, completeness | integration-agent |
-| `traceability-agent` | Không | RTM: mapping FR → UC → Component → API → DB → Test | integration-agent |
-| `test-agent` | Không | Test Plan, test cases theo UC, Postman collection từ OpenAPI | integration-agent |
-| `formatter-agent` | Không | Export markdown → docx/pdf/html/xlsx (on demand) | doc-coordinator |
+| `integration-agent` | No | Cross-checks consistency, `index.md`, changelog, package manifest, quality report | doc-coordinator |
+| `quality-agent` | No | Quality gate: artifact coverage, cross-doc consistency, diagram syntax, completeness | integration-agent |
+| `traceability-agent` | No | RTM: maps FR → UC → Component → API → DB → Test | integration-agent |
+| `test-agent` | No | Test Plan, test cases per UC, Postman collection from OpenAPI | integration-agent |
+| `formatter-agent` | No | Exports markdown → docx/pdf/html/xlsx (on demand) | doc-coordinator |
 
-### Kiến trúc spawn (rút gọn)
+### Spawn architecture (simplified)
 
 ```
 doc-coordinator
@@ -77,52 +77,52 @@ doc-coordinator
 │     ├── @requirements-agent × N
 │     ├── @uc-diagram-agent × N
 │     └── skill: srs-writing
-├── @sdd-agent          (cần SRS + requirements-summary + "XÁC NHẬN")
+├── @sdd-agent          (requires SRS + requirements-summary + "CONFIRM")
 │     ├── @component-agent × N
 │     ├── @db-agent & @api-agent
 │     └── skill: sdd-writing
 └── @integration-agent
-      ├── @quality-agent        (quality gate — chạy đầu tiên)
+      ├── @quality-agent        (quality gate — runs first)
       ├── @traceability-agent
       └── @test-agent
-# @formatter-agent: gọi on demand qua /export-docs
+# @formatter-agent: called on demand via /export-docs
 ```
 
-**Nguyên tắc:** `doc-coordinator` không gọi skills trực tiếp — luôn ủy quyền qua sub-agents. Worker có thể spawn **song song** (`&` … `wait`).
+**Principle:** `doc-coordinator` does not call skills directly — it always delegates through sub-agents. Workers can spawn **in parallel** (`&` … `wait`).
 
 ---
 
 ## Skills (10)
 
-| Skill | Version | Mô tả | Dùng bởi |
+| Skill | Version | Description | Used by |
 |-------|---------|--------|----------|
-| `requirements-gathering` | 3.2.0 | Phỏng vấn bắt buộc từng câu (AskUserQuestion); đào sâu; kết thúc bằng "XÁC NHẬN" | srs-agent, `/interview-stakeholder` |
-| `srs-writing` | 4.0.0 | Viết SRS IEEE; AC per UC + RTI; **link** PlantUML ngoài, không embed | srs-agent |
-| `sdd-writing` | 4.0.0 | Viết SDD IEEE 1016; requirements mapping, error/logging/caching/rate-limit | sdd-agent |
+| `requirements-gathering` | 3.2.0 | Mandatory question-by-question interview (AskUserQuestion); probes deeper; ends with "CONFIRM" | srs-agent, `/interview-stakeholder` |
+| `srs-writing` | 4.0.0 | Writes IEEE SRS; AC per UC + RTI; **links** external PlantUML, not embedded | srs-agent |
+| `sdd-writing` | 4.0.0 | Writes IEEE 1016 SDD; requirements mapping, error/logging/caching/rate-limit | sdd-agent |
 | `uml-design` | 3.0.0 | Use case, screen flow, state, ERD, sequence, deployment, DFD, integration (PlantUML) | uc-diagram-agent, srs/sdd agents |
 | `component-design` | 1.0.0 | 5 artifacts/component (class BE/FE, sequence, state, `*_tables.sql`) | component-agent |
-| `database-design` | 1.0.0 | ER diagram, DDL, schema tổng thể | db-agent |
+| `database-design` | 1.0.0 | ER diagram, DDL, overall schema | db-agent |
 | `api-design` | 3.0.0 | OpenAPI 3.0, error codes, auth, versioning | api-agent |
 | `nfr-design` | 1.0.0 | Capacity planning, DR, i18n/l10n, accessibility (WCAG) | sdd-agent |
 | `traceability` | 1.0.0 | RTM + coverage report (`traceability/RTM.md`, `coverage.md`) | traceability-agent |
-| `test-design` | 1.0.0 | TEST-PLAN, test cases/UC, Postman từ openapi.yaml | test-agent |
+| `test-design` | 1.0.0 | TEST-PLAN, test cases/UC, Postman from openapi.yaml | test-agent |
 
 ---
 
 ## Commands (10)
 
-| Command | File | Mô tả | Agent xử lý |
+| Command | File | Description | Handling agent |
 |---------|------|--------|-------------|
-| `/create-srs [project_name]` | `commands/create-srs.md` | Tạo SRS (phỏng vấn → UC diagrams → SRS) | doc-coordinator → srs-agent |
-| `/create-sdd [project_name]` | `commands/create-sdd.md` | Tạo SDD (yêu cầu SRS đã có) | doc-coordinator → sdd-agent |
+| `/create-srs [project_name]` | `commands/create-srs.md` | Creates SRS (interview → UC diagrams → SRS) | doc-coordinator → srs-agent |
+| `/create-sdd [project_name]` | `commands/create-sdd.md` | Creates SDD (requires an existing SRS) | doc-coordinator → sdd-agent |
 | `/generate-docs [project_name]` | `commands/generate-docs.md` | SRS + SDD + quality + RTM + test | doc-coordinator (full pipeline) |
-| `/interview-stakeholder` | `commands/interview-stakeholder.md` | Phỏng vấn stakeholder (user/manager/dev) | doc-coordinator |
-| `/create-srs-template` | `commands/create-srs-template.md` | Template SRS rỗng (IEEE) | any |
-| `/create-sdd-template` | `commands/create-sdd-template.md` | Template SDD rỗng (IEEE) | any |
-| `/create-diagram` | `commands/create-diagram.md` | Tạo UML từ mô tả text (use case, class, sequence, …) | any |
-| `/update-srs [project] [--scope]` | `commands/update-srs.md` | Cập nhật SRS với delta changes + semantic versioning | doc-coordinator |
-| `/update-sdd [project] [--scope]` | `commands/update-sdd.md` | Cập nhật SDD với delta changes (component-level) | doc-coordinator |
-| `/export-docs [project] [--format]` | `commands/export-docs.md` | Xuất docx/pdf/html/xlsx cho stakeholder | doc-coordinator → formatter-agent |
+| `/interview-stakeholder` | `commands/interview-stakeholder.md` | Interviews a stakeholder (user/manager/dev) | doc-coordinator |
+| `/create-srs-template` | `commands/create-srs-template.md` | Empty SRS template (IEEE) | any |
+| `/create-sdd-template` | `commands/create-sdd-template.md` | Empty SDD template (IEEE) | any |
+| `/create-diagram` | `commands/create-diagram.md` | Creates UML from a text description (use case, class, sequence, …) | any |
+| `/update-srs [project] [--scope]` | `commands/update-srs.md` | Updates SRS with delta changes + semantic versioning | doc-coordinator |
+| `/update-sdd [project] [--scope]` | `commands/update-sdd.md` | Updates SDD with delta changes (component-level) | doc-coordinator |
+| `/export-docs [project] [--format]` | `commands/export-docs.md` | Exports docx/pdf/html/xlsx for stakeholders | doc-coordinator → formatter-agent |
 
 ### Quick start
 
@@ -132,20 +132,20 @@ doc-coordinator
 /generate-docs MyProject
 ```
 
-**Lưu ý:** Trước SRS, phỏng vấn requirements là **bắt buộc** — user phải trả lời đủ và gõ `XÁC NHẬN` trước khi tiếp tục. `/create-sdd` bị chặn nếu chưa có SRS.
+**Note:** Before SRS, the requirements interview is **mandatory** — the user must answer all questions and type `CONFIRM` before continuing. `/create-sdd` is blocked if there is no SRS yet.
 
 ---
 
-## Output artifacts (theo project)
+## Output artifacts (per project)
 
-Sau khi chạy đầy đủ pipeline, thư mục dự kiến:
+After running the full pipeline, the expected directory looks like:
 
 ```
 docs/{ProjectName}/
 ├── SRS_{Project}_v1.0.0.md
 ├── SDD_{Project}_v1.0.0.md
 ├── requirements-summary.md
-├── requirements/              # Chi tiết phỏng vấn
+├── requirements/              # Interview details
 ├── interviews/                # interview_{name}_{date}.md
 ├── diagrams/                  # PlantUML per UC + system-level
 ├── api/
@@ -169,30 +169,30 @@ docs/{ProjectName}/
 
 ---
 
-## Tài liệu hỗ trợ (`docs/`)
+## Supporting documentation (`docs/`)
 
-| File | Mục đích |
+| File | Purpose |
 |------|----------|
-| `docs/user-flow.md` | User flow chi tiết cho từng command |
-| `docs/SRS_Questions_Catalogue.md` | Catalogue câu hỏi SRS |
-| `docs/SRS_Questions_Review.md` | Review câu hỏi SRS |
-| `docs/SDD_Questions_Catalogue.md` | Catalogue câu hỏi SDD |
-| `docs/SDD_Questions_Review.md` | Review câu hỏi SDD |
+| `docs/user-flow.md` | Detailed user flow for each command |
+| `docs/SRS_Questions_Catalogue.md` | SRS question catalogue |
+| `docs/SRS_Questions_Review.md` | SRS question review |
+| `docs/SDD_Questions_Catalogue.md` | SDD question catalogue |
+| `docs/SDD_Questions_Review.md` | SDD question review |
 
 ---
 
 ## Diagrams & PlantUML
 
-| Vị trí | Nội dung |
+| Location | Content |
 |--------|----------|
 | `diagrams/workflow/` | `agentcode-workflow.puml`, `agentcode-sequence.puml`, `agentcode-architecture.puml`, `mandatory-interview-flow.puml`, `mandatory-requirements-flow.puml`, `external-linking.puml`, `user-journey.puml` |
-| `PlantUML/config.cfg` | Cấu hình render PlantUML |
+| `PlantUML/config.cfg` | PlantUML render configuration |
 
-**Quy ước UC diagrams (mỗi use case):** use case, screen flow, state, sequence, class backend, class frontend — do `uc-diagram-agent` + skill `uml-design`.
+**UC diagram convention (per use case):** use case, screen flow, state, sequence, class backend, class frontend — produced by `uc-diagram-agent` + skill `uml-design`.
 
 ---
 
-## Template SRS / SDD
+## SRS / SDD Templates
 
 ### SRS (sections)
 
@@ -214,30 +214,31 @@ docs/{ProjectName}/
 7. Security Design  
 8. Deployment Architecture  
 
-Templates rỗng: `/create-srs-template`, `/create-sdd-template`. Bổ sung template: `srs-sdd-template-patches.md`.
+Empty templates: `/create-srs-template`, `/create-sdd-template`. Additional templates: `srs-sdd-template-patches.md`.
 
 ---
 
-## Tích hợp IDE / agent host
+## IDE / agent host integration
 
-| Host | Cách dùng |
+| Host | Usage |
 |------|-----------|
-| OpenCode | Copy vào `~/.config/opencode/skills/` |
-| Claude Code | Copy vào `~/.claude/skills/` |
-| Custom | Import theo [AGENTS.md](AGENTS.md) — cấu hình `mode: primary` / `subagent`, permissions |
+| OpenCode | Copy to `~/.config/opencode/skills/` |
+| Claude Code | Copy to `~/.claude/skills/` |
+| Custom | Import per [AGENTS.md](AGENTS.md) — configure `mode: primary` / `subagent`, permissions |
 
 ---
 
-## File tham chiếu nhanh
+## Quick reference files
 
-| File | Khi nào đọc |
+| File | When to read it |
 |------|----------------|
 | [AGENTS.md](AGENTS.md) | Workflow, @mention, registry, quality checklist (canonical) |
-| [MANIFEST.md](MANIFEST.md) | Component list, file structure tóm tắt |
-| [docs/user-flow.md](docs/user-flow.md) | Luồng người dùng từng bước |
+| [MANIFEST.md](MANIFEST.md) | Component list, condensed file structure |
+| [docs/user-flow.md](docs/user-flow.md) | Step-by-step user flow |
 
 ---
 
 ## License
 
 Proprietary — AgentCode Framework
+</content>

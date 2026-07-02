@@ -1,15 +1,15 @@
 ---
 name: api-design
 description: |
-  Thiết kế REST API hoàn chỉnh cho SDD: endpoint inventory, OpenAPI 3.0 spec,
-  error code registry, authentication scheme, rate limiting, và versioning.
+  Design a complete REST API for the SDD: endpoint inventory, OpenAPI 3.0 spec,
+  error code registry, authentication scheme, rate limiting, and versioning.
 
-  SỬ DỤNG KHI:
-  - api-agent được spawn để thiết kế API tổng thể
-  - Cần tạo openapi.yaml chuẩn OpenAPI 3.0
-  - Cần định nghĩa error codes, response envelope, auth scheme
+  USE WHEN:
+  - api-agent is spawned to design the overall API
+  - Need to create openapi.yaml conforming to OpenAPI 3.0
+  - Need to define error codes, response envelope, auth scheme
 
-  OUTPUT BẮT BUỘC (2 files):
+  REQUIRED OUTPUT (2 files):
   1. api/openapi.yaml         — Full OpenAPI 3.0 spec
   2. api/error-codes.md       — Error code registry
 version: "3.0.0"
@@ -19,23 +19,23 @@ mode: false
 
 # API Design Skill v3.0.0
 
-## Mục đích
-Hướng dẫn `api-agent` thiết kế toàn bộ REST API cho dự án theo chuẩn OpenAPI 3.0, nhất quán về conventions, authentication, error handling, và versioning.
+## Purpose
+Guide `api-agent` to design the entire REST API for the project following the OpenAPI 3.0 standard, consistent in conventions, authentication, error handling, and versioning.
 
 ---
 
-## Bước 1 — Đọc SRS và xác định API scope
+## Step 1 — Read the SRS and determine API scope
 
-Trước khi viết spec, đọc:
+Before writing the spec, read:
 - `requirements-summary.md` → Actors, Use Cases, NFRs (Security, Performance)
 - `SRS_{Project}_v*.md` → Functional requirements, Data entities
-- `db/schema.sql` (nếu có) → Derive response schemas từ table definitions
+- `db/schema.sql` (if available) → Derive response schemas from table definitions
 
 **Mapping UC → Endpoint:**
 ```
-Mỗi Use Case → 1 hoặc nhiều API endpoints
-Pattern chuẩn:
-  UC: Quản lý {Resource}
+Each Use Case → 1 or more API endpoints
+Standard pattern:
+  UC: Manage {Resource}
     GET    /api/v1/{resources}           list (paginated)
     POST   /api/v1/{resources}           create
     GET    /api/v1/{resources}/{id}      get by id
@@ -43,11 +43,11 @@ Pattern chuẩn:
     PATCH  /api/v1/{resources}/{id}      update (partial)
     DELETE /api/v1/{resources}/{id}      soft delete
 
-  UC: Quan hệ {Parent}–{Child}
+  UC: {Parent}–{Child} relationship
     GET    /api/v1/{parents}/{id}/{children}
     POST   /api/v1/{parents}/{id}/{children}
 
-  UC: Action không phải CRUD
+  UC: Non-CRUD action
     POST   /api/v1/{resources}/{id}/activate
     POST   /api/v1/{resources}/{id}/cancel
     POST   /api/v1/{resources}/{id}/approve
@@ -55,7 +55,7 @@ Pattern chuẩn:
 
 ---
 
-## Bước 2 — API Design Conventions (thiết lập TRƯỚC khi viết spec)
+## Step 2 — API Design Conventions (establish BEFORE writing the spec)
 
 ### URL & Versioning
 ```
@@ -135,7 +135,7 @@ X-RateLimit-Reset: 1716700800
 
 ---
 
-## Bước 3 — OpenAPI 3.0 Full Template
+## Step 3 — OpenAPI 3.0 Full Template
 
 ```yaml
 openapi: "3.0.3"
@@ -780,23 +780,23 @@ components:
 
 ---
 
-## Bước 4 — Error Codes Registry Template
+## Step 4 — Error Codes Registry Template
 
-Lưu vào `api/error-codes.md`:
+Save to `api/error-codes.md`:
 
 ```markdown
 # API Error Codes — {ProjectName} v1.0.0
 
 ## Standard HTTP Errors
 
-| HTTP | Code | Message | Khi nào |
+| HTTP | Code | Message | When |
 |------|------|---------|---------|
 | 400 | INVALID_REQUEST | Malformed request body | JSON parse error, missing Content-Type |
 | 401 | UNAUTHENTICATED | Authentication required | No/invalid/expired token |
 | 401 | TOKEN_EXPIRED | Access token has expired | JWT exp claim passed |
 | 401 | INVALID_TOKEN | Token is invalid or malformed | JWT verify fail |
 | 403 | FORBIDDEN | Insufficient permissions | Role/permission check fail |
-| 404 | NOT_FOUND | Resource not found | ID không tồn tại hoặc soft-deleted |
+| 404 | NOT_FOUND | Resource not found | ID does not exist or is soft-deleted |
 | 405 | METHOD_NOT_ALLOWED | HTTP method not supported | Wrong verb |
 | 409 | CONFLICT | Resource already exists | Duplicate unique field |
 | 410 | GONE | Resource permanently deleted | Hard-deleted resource |
@@ -807,27 +807,27 @@ Lưu vào `api/error-codes.md`:
 
 ## Auth Module Errors
 
-| Code | Message | HTTP | Khi nào |
+| Code | Message | HTTP | When |
 |------|---------|------|---------|
 | INVALID_CREDENTIALS | Email or password is incorrect | 401 | Login fail |
 | ACCOUNT_DISABLED | Account has been disabled | 403 | is_active = false |
 | EMAIL_NOT_VERIFIED | Please verify your email first | 403 | is_email_verified = false |
-| OTP_EXPIRED | OTP code has expired | 422 | OTP TTL vượt quá |
-| OTP_INVALID | OTP code is incorrect | 422 | Sai OTP |
-| PASSWORD_TOO_WEAK | Password does not meet requirements | 422 | Không đủ complexity |
-| EMAIL_ALREADY_EXISTS | Email is already registered | 409 | Đăng ký trùng email |
-| REFRESH_TOKEN_EXPIRED | Refresh token has expired | 401 | Phải login lại |
-| REFRESH_TOKEN_REVOKED | Refresh token has been revoked | 401 | Logout đã xảy ra |
+| OTP_EXPIRED | OTP code has expired | 422 | OTP TTL exceeded |
+| OTP_INVALID | OTP code is incorrect | 422 | Incorrect OTP |
+| PASSWORD_TOO_WEAK | Password does not meet requirements | 422 | Insufficient complexity |
+| EMAIL_ALREADY_EXISTS | Email is already registered | 409 | Duplicate email registration |
+| REFRESH_TOKEN_EXPIRED | Refresh token has expired | 401 | Must log in again |
+| REFRESH_TOKEN_REVOKED | Refresh token has been revoked | 401 | Logout has occurred |
 
 ## {Domain Module} Errors
 
-| Code | Message | HTTP | Khi nào |
+| Code | Message | HTTP | When |
 |------|---------|------|---------|
-| {DOMAIN}_{ENTITY}_NOT_FOUND | {Entity} not found | 404 | ID không tồn tại |
+| {DOMAIN}_{ENTITY}_NOT_FOUND | {Entity} not found | 404 | ID does not exist |
 | {DOMAIN}_{ENTITY}_ALREADY_EXISTS | {Entity} already exists | 409 | Duplicate key |
 | {DOMAIN}_INVALID_STATUS | Invalid status transition | 422 | State machine violation |
-| {DOMAIN}_INSUFFICIENT_STOCK | Insufficient stock | 422 | Tồn kho không đủ |
-| {DOMAIN}_PAYMENT_FAILED | Payment processing failed | 422 | Gateway từ chối |
+| {DOMAIN}_INSUFFICIENT_STOCK | Insufficient stock | 422 | Insufficient stock |
+| {DOMAIN}_PAYMENT_FAILED | Payment processing failed | 422 | Gateway rejected |
 
 ## Error Response Format
 
@@ -844,20 +844,20 @@ Lưu vào `api/error-codes.md`:
 }
 ```
 
-`fields` chỉ có mặt khi `code = VALIDATION_ERROR` (HTTP 422).
+`fields` is only present when `code = VALIDATION_ERROR` (HTTP 422).
 ```
 
 ---
 
-## Checklist hoàn thành
+## Completion Checklist
 
-- [ ] Tất cả UCs từ SRS đã có ít nhất 1 endpoint tương ứng
+- [ ] All UCs from the SRS have at least 1 corresponding endpoint
 - [ ] Auth endpoints: register, login, refresh, logout
-- [ ] Tất cả list endpoints có pagination parameters
-- [ ] Tất cả protected endpoints có `security: [BearerAuth: []]`
-- [ ] Response schemas dùng chung `SuccessResponse` envelope
-- [ ] Tất cả error responses dùng `$ref` đến common responses
-- [ ] `operationId` unique và camelCase cho mọi endpoint
-- [ ] Examples được cung cấp cho request/response quan trọng
-- [ ] `api/error-codes.md` có đủ: HTTP errors + domain errors
-- [ ] YAML syntax valid (không tab character, indentation nhất quán)
+- [ ] All list endpoints have pagination parameters
+- [ ] All protected endpoints have `security: [BearerAuth: []]`
+- [ ] Response schemas share the common `SuccessResponse` envelope
+- [ ] All error responses use `$ref` to common responses
+- [ ] `operationId` is unique and camelCase for every endpoint
+- [ ] Examples are provided for important requests/responses
+- [ ] `api/error-codes.md` includes: HTTP errors + domain errors
+- [ ] YAML syntax valid (no tab characters, consistent indentation)

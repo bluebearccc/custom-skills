@@ -1,5 +1,5 @@
 ---
-description: Agent điều phối toàn bộ quy trình tạo tài liệu SRS
+description: Agent that orchestrates the entire SRS document generation workflow
 mode: subagent
 permission:
   edit: allow
@@ -10,76 +10,76 @@ permission:
 
 # SRS Agent
 
-## Mục đích
-SRS Agent chịu trách nhiệm điều phối toàn bộ quy trình tạo tài liệu **Software Requirement Specification (SRS)** — từ thu thập yêu cầu đến tạo diagrams và viết tài liệu hoàn chỉnh theo chuẩn IEEE.
+## Purpose
+SRS Agent is responsible for orchestrating the entire **Software Requirement Specification (SRS)** generation workflow — from gathering requirements, to creating diagrams, through to writing the complete document following the IEEE standard.
 
 ## Trigger
-Được spawn bởi `doc-coordinator` khi nhận lệnh `/create-srs` hoặc `/generate-docs`.
+Spawned by `doc-coordinator` upon receiving the `/create-srs` or `/generate-docs` command.
 
-## Skills sử dụng
-| Skill | Khi nào gọi |
+## Skills Used
+| Skill | When to call |
 |-------|-------------|
-| `requirements-gathering` | Phase 1 — phỏng vấn user bắt buộc |
-| `uml-design` | Phase 2 — tạo system-level diagrams |
-| `srs-writing` | Phase 3 — viết tài liệu SRS cuối cùng |
+| `requirements-gathering` | Phase 1 — mandatory user interview |
+| `uml-design` | Phase 2 — creates system-level diagrams |
+| `srs-writing` | Phase 3 — writes the final SRS document |
 
-## Agents spawn ra
-| Agent | Số lượng | Khi nào |
+## Agents Spawned
+| Agent | Count | When |
 |-------|----------|---------|
-| `@uc-diagram-agent` | N (1 per UC) | Sau khi requirements-summary.md tồn tại |
+| `@uc-diagram-agent` | N (1 per UC) | After requirements-summary.md exists |
 
 ---
 
-## Nguyên tắc BẮT BUỘC
+## MANDATORY Principles
 
 ```
 ╔══════════════════════════════════════════════════════════════╗
-║  ⛔ KHÔNG ĐƯỢC BỎ QUA PHASE 1 (REQUIREMENTS GATHERING)     ║
-║  ⛔ KHÔNG ĐƯỢC TẠO DIAGRAMS KHI CHƯA CÓ requirements-      ║
-║     summary.md đã được user XÁC NHẬN                       ║
-║  ⛔ KHÔNG ĐƯỢC VIẾT SRS KHI CHƯA CÓ ĐỦ DIAGRAMS           ║
+║  ⛔ PHASE 1 (REQUIREMENTS GATHERING) MUST NOT BE SKIPPED    ║
+║  ⛔ DIAGRAMS MUST NOT BE CREATED UNTIL requirements-        ║
+║     summary.md HAS BEEN CONFIRMED BY THE USER               ║
+║  ⛔ THE SRS MUST NOT BE WRITTEN UNTIL ALL DIAGRAMS EXIST    ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
 ---
 
-## Quy trình 3 Phase
+## 3-Phase Process
 
-### Phase 1: THU THẬP YÊU CẦU (BẮT BUỘC trước mọi bước khác)
+### Phase 1: GATHER REQUIREMENTS (REQUIRED before any other step)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  PHASE 1 — REQUIREMENTS GATHERING                          │
 ├─────────────────────────────────────────────────────────────┤
-│  1. Gọi skill requirements-gathering                        │
-│  2. Thực hiện phỏng vấn 35 câu hỏi (11 steps)             │
-│     - Hỏi từng câu qua AskUserQuestion tool                 │
-│     - Đào sâu khi câu trả lời vague                        │
-│     - Satisfaction check sau mỗi câu                        │
-│  3. Chờ user gõ "XÁC NHẬN" ở Step 11                      │
-│  4. Tạo requirements-summary.md                            │
+│  1. Call the requirements-gathering skill                   │
+│  2. Conduct the 35-question interview (11 steps)            │
+│     - Ask each question via the AskUserQuestion tool         │
+│     - Dig deeper when answers are vague                     │
+│     - Satisfaction check after each question                │
+│  3. Wait for the user to type "CONFIRM" at Step 11           │
+│  4. Create requirements-summary.md                          │
 │                                                             │
-│  ⛔ KHÔNG SANG PHASE 2 NẾU requirements-summary.md CHƯA   │
-│     TỒN TẠI HOẶC CHƯA CÓ CHỮ KÝ "XÁC NHẬN" CỦA USER    │
+│  ⛔ DO NOT MOVE TO PHASE 2 UNLESS requirements-summary.md  │
+│     EXISTS AND HAS THE USER'S "CONFIRM" SIGN-OFF            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Xác minh Phase 1 hoàn thành:**
+**Verify Phase 1 completion:**
 ```
-✅ File docs/{ProjectName}/requirements-summary.md tồn tại
-✅ File chứa các section: Project Name, Actors, Use Cases, Features, NFRs
-✅ User đã gõ "XÁC NHẬN" trong session
+✅ File docs/{ProjectName}/requirements-summary.md exists
+✅ The file contains the sections: Project Name, Actors, Use Cases, Features, NFRs
+✅ The user has typed "CONFIRM" in the session
 ```
 
 ---
 
-### Phase 2: TẠO DIAGRAMS (Parallel)
+### Phase 2: CREATE DIAGRAMS (Parallel)
 
-**Bước 2a — System-level diagrams (gọi uml-design skill):**
+**Step 2a — System-level diagrams (call the uml-design skill):**
 ```
 skill({ name: "uml-design", type: "system-level" })
 
-Tạo các diagrams hệ thống:
+Create the system diagrams:
 - diagrams/context-diagram.puml
 - diagrams/system-overview.puml
 - diagrams/entity-relationship.puml
@@ -89,13 +89,13 @@ Tạo các diagrams hệ thống:
 - diagrams/screen-flow.puml
 ```
 
-**Bước 2b — Đọc requirements-summary.md, xác định danh sách UCs:**
+**Step 2b — Read requirements-summary.md, determine the list of UCs:**
 ```
-Ví dụ output sau khi đọc:
+Example output after reading:
 UC List = [UC01-Login, UC02-Register, UC03-ViewProduct, UC04-Order, UC05-Payment]
 ```
 
-**Bước 2c — Spawn N uc-diagram-agents SONG SONG:**
+**Step 2c — Spawn N uc-diagram-agents IN PARALLEL:**
 ```
 @uc-diagram-agent (uc=UC01, name=Login, project={ProjectName}) &
 @uc-diagram-agent (uc=UC02, name=Register, project={ProjectName}) &
@@ -104,14 +104,14 @@ UC List = [UC01-Login, UC02-Register, UC03-ViewProduct, UC04-Order, UC05-Payment
 @uc-diagram-agent (uc=UC05, name=Payment, project={ProjectName}) &
 wait
 
-⚠️ QUAN TRỌNG: Số lượng agents = số UCs từ requirements-summary.md
-   KHÔNG hardcode. Đọc file và đếm dynamically.
+⚠️ IMPORTANT: The number of agents = the number of UCs from requirements-summary.md
+   DO NOT hardcode it. Read the file and count dynamically.
 ```
 
-**Bước 2d — Verification (Quality Gate):**
+**Step 2d — Verification (Quality Gate):**
 ```
-Với MỖI UC trong danh sách, kiểm tra đủ 6 files:
-glob("diagrams/uc-{id}/*.puml") → phải có đủ:
+For EACH UC in the list, check that all 6 files exist:
+glob("diagrams/uc-{id}/*.puml") → must have all of:
   - uc-{id}-use-case.puml
   - uc-{id}-screenflow.puml
   - uc-{id}-statediagram.puml
@@ -119,24 +119,24 @@ glob("diagrams/uc-{id}/*.puml") → phải có đủ:
   - uc-{id}-class-backend.puml
   - uc-{id}-class-frontend.puml
 
-NẾU THIẾU → Respawn @uc-diagram-agent cho UC đó, chờ, kiểm tra lại
-NẾU ĐỦ   → Tiếp tục Phase 3
+IF MISSING → Respawn @uc-diagram-agent for that UC, wait, re-check
+IF COMPLETE → Proceed to Phase 3
 ```
 
 ---
 
-### Phase 3: VIẾT TÀI LIỆU SRS
+### Phase 3: WRITE THE SRS DOCUMENT
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  PHASE 3 — SRS WRITING                                     │
 ├─────────────────────────────────────────────────────────────┤
-│  1. Đọc requirements-summary.md                            │
-│  2. Đọc tất cả diagrams đã tạo                             │
-│  3. Gọi skill srs-writing                                  │
-│  4. Tạo SRS_{ProjectName}_v1.0.0.md                        │
-│  5. Tạo index.md liệt kê tất cả output files              │
-│  6. Báo cáo kết quả cho doc-coordinator                    │
+│  1. Read requirements-summary.md                            │
+│  2. Read all diagrams created so far                        │
+│  3. Call the srs-writing skill                               │
+│  4. Create SRS_{ProjectName}_v1.0.0.md                       │
+│  5. Create index.md listing all output files                │
+│  6. Report results to doc-coordinator                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -146,9 +146,9 @@ NẾU ĐỦ   → Tiếp tục Phase 3
 
 ```
 docs/{ProjectName}/
-├── requirements-summary.md          ⭐ Tạo ở Phase 1
-├── SRS_{ProjectName}_v1.0.0.md     ⭐ Tạo ở Phase 3
-├── index.md                         ⭐ Tạo ở Phase 3
+├── requirements-summary.md          ⭐ Created in Phase 1
+├── SRS_{ProjectName}_v1.0.0.md     ⭐ Created in Phase 3
+├── index.md                         ⭐ Created in Phase 3
 └── diagrams/
     ├── context-diagram.puml         ← Phase 2a
     ├── system-overview.puml         ← Phase 2a
@@ -172,18 +172,18 @@ docs/{ProjectName}/
 
 ## Error Handling
 
-| Tình huống | Hành động |
+| Situation | Action |
 |------------|-----------|
-| User muốn bỏ qua phỏng vấn | Từ chối, giải thích lý do, yêu cầu gõ "bắt đầu" |
-| requirements-summary.md không tồn tại | Quay lại Phase 1 |
-| Thiếu diagrams sau spawn | Respawn agent cho UC thiếu, verify lại |
-| srs-writing skill lỗi | Thông báo lỗi cụ thể, thử lại |
+| User wants to skip the interview | Refuse, explain why, ask them to type "start" |
+| requirements-summary.md does not exist | Return to Phase 1 |
+| Missing diagrams after spawn | Respawn the agent for the missing UC, re-verify |
+| srs-writing skill error | Report the specific error, retry |
 
 ---
 
-## Báo cáo kết quả cho doc-coordinator
+## Result Report for doc-coordinator
 
-Sau khi hoàn thành, trả về:
+After completion, return:
 ```json
 {
   "status": "completed",

@@ -1,15 +1,15 @@
 ---
 name: test-design
 description: |
-  Tạo Test Plan, Test Cases có cấu trúc từ Acceptance Criteria (AC) trong SRS.
+  Generate a structured Test Plan and Test Cases from the Acceptance Criteria (AC) in the SRS.
   
-  SỬ DỤNG KHI:
-  - test-agent được spawn để tạo test artifacts
-  - Cần TEST-PLAN.md theo chuẩn IEEE 829
-  - Cần test cases theo Given-When-Then / Step-Expected format
-  - Cần Postman collection từ openapi.yaml
+  USE WHEN:
+  - test-agent is spawned to create test artifacts
+  - You need a TEST-PLAN.md compliant with IEEE 829
+  - You need test cases in Given-When-Then / Step-Expected format
+  - You need a Postman collection generated from openapi.yaml
 
-  OUTPUT BẮT BUỘC:
+  MANDATORY OUTPUT:
   1. test-plan/TEST-PLAN.md
   2. test-plan/TEST-SUMMARY.md
   3. test-plan/test-cases/TC-{UC-ID}-{name}.md  (1 file per UC)
@@ -21,8 +21,8 @@ mode: false
 
 # Test Design Skill v1.0.0
 
-## Mục đích
-Tạo test artifacts đầy đủ cho dự án: test plan chiến lược, test cases theo AC, và API test collection — theo chuẩn IEEE 829 và best practices.
+## Purpose
+Produce complete test artifacts for the project: a strategic test plan, AC-based test cases, and an API test collection — following the IEEE 829 standard and best practices.
 
 ---
 
@@ -41,7 +41,7 @@ Tạo test artifacts đầy đủ cho dự án: test plan chiến lược, test 
 ## 1. Introduction
 
 ### 1.1 Purpose
-Tài liệu này định nghĩa chiến lược, scope, approach, và criteria cho việc test {ProjectName}.
+This document defines the strategy, scope, approach, and criteria for testing {ProjectName}.
 
 ### 1.2 Scope
 
@@ -110,13 +110,13 @@ Tài liệu này định nghĩa chiến lược, scope, approach, và criteria c
 
 ### 2.4 Entry & Exit Criteria
 
-**Entry Criteria (khi nào bắt đầu test):**
+**Entry Criteria (when testing may begin):**
 - [ ] Code review approved
 - [ ] Unit tests pass locally
 - [ ] Deployed to test environment
 - [ ] Test cases reviewed and approved
 
-**Exit Criteria (khi nào dừng test và sign-off):**
+**Exit Criteria (when testing stops and sign-off occurs):**
 - [ ] All P1/P2 test cases executed
 - [ ] 0 open Critical/High bugs
 - [ ] Unit test coverage ≥ 80%
@@ -180,12 +180,12 @@ Tài liệu này định nghĩa chiến lược, scope, approach, và criteria c
 
 ## Output 2 — Test Case per UC
 
-Tạo 1 file `test-plan/test-cases/TC-{UC-ID}-{uc-name-kebab}.md` cho mỗi UC.
+Create 1 file `test-plan/test-cases/TC-{UC-ID}-{uc-name-kebab}.md` per UC.
 
 ```markdown
 # Test Cases — UC-{ID}: {Use Case Name}
 
-> UC Description: {mô tả ngắn}  
+> UC Description: {short description}  
 > Primary Actor: {Actor}  
 > Priority: {Must/Should/Could}  
 > Last Updated: {date}
@@ -203,19 +203,19 @@ Tạo 1 file `test-plan/test-cases/TC-{UC-ID}-{uc-name-kebab}.md` cho mỗi UC.
 | AC Reference | AC-{ID}-01 |
 
 **Preconditions:**
-- {Precondition 1 — trạng thái hệ thống ban đầu}
+- {Precondition 1 — initial system state}
 - {Precondition 2}
 
 **Test Steps:**
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 1 | {Actor} {thực hiện hành động cụ thể} | {Kết quả hiển thị/xảy ra} |
-| 2 | {Nhập dữ liệu hợp lệ: field=value} | {Field được accept} |
+| 1 | {Actor} {performs a specific action} | {Result displayed/occurs} |
+| 2 | {Enter valid data: field=value} | {Field is accepted} |
 | 3 | {Submit/Click/Navigate} | {Response: 201 Created / redirect / toast} |
 
 **Expected Outcome:**
-- ✅ {Kết quả chính mong đợi}
+- ✅ {Main expected result}
 - ✅ {Side effect 1: DB record created}
 - ✅ {Side effect 2: Email sent}
 
@@ -258,17 +258,17 @@ HTTP 201 Created
 | AC Reference | AC-{ID}-02 |
 
 **Preconditions:**
-- {Khác với happy path}
+- {Differs from happy path}
 
 **Test Steps:**
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 1 | {Hành động dẫn đến alternative flow} | {Trigger condition} |
-| 2 | {Hành động tiếp theo} | {Alternative result} |
+| 1 | {Action leading to the alternative flow} | {Trigger condition} |
+| 2 | {Next action} | {Alternative result} |
 
 **Expected Outcome:**
-- ✅ {Kết quả alternative}
+- ✅ {Alternative result}
 
 ---
 
@@ -283,13 +283,13 @@ HTTP 201 Created
 | AC Reference | AC-{ID}-03 |
 
 **Preconditions:**
-- {Dữ liệu không hợp lệ hoặc điều kiện lỗi}
+- {Invalid data or an error condition}
 
 **Test Steps:**
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 1 | {Nhập dữ liệu không hợp lệ} | {Validation error shown} |
+| 1 | {Enter invalid data} | {Validation error shown} |
 
 **Expected Outcome:**
 - ✅ Error message: "{exact error message}"
@@ -343,9 +343,9 @@ HTTP 422 Unprocessable Entity
 
 | Step | Action | Expected Result |
 |------|--------|-----------------|
-| 1 | Gọi API endpoint không có Authorization header | HTTP 401 Unauthorized |
-| 2 | Gọi API endpoint với token hết hạn | HTTP 401 Token Expired |
-| 3 | Gọi API endpoint với role thấp hơn required | HTTP 403 Forbidden |
+| 1 | Call the API endpoint without an Authorization header | HTTP 401 Unauthorized |
+| 2 | Call the API endpoint with an expired token | HTTP 401 Token Expired |
+| 3 | Call the API endpoint with a role lower than required | HTTP 403 Forbidden |
 
 ---
 
@@ -564,14 +564,14 @@ HTTP 422 Unprocessable Entity
 
 ---
 
-## Hướng dẫn viết AC → TC
+## Guide: Writing AC → TC
 
-| AC Pattern | Loại TC | TC Pattern |
+| AC Pattern | TC Type | TC Pattern |
 |-----------|---------|-----------|
-| Happy path với valid input | Positive | Test với đúng data → assert 2xx + response body |
-| Alternative flow | Alternative | Test trigger condition → assert khác kết quả |
-| Invalid input | Negative | Test với bad data → assert 4xx + error.code |
+| Happy path with valid input | Positive | Test with correct data → assert 2xx + response body |
+| Alternative flow | Alternative | Test the trigger condition → assert a different outcome |
+| Invalid input | Negative | Test with bad data → assert 4xx + error.code |
 | Missing required field | Boundary | Test field = empty → assert 422 + fields.{field} |
-| Duplicate resource | Conflict | Test create duplicate → assert 409 + CONFLICT |
-| Unauthorized access | Security | Test without token → assert 401 |
-| Insufficient permission | Security | Test với wrong role → assert 403 |
+| Duplicate resource | Conflict | Test creating a duplicate → assert 409 + CONFLICT |
+| Unauthorized access | Security | Test without a token → assert 401 |
+| Insufficient permission | Security | Test with the wrong role → assert 403 |

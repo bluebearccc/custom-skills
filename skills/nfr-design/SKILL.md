@@ -1,15 +1,15 @@
 ---
 name: nfr-design
 description: |
-  Template và hướng dẫn thiết kế Non-Functional Requirements đầy đủ cho SDD:
+  Templates and guidance for designing complete Non-Functional Requirements for the SDD:
   capacity planning, disaster recovery, i18n/l10n, accessibility (WCAG).
 
-  SỬ DỤNG KHI:
-  - sdd-agent cần điền Section 8 (Performance), Section 9 (Reliability/DR) trong SDD
-  - Cần thiết kế chi tiết về capacity, DR procedure, i18n, accessibility
-  - Cần concrete targets từ NFRs trong SRS
+  USE WHEN:
+  - sdd-agent needs to fill in Section 8 (Performance) and Section 9 (Reliability/DR) of the SDD
+  - Detailed design of capacity, DR procedure, i18n, accessibility is needed
+  - Concrete targets from NFRs in the SRS are needed
 
-  OUTPUT: Các sections markdown để chèn vào SDD document
+  OUTPUT: Markdown sections to insert into the SDD document
 version: "1.0.0"
 allowed-tools: ["Read", "Write", "Edit"]
 mode: false
@@ -17,8 +17,8 @@ mode: false
 
 # NFR Design Skill v1.0.0
 
-## Mục đích
-Cung cấp templates đầy đủ cho tất cả Non-Functional Requirements trong SDD — đảm bảo mỗi NFR đều có concrete target, measurement method, và design decision.
+## Purpose
+Provide complete templates for all Non-Functional Requirements in the SDD — ensuring every NFR has a concrete target, measurement method, and design decision.
 
 ---
 
@@ -126,14 +126,14 @@ Cung cấp templates đầy đủ cho tất cả Non-Functional Requirements tro
 ```markdown
 #### 8.3 Caching Strategy
 
-(Đã có từ Sprint 2 SDD patch — tham khảo Section 4.1.3)
+(Already covered in the Sprint 2 SDD patch — see Section 4.1.3)
 
-**Bổ sung: Cache Invalidation Patterns**
+**Addendum: Cache Invalidation Patterns**
 
-| Pattern | Khi nào dùng | Implementation |
+| Pattern | When to use | Implementation |
 |---------|-------------|----------------|
 | TTL-based | Read-heavy, acceptable staleness | Redis EXPIRE |
-| Write-through | Data phải consistent ngay | Update cache on write |
+| Write-through | Data must be consistent immediately | Update cache on write |
 | Cache-aside (Lazy) | Read-heavy, infrequent writes | Miss → DB → cache |
 | Event-driven | Microservices, eventual consistency | Pub/Sub invalidation |
 
@@ -278,7 +278,7 @@ STEP 5 — Post-recovery:
 ```
 src/locales/
 ├── vi/
-│   ├── common.json      ← Buttons, labels, errors dùng chung
+│   ├── common.json      ← Shared buttons, labels, errors
 │   ├── auth.json        ← Auth module strings
 │   ├── product.json     ← Product module strings
 │   ├── order.json       ← Order module strings
@@ -296,12 +296,12 @@ src/locales/
 {
   "auth": {
     "login": {
-      "title": "Đăng nhập",
+      "title": "Log in",
       "email_label": "Email",
-      "password_label": "Mật khẩu",
-      "submit_button": "Đăng nhập",
-      "error_invalid": "Email hoặc mật khẩu không đúng",
-      "forgot_password": "Quên mật khẩu?"
+      "password_label": "Password",
+      "submit_button": "Log in",
+      "error_invalid": "Incorrect email or password",
+      "forgot_password": "Forgot password?"
     }
   }
 }
@@ -309,13 +309,13 @@ src/locales/
 
 **Backend i18n:**
 ```
-Error messages: trả về error.code (không translate ở BE)
-Client translate: dựa vào error.code → localized message
-Email templates: tạo template riêng cho từng ngôn ngữ
-PDF/Reports: generate với locale của user
+Error messages: return error.code (do not translate on the BE)
+Client translate: map error.code → localized message
+Email templates: create a separate template per language
+PDF/Reports: generate using the user's locale
 ```
 
-**10.X.4 SEO Considerations (nếu có public pages)**
+**10.X.4 SEO Considerations (if public pages exist)**
 ```
 <html lang="vi">
 <link rel="alternate" hreflang="vi" href="https://domain.com/vi/page" />
@@ -373,7 +373,7 @@ PDF/Reports: generate với locale của user
 | 3.2.2 On Input | No unexpected context change on input | No auto-submit on selection |
 | 3.3.1 Error Identification | Errors identified in text | Error messages below fields |
 | 3.3.2 Labels or Instructions | Form fields have labels | `<label for="...">` |
-| 3.3.3 Error Suggestion | Describe how to fix errors | "Vui lòng nhập email hợp lệ (vd: user@gmail.com)" |
+| 3.3.3 Error Suggestion | Describe how to fix errors | "Please enter a valid email (e.g., user@gmail.com)" |
 
 **11.X.5 Robust Requirements**
 
@@ -395,28 +395,28 @@ PDF/Reports: generate với locale của user
 
 **11.X.7 ARIA Component Patterns**
 
-Common components cần ARIA:
+Common components that need ARIA:
 
 ```html
 <!-- Modal Dialog -->
 <div role="dialog" aria-modal="true" aria-labelledby="dialog-title">
-  <h2 id="dialog-title">Xác nhận xóa</h2>
+  <h2 id="dialog-title">Confirm deletion</h2>
   ...
 </div>
 
 <!-- Live Notifications (Toast) -->
 <div role="status" aria-live="polite" aria-atomic="true">
-  Đã lưu thành công
+  Saved successfully
 </div>
 
 <!-- Error Alert -->
 <div role="alert" aria-live="assertive">
-  Đã xảy ra lỗi: Email không hợp lệ
+  An error occurred: Invalid email
 </div>
 
 <!-- Loading State -->
 <button aria-busy="true" aria-disabled="true">
-  <span aria-hidden="true">⏳</span> Đang xử lý...
+  <span aria-hidden="true">⏳</span> Processing...
 </button>
 
 <!-- Expandable Nav -->
@@ -427,28 +427,28 @@ Common components cần ARIA:
 
 ---
 
-## Cách sử dụng
+## How to Use
 
-`sdd-agent` gọi skill này để điền các sections còn thiếu trong SDD:
+`sdd-agent` calls this skill to fill in the missing sections of the SDD:
 
 ```
 skill({ name: "nfr-design", section: "capacity" })
-  → Trả về template 8.1 để điền vào SDD
+  → Returns the 8.1 template to fill into the SDD
 
 skill({ name: "nfr-design", section: "dr" })
-  → Trả về template 9.5 để điền vào SDD
+  → Returns the 9.5 template to fill into the SDD
 
 skill({ name: "nfr-design", section: "i18n" })
-  → Trả về template 10.X để điền vào SDD
+  → Returns the 10.X template to fill into the SDD
 
 skill({ name: "nfr-design", section: "accessibility" })
-  → Trả về template 11.X để điền vào SDD
+  → Returns the 11.X template to fill into the SDD
 
 skill({ name: "nfr-design", section: "all" })
-  → Trả về tất cả templates
+  → Returns all templates
 ```
 
-Sau khi nhận template, agent điền giá trị cụ thể từ `requirements-summary.md`:
-- `{N}` → giá trị từ NFR section trong SRS
-- `{vi, en}` → ngôn ngữ từ yêu cầu i18n trong SRS
-- RTO/RPO → từ NFR availability trong SRS
+After receiving the template, the agent fills in concrete values from `requirements-summary.md`:
+- `{N}` → value from the NFR section in the SRS
+- `{vi, en}` → languages from the i18n requirements in the SRS
+- RTO/RPO → from the NFR availability requirements in the SRS
