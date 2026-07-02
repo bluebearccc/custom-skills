@@ -96,7 +96,7 @@ doc-coordinator
 
 | Skill | Version | Description | Used by |
 |-------|---------|--------|----------|
-| `requirements-gathering` | 3.2.0 | Mandatory question-by-question interview (AskUserQuestion); probes deeper; ends with "CONFIRM" | srs-agent, `/interview-stakeholder` |
+| `requirements-gathering` | 4.0.0 | Mandatory 38-question / 12-step interview (AskUserQuestion); probes deeper; ends with "CONFIRM" | srs-agent, `/interview-stakeholder` |
 | `srs-writing` | 4.0.0 | Writes IEEE SRS; AC per UC + RTI; **links** external PlantUML, not embedded | srs-agent |
 | `sdd-writing` | 4.0.0 | Writes IEEE 1016 SDD; requirements mapping, error/logging/caching/rate-limit | sdd-agent |
 | `uml-design` | 3.0.0 | Use case, screen flow, state, ERD, sequence, deployment, DFD, integration (PlantUML) | uc-diagram-agent, srs/sdd agents |
@@ -220,11 +220,20 @@ Empty templates: `/create-srs-template`, `/create-sdd-template`. Additional temp
 
 ## IDE / agent host integration
 
-| Host | Usage |
-|------|-----------|
-| OpenCode | Copy to `~/.config/opencode/skills/` |
-| Claude Code | Copy to `~/.claude/skills/` |
-| Custom | Import per [AGENTS.md](AGENTS.md) — configure `mode: primary` / `subagent`, permissions |
+This framework's files are written to work on **both OpenCode and Claude Code at the same time**, with no separate fork needed:
+- `agents/*.md` carry both `name`/`description` (read by Claude Code) and `mode`/`permission` (read by OpenCode) — each host reads the fields it understands and ignores the rest.
+- `commands/*.md` carry `agent: <name>`, which OpenCode uses directly to run the command as that agent; Claude Code honors the same field when paired with `context: fork` (also present), forking the command into that named subagent.
+- `skills/*/SKILL.md` use the shared `name` / `description` / `allowed-tools` fields both hosts recognize natively.
+
+Copy the whole `agents/`, `skills/`, and `commands/` folders into the matching directories below for whichever host(s) you use:
+
+| Host | Agents | Skills | Commands |
+|------|--------|--------|----------|
+| OpenCode — global | `~/.config/opencode/agents/` | `~/.config/opencode/skills/` | `~/.config/opencode/commands/` |
+| OpenCode — project | `.opencode/agents/` | `.opencode/skills/` | `.opencode/commands/` |
+| Claude Code — global | `~/.claude/agents/` | `~/.claude/skills/` | `~/.claude/commands/` |
+| Claude Code — project | `.claude/agents/` | `.claude/skills/` | `.claude/commands/` |
+| Custom host | Import per [AGENTS.md](AGENTS.md) — configure `mode: primary` / `subagent`, permissions |
 
 ---
 

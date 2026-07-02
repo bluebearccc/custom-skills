@@ -85,14 +85,15 @@ agentcode-framework/
 | `quality-agent` | subagent | Quality gate: coverage, consistency, diagram syntax | No | integration-agent |
 | `formatter-agent` | subagent | Converts markdown → docx/pdf/html/xlsx | No | doc-coordinator (on demand) |
 
-### OpenCode agent configuration (frontmatter)
+### Agent configuration (frontmatter) — dual-host
 
-`doc-coordinator` uses `mode: primary`; all other agents use `mode: subagent`. Minimum permissions:
+Every file in `agents/` carries both OpenCode's and Claude Code's recognized fields side by side; each host reads what it understands and ignores the rest. `doc-coordinator` uses `mode: primary`; all other agents use `mode: subagent` (this `mode` distinction is OpenCode-only — Claude Code has no file-defined "primary" agent, since the main conversation itself is the orchestrator; `doc-coordinator` is simply the subagent that commands fork into).
 
 ```yaml
 ---
+name: <agent-slug>       # required by Claude Code (~/.claude/agents/*.md); ignored by OpenCode
 description: <agent description>
-mode: subagent           # or primary for doc-coordinator
+mode: subagent           # OpenCode: or primary for doc-coordinator; ignored by Claude Code
 permission:
   edit: allow
   read: allow
@@ -102,6 +103,8 @@ permission:
 ---
 ```
 
+`tools:`/`disallowedTools:` are intentionally omitted — Claude Code then lets the subagent inherit the host's full tool set, which lines up with the `permission: allow` grants above. (Do not add a Claude Code–style `tools:` list here: OpenCode has its own deprecated `tools:` field with an incompatible shape — a `{toolName: boolean}` map instead of a list — and reusing the key would collide.)
+
 `doc-coordinator` calls sub-agents via **@mention** (e.g. `@srs-agent`). Workers are spawned in parallel with `&` … `wait`.
 
 ---
@@ -110,7 +113,7 @@ permission:
 
 | Skill | Version | Purpose | Location |
 |-------|---------|---------|----------|
-| `requirements-gathering` | 3.2.0 | Mandatory question-by-question interview (AskUserQuestion), ending with "CONFIRM" | skills/requirements-gathering/SKILL.md |
+| `requirements-gathering` | 4.0.0 | Mandatory 38-question / 12-step interview (AskUserQuestion), ending with "CONFIRM" | skills/requirements-gathering/SKILL.md |
 | `srs-writing` | 4.0.0 | Writes IEEE SRS; AC per UC + RTI; links external PlantUML | skills/srs-writing/SKILL.md |
 | `sdd-writing` | 4.0.0 | Writes IEEE 1016 SDD; requirements mapping, error/logging/caching/rate-limit | skills/sdd-writing/SKILL.md |
 | `uml-design` | 3.0.0 | Use case, screen flow, state, ERD, sequence, deployment, DFD, integration | skills/uml-design/SKILL.md |
@@ -313,9 +316,5 @@ docs/{ProjectName}/
 
 ## Integration with the agent host
 
-| Host | Usage |
-|------|-----------|
-| OpenCode | Copy to `~/.config/opencode/skills/` |
-| Claude Code | Copy to `~/.claude/skills/` |
-| Custom | Import per this file — configure `mode: primary`/`subagent`, permissions |
+The repo works unmodified on both OpenCode and Claude Code — see [README.md § IDE / agent host integration](README.md#ide--agent-host-integration) for the exact copy targets (`agents/`, `skills/`, `commands/` each have a global and project-level path per host). For a custom host, import per this file — configure `mode: primary`/`subagent`, permissions.
 </content>

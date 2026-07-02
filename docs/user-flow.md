@@ -27,7 +27,7 @@ AgentCode Framework is an AI agent system that helps automatically generate SRS 
 ║   Before creating the SRS, the system MUST interview you.                 ║
 ║   This ensures the document is ACCURATE to the real requirements.         ║
 ║                                                                              ║
-║   You will be asked 23 questions, one at a time.                          ║
+║   You will be asked 38 questions across 12 steps, one at a time.          ║
 ║   After each question, you'll be asked "Are you satisfied?"               ║
 ║   Finally, you need to type "CONFIRM" to proceed.                         ║
 ║                                                                              ║
@@ -63,14 +63,14 @@ User: /create-srs "Sales Management System"
 User: start
 ```
 
-### Step 3: THE 23-QUESTION INTERVIEW
+### Step 3: THE 38-QUESTION INTERVIEW (12 STEPS)
 
 ```
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║  STEP 2: BASIC PROJECT INFORMATION                                        ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
-║  📝 Question 1/23: What is your project name?                             ║
+║  📝 Question 1/38: What is your project name?                             ║
 ║                                                                              ║
 ║  Examples: "Sales Management System", "Food Ordering App", "CRM Software" ║
 ║                                                                              ║
@@ -78,7 +78,7 @@ User: start
 
 User: Sales Management System
 
-📝 Question 2/23: Briefly describe (2-3 sentences) the system you want to build. ║
+📝 Question 2/38: Briefly describe (2-3 sentences) the system you want to build. ║
                                                                               ║
 ║  Answer hints:                                                            ║
 ║  • What does the system do?                                               ║
@@ -118,7 +118,7 @@ Are you satisfied with this description? Anything to add?"
 ### Step 4: Continue With the Next Questions
 
 ```
-📝 Question 3/23: Does this system replace or supplement an existing system?
+📝 Question 3/38: Does this system replace or supplement an existing system?
 
 Answer one of:
 A) BRAND NEW - Built from scratch
@@ -128,12 +128,12 @@ D) UPGRADE - Moving to new technology
 
 User: A
 
-📝 Question 4/23: What business problem or opportunity does this project address?
+📝 Question 4/38: What business problem or opportunity does this project address?
 User: (answer or skip)
 
 ☝️ STEP 3: USERS & ACTORS
 
-📝 Question 5/23: Who will use this system?
+📝 Question 6/38: Who will use this system?
 
 List all user groups (actors).
 
@@ -329,98 +329,96 @@ User: /generate-docs "Sales Management System"
 
 ---
 
-## Detailed Interview Flow (23 Questions)
+## Detailed Interview Flow (38 Questions · 12 Steps)
+
+> This mirrors `skills/requirements-gathering/SKILL.md` v4.0.0. Every main answer is followed by a
+> "satisfied?" check; vague answers are probed deeper before moving on. Question 10 is a **loop** —
+> it is repeated for every Must-Have feature to capture the full use-case specification
+> (actor, trigger, preconditions, main flow, alternative flows, exception flows, postconditions).
 
 ```
 START
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 1: INTRODUCTION (No question)                        │
-│  - Agent introduces the rules                                │
-│  - User types "start"                                        │
-└──────────────────────────────────────────────────────────────┘
+STEP 1: INTRODUCTION (no question)
+   - Agent introduces the rules · User types "start"
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 2: PROJECT INFORMATION (4 questions)                 │
-│  - Q1: Project name [REQUIRED]                             │
-│  - Q2: System description [REQUIRED]                       │
-│  - Q3: Existing system? [REQUIRED]                          │
-│  - Q4: Business problem [OPTIONAL]                          │
-└──────────────────────────────────────────────────────────────┘
+STEP 2: PROJECT INFORMATION (Q1–Q5)
+   - Q1  Project name                         [REQUIRED]
+   - Q2  System description                   [REQUIRED]
+   - Q3  Existing system? (new/replace/…)     [REQUIRED]
+   - Q4  Business problem / opportunity        [OPTIONAL]
+   - Q5  Stakeholders & approval authority    [REQUIRED]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 3: USERS & ACTORS (3 questions)                       │
-│  - Q5: Who uses it? [REQUIRED]                              │
-│  - Q6: Permissions? [REQUIRED]                               │
-│  - Q7: Guest users? [OPTIONAL]                               │
-└──────────────────────────────────────────────────────────────┘
+STEP 3: USERS & ACTORS (Q6–Q8)
+   - Q6  Who uses it? (actor list)            [REQUIRED]
+   - Q7  Permissions per actor                 [REQUIRED]
+   - Q8  Anonymous / guest users?              [OPTIONAL]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 4: FEATURES & MOSCOW (2 questions)                    │
-│  - Q8: Feature list [REQUIRED]                              │
-│  - Q9: MoSCoW classification [REQUIRED]                     │
-└──────────────────────────────────────────────────────────────┘
+STEP 4: FUNCTIONAL REQUIREMENTS (Q9–Q14)
+   - Q9  Feature list + MoSCoW                 [REQUIRED]
+   - Q10 Use-case detailed spec — LOOP per Must-Have feature
+         (actor · trigger · preconditions · main flow ·
+          alternative flows · exception flows · postconditions)  [REQUIRED]
+   - Q11 MoSCoW sanity check                   [REQUIRED]
+   - Q12 Business rules & calculations         [REQUIRED]
+   - Q13 Validation & error handling           [REQUIRED]
+   - Q14 Reporting & analytics                 [OPTIONAL]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 5: DATA (2 questions)                                 │
-│  - Q10: Entities [REQUIRED]                                  │
-│  - Q11: Data volume [OPTIONAL]                                │
-└──────────────────────────────────────────────────────────────┘
+STEP 5: DATA MODEL (Q15–Q17)
+   - Q15 Entities & fields                     [REQUIRED]
+   - Q16 Relationships & cardinality           [REQUIRED]
+   - Q17 Data volume & growth                  [OPTIONAL]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 6: PLATFORM (2 questions)                              │
-│  - Q12: Access platform [REQUIRED]                          │
-│  - Q13: UI requirements [OPTIONAL]                            │
-└──────────────────────────────────────────────────────────────┘
+STEP 6: INTEGRATION & INTERFACES (Q18–Q21)
+   - Q18 External systems                      [REQUIRED]
+   - Q19 API specs & data format               [REQUIRED]
+   - Q20 Data sync strategy                     [REQUIRED]
+   - Q21 File imports / exports                 [OPTIONAL]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 7: INTEGRATION (2 questions)                           │
-│  - Q14: Other systems? [OPTIONAL]                            │
-│  - Q15: Data import/export? [OPTIONAL]                       │
-└──────────────────────────────────────────────────────────────┘
+STEP 7: PLATFORM & UI (Q22–Q24)
+   - Q22 Platforms (web/mobile/desktop/API)    [REQUIRED]
+   - Q23 Responsive & accessibility (WCAG)     [REQUIRED]
+   - Q24 Multi-language / i18n                  [OPTIONAL]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 8: NON-FUNCTIONAL (4 questions)                        │
-│  - Q16: Performance [REQUIRED]                               │
-│  - Q17: Number of concurrent users [REQUIRED]                │
-│  - Q18: Data security [REQUIRED]                             │
-│  - Q19: Uptime? [OPTIONAL]                                    │
-└──────────────────────────────────────────────────────────────┘
+STEP 8: NON-FUNCTIONAL (Q25–Q29)
+   - Q25 Performance targets                    [REQUIRED]
+   - Q26 Scalability & concurrency              [REQUIRED]
+   - Q27 Availability & SLA                      [REQUIRED]
+   - Q28 Backup & recovery (RPO/RTO)            [REQUIRED]
+   - Q29 Security & authentication              [REQUIRED]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 9: SECURITY (2 questions)                              │
-│  - Q20: Login? [REQUIRED]                                    │
-│  - Q21: Regulatory compliance? [OPTIONAL]                    │
-└──────────────────────────────────────────────────────────────┘
+STEP 9: COMPLIANCE & RISK (Q30–Q32)
+   - Q30 Regulatory compliance                  [REQUIRED]
+   - Q31 Data classification & privacy (PII)   [REQUIRED]
+   - Q32 Audit trail & logging                  [REQUIRED]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 10: BUSINESS RULES (2 questions)                       │
-│  - Q22: Automated rules? [OPTIONAL]                           │
-│  - Q23: Budget/timeline? [OPTIONAL]                            │
-└──────────────────────────────────────────────────────────────┘
+STEP 10: OPERATIONS & SUPPORT (Q33–Q36)
+   - Q33 Deployment & infrastructure            [REQUIRED]
+   - Q34 Monitoring & alerting                  [OPTIONAL]
+   - Q35 Support model & training               [REQUIRED]
+   - Q36 Configuration management               [REQUIRED]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  STEP 11: FINAL CONFIRMATION                                │
-│  - Display the SUMMARY table                                │
-│  - User types "CONFIRM"                                     │
-└──────────────────────────────────────────────────────────────┘
+STEP 11: PROJECT CONTEXT (Q37–Q38)
+   - Q37 Success metrics                        [REQUIRED]
+   - Q38 Timeline & phases                       [REQUIRED]
    │
    ▼
-┌──────────────────────────────────────────────────────────────┐
-│  GENERATE THE REQUIREMENTS SUMMARY                          │
-│  Continue to SRS/SDD                                        │
-└──────────────────────────────────────────────────────────────┘
+STEP 12: FINAL CONFIRMATION
+   - Display the SUMMARY table · User types "CONFIRM"
+   │
+   ▼
+GENERATE requirements-summary.md → continue to SRS / SDD
 ```
 
 ---
@@ -445,8 +443,9 @@ START
 |-------------|---------------|
 | Type `/create-srs MyProject` | Greets and introduces the rules |
 | Types "start" | Begins the interview |
-| Answers 23 questions | Asks each question + digs deeper when vague |
+| Answers 38 questions (12 steps) | Asks each question + digs deeper when vague |
 | Answers the satisfaction check | Ensures the information is complete |
 | Types "CONFIRM" | Generates requirements-summary.md |
 | Waits | Spawns 18 agents in parallel |
 | Receives the result | Generates 50+ files with quality gates |
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   

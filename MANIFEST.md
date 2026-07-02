@@ -44,7 +44,7 @@ System prompt here
 
 | Skill | Version | Description |
 |-------|---------|-------------|
-| `requirements-gathering` | 3.2.0 | Gathers requirements from stakeholders (AskUserQuestion) |
+| `requirements-gathering` | 4.0.0 | Gathers requirements from stakeholders — 38-question / 12-step interview (AskUserQuestion) |
 | `srs-writing` | 4.0.0 | Writes the SRS document + AC per UC + RTI |
 | `sdd-writing` | 4.0.0 | Writes the SDD document + error/logging/caching/rate-limit |
 | `uml-design` | 3.0.0 | Generates UML diagrams (use case, sequence, state, deployment, DFD) |
@@ -131,4 +131,3 @@ II. Software Requirement Specification
 
 ## License
 
-Proprietary — AgentCode Framework
