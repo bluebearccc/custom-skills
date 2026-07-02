@@ -1,0 +1,125 @@
+@startuml External Linking Pattern
+!include ../PlantUML/config.cfg
+
+title AgentCode Framework - External Linking Pattern
+
+' === SRS DOCUMENT ===
+package "SRS Document" as SRS #LightBlue {
+  file "SRS_{Project}_v1.0.0.md"
+}
+
+' === SDD DOCUMENT ===
+package "SDD Document" as SDD #LightGreen {
+  file "SDD_{Project}_v1.0.0.md"
+}
+
+' === EXTERNAL DIAGRAMS ===
+package "Diagrams (External)" #LightYellow {
+  folder "diagrams/" as DiagRoot {
+    file "context-diagram.puml" as Context
+    file "entity-relationship.puml" as ER
+    file "screen-flow.puml" as ScreenFlow
+
+    folder "uc-01/" as UC1 {
+      file "uc-01-use-case.puml" as UC1UC
+      file "uc-01-screenflow.puml" as UC1SF
+      file "uc-01-statediagram.puml" as UC1State
+      file "uc-01-sequence.puml" as UC1Seq
+      file "uc-01-class-backend.puml" as UC1BE
+      file "uc-01-class-frontend.puml" as UC1FE
+    }
+
+    folder "uc-02/" as UC2 {
+      file "uc-02-use-case.puml"
+      file "uc-02-screenflow.puml"
+      file "uc-02-statediagram.puml"
+      file "uc-02-sequence.puml"
+      file "uc-02-class-backend.puml"
+      file "uc-02-class-frontend.puml"
+    }
+  }
+}
+
+' === LINKS FROM SRS ===
+SRS --> Context : **[Context Diagram]**
+SRS --> ER : **[ER Diagram]**
+SRS --> ScreenFlow : **[Screen Flow]**
+SRS --> UC1UC : **UC01 Use Case**
+SRS --> UC1SF : **UC01 Screen**
+SRS --> UC1State : **UC01 State**
+SRS --> UC1Seq : **UC01 Sequence**
+SRS --> UC1BE : **UC01 BE Classes**
+SRS --> UC1FE : **UC01 FE Classes**
+
+' === DATABASE & API ===
+package "Database (External)" as DB #LightGray {
+  folder "db/" as DBRoot {
+    file "schema.sql" as Schema
+    folder "tables/" as Tables {
+      file "uc01_tables.sql"
+      file "uc02_tables.sql"
+    }
+  }
+}
+
+package "API (External)" as API #LightGray {
+  folder "api/" as APIRoot {
+    file "openapi.yaml" as OpenAPI
+  }
+}
+
+SDD --> Schema : **[schema.sql]**
+SDD --> OpenAPI : **[openapi.yaml]**
+SDD --> ER : **[ER Diagram]**
+
+' === MARKDOWN REFERENCE FORMAT ===
+note as N1 #LightYellow
+  **Linking Syntax in Markdown:**
+
+  **Link to PlantUML (not rendered in MD):**
+  ```
+  [Use Case Diagram](./diagrams/uc-01/uc-01-use-case.puml)
+  ```
+
+  **Link to Image (if rendered):**
+  ```
+  ![UC01](./diagrams/uc-01/uc-01-use-case.png)
+  ```
+
+  **Link to code/data files:**
+  ```
+  [Schema](./db/schema.sql)
+  [OpenAPI](./api/openapi.yaml)
+  ```
+end note
+
+' === KEY POINTS ===
+note as N2 #Pink
+  **BENEFITS of External Linking:**
+
+  1. **Separation of Concerns**
+     - Document = readable text
+     - Diagrams = PlantUML source
+
+  2. **Parallel Generation**
+     - N agents create diagrams simultaneously
+     - No blocking on diagram embedding
+
+  3. **Maintainability**
+     - Update diagrams without touching document
+     - IDEs render PlantUML from external files
+
+  4. **Consistency**
+     - Single source of truth
+     - No duplicate diagram code
+end note
+
+legend right
+  |= Color |= Meaning |
+  | <back:#LightBlue>  </back> | SRS Document |
+  | <back:#LightGreen> </back> | SDD Document |
+  | <back:#LightYellow></back> | PlantUML Diagrams (External) |
+  | <back:#LightGray>  </back> | Database/API (External) |
+endlegend
+
+@enduml

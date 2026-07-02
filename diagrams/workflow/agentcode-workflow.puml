@@ -1,0 +1,130 @@
+@startuml AgentCode Framework - Multi-Agent Parallel Workflow
+!include ../PlantUML/config.cfg
+
+skinparam backgroundColor #FEFEFE
+skinparam componentStyle uml2
+
+title AgentCode Framework - FIXED Multi-Agent Parallel Workflow
+
+' === LAYER 1: INPUT ===
+package "User Layer" {
+  actor User
+  node "Terminal" as Term
+}
+
+' === LAYER 2: COMMAND ===
+package "Command Layer" #LightBlue {
+  rectangle "/create-srs" as cmdSRS
+  rectangle "/create-sdd" as cmdSDD
+  rectangle "/generate-docs" as cmdGen
+}
+
+' === LAYER 3: COORDINATOR ===
+package "Doc Coordinator\n(Primary Agent)" as DocCo #Gold {
+  agent "doc-coordinator"
+}
+
+' === LAYER 4: WORKFLOW COORDINATORS ===
+package "SRS Workflow" as SRS_WF #LightGreen {
+  agent "srs-agent"
+  note right: Spawns N parallel\nuc-diagram-agents\nwith & + wait
+}
+
+package "SDD Workflow" as SDD_WF #LightGreen {
+  agent "sdd-agent"
+  note right: Spawns N parallel\ncomponent-agents\nwith & + wait
+}
+
+' === LAYER 5: SPECIALIZED WORKERS ===
+package "Requirements Workers" #LightGray {
+  agent "requirements-agent\n(Guest)" as reqGuest
+  agent "requirements-agent\n(Member)" as reqMember
+  agent "requirements-agent\n(...N)" as reqN
+}
+
+package "UC Diagram Workers\n(N agents - 1 per UC)" #LightGray {
+  agent "uc-diagram-agent\n(UC01)" as uc01
+  agent "uc-diagram-agent\n(UC02)" as uc02
+  agent "uc-diagram-agent\n(UC03)" as uc03
+  agent "uc-diagram-agent\n(...N)" as ucN
+}
+
+note right of ucN #LightYellow
+  **MỖI agent tạo 6 diagrams:**
+  uc-XX-use-case.puml
+  uc-XX-screenflow.puml
+  uc-XX-statediagram.puml
+  uc-XX-sequence.puml
+  uc-XX-class-backend.puml
+  uc-XX-class-frontend.puml
+end note
+
+package "Component Workers\n(N agents - 1 per component)" #LightGray {
+  agent "component-agent\n(C1)" as comp1
+  agent "component-agent\n(C2)" as comp2
+  agent "component-agent\n(C3)" as comp3
+  agent "component-agent\n(...N)" as compN
+}
+
+note right of compN #LightYellow
+  **MỖI agent tạo 5 artifacts:**
+  C-X-class-backend.puml
+  C-X-class-frontend.puml
+  C-X-sequence.puml
+  C-X-state.puml
+  db/tables/C-X_tables.sql
+end note
+
+package "DB/API Workers" #LightGray {
+  agent "db-agent"
+  agent "api-agent"
+}
+
+' === CONNECTIONS ===
+User --> Term : Input
+Term --> cmdGen : /generate-docs
+
+cmdGen --> DocCo : Route
+DocCo --> SRS_WF : @srs-agent &
+DocCo --> SDD_WF : @sdd-agent &
+
+' SRS Workflow
+SRS_WF --> reqGuest : @requirements-agent &
+SRS_WF --> reqMember : @requirements-agent &
+SRS_WF --> reqN : @requirements-agent &
+
+SRS_WF --> uc01 : @uc-diagram-agent &
+SRS_WF --> uc02 : @uc-diagram-agent &
+SRS_WF --> uc03 : @uc-diagram-agent &
+SRS_WF --> ucN : @uc-diagram-agent &
+
+' SDD Workflow
+SDD_WF --> comp1 : @component-agent &
+SDD_WF --> comp2 : @component-agent &
+SDD_WF --> comp3 : @component-agent &
+SDD_WF --> compN : @component-agent &
+
+SDD_WF --> db-agent : @db-agent &
+SDD_WF --> api-agent : @api-agent &
+
+' === VERIFICATION ===
+note as N1 #Pink
+  **QUALITY GATES (FIXED)**
+  ========================
+  Sau khi spawn N agents:
+  1. Glob check: diagrams/uc-*/*.puml
+  2. Verify đủ 6 files/UC
+  3. Nếu thiếu → respawn agent đó
+  4. Verify đủ 5 files/component
+end note
+
+' === LEGEND ===
+legend right
+  |= Color |= Component |
+  | <back:#Gold>      </back> | Primary Agent |
+  | <back:#LightGreen></back> | Workflow Coordinator |
+  | <back:#LightGray> </back> | Worker Agents (N parallel) |
+  | <back:#LightBlue> </back> | Command Layer |
+endlegend
+
+@enduml

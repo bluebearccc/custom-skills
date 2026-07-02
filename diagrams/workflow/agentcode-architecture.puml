@@ -1,0 +1,156 @@
+@startuml AgentCode Framework - FIXED Architecture
+!include ../PlantUML/config.cfg
+
+skinparam componentStyle uml2
+
+title AgentCode Framework - Architecture FIXED
+
+top to bottom direction
+
+' === INPUT ===
+node "Input" {
+  actor User
+}
+
+' === FRAMEWORK STRUCTURE ===
+package "AgentCode Framework" #LightBlue {
+
+  package "agents/" as AgentsPkg {
+    file "doc-coordinator.md" as DocCo #Gold
+    file "srs-agent.md" as SRSAgt #LightGreen
+    file "sdd-agent.md" as SDDAgt #LightGreen
+    file "uc-diagram-agent.md" as UCAgt #LightGray
+    file "component-agent.md" as CompAgt #LightGray
+    file "requirements-agent.md" as ReqAgt #LightGray
+    file "db-agent.md" as DBAgt #LightGray
+    file "api-agent.md" as APIAgt #LightGray
+  }
+
+  package "skills/" as SkillsPkg {
+    file "requirements-gathering/SKILL.md" as ReqSkill
+    file "srs-writing/SKILL.md" as SRSSkill
+    file "sdd-writing/SKILL.md" as SDDSkill
+    file "uml-design/SKILL.md" as UMLSkill
+    file "database-design/SKILL.md" as DBSkill
+    file "api-design/SKILL.md" as APISkill
+  }
+
+  package "commands/" as CmdsPkg {
+    file "create-srs.md" as CmdSRS
+    file "create-sdd.md" as CmdSDD
+    file "generate-docs.md" as CmdGen
+  }
+}
+
+' === OUTPUT STRUCTURE ===
+package "Output Structure" #LightYellow {
+  folder "docs/{ProjectName}/" as OutRoot {
+    file "SRS_{Project}_v1.0.0.md" as OutSRS
+    file "SDD_{Project}_v1.0.0.md" as OutSDD
+    file "index.md" as OutIndex
+
+    folder "diagrams/" as OutDiag {
+      file "context-diagram.puml"
+      file "entity-relationship.puml"
+      file "system-overview.puml"
+      file "layered-architecture.puml"
+
+      folder "uc-01/" as OutUC1 {
+        file "uc-01-use-case.puml" as UC1UC
+        file "uc-01-screenflow.puml" as UC1SF
+        file "uc-01-statediagram.puml" as UC1State
+        file "uc-01-sequence.puml" as UC1Seq
+        file "uc-01-class-backend.puml" as UC1BE
+        file "uc-01-class-frontend.puml" as UC1FE
+      }
+
+      folder "uc-02/" as OutUC2 {
+        file "uc-02-use-case.puml"
+        file "uc-02-screenflow.puml"
+        file "uc-02-statediagram.puml"
+        file "uc-02-sequence.puml"
+        file "uc-02-class-backend.puml"
+        file "uc-02-class-frontend.puml"
+      }
+
+      folder "uc-0N/" as OutUCN {
+        note: ...N UCs
+      }
+
+      folder "components/" as OutComp {
+        folder "{C1}/" as C1Folder {
+          file "C1-class-backend.puml"
+          file "C1-class-frontend.puml"
+          file "C1-sequence.puml"
+          file "C1-state.puml"
+        }
+        folder "{C2}/" as C2Folder
+        folder "{CN}/" as CNFolder
+      }
+    }
+
+    folder "db/" as OutDB {
+      file "schema.sql"
+      folder "tables/" as TablesFolder {
+        file "C1_tables.sql"
+        file "C2_tables.sql"
+        file "CN_tables.sql"
+      }
+    }
+
+    folder "api/" as OutAPI {
+      file "openapi.yaml"
+    }
+  }
+}
+
+' === CONNECTIONS ===
+User --> CmdGen : /generate-docs
+
+CmdGen --> DocCo : spawns
+
+DocCo --> SRSAgt : @srs-agent &
+DocCo --> SDDAgt : @sdd-agent &
+
+' SRS path
+SRSAgt --> ReqSkill : skill()
+SRSAgt --> UCAgt : spawns N & & &
+SRSAgt --> SRSSkill : skill()
+SRSAgt --> OutSRS : generates
+SRSAgt --> OutDiag : generates diagrams
+
+' SDD path
+SDDAgt --> CompAgt : spawns N & & &
+SDDAgt --> DBAgt : @db-agent &
+SDDAgt --> APIAgt : @api-agent &
+SDDAgt --> SDDSkill : skill()
+SDDAgt --> OutSDD : generates
+SDDAgt --> OutDiag : generates diagrams
+SDDAgt --> OutDB : generates schema
+
+' === LEGEND ===
+legend right
+  |= Color |= Component |
+  | <back:#Gold>      </back> | Primary Agent |
+  | <back:#LightGreen></back> | Workflow Coordinator |
+  | <back:#LightGray> </back> | Worker Agents |
+endlegend
+
+note as N1 #LightYellow
+  **FIXED: MỖI UC TẠO 6 DIAGRAMS**
+  1. uc-XX-use-case.puml
+  2. uc-XX-screenflow.puml
+  3. uc-XX-statediagram.puml
+  4. uc-XX-sequence.puml
+  5. uc-XX-class-backend.puml
+  6. uc-XX-class-frontend.puml
+
+  **FIXED: MỖI COMPONENT TẠO 5 ARTIFACTS**
+  1. C-X-class-backend.puml
+  2. C-X-class-frontend.puml
+  3. C-X-sequence.puml
+  4. C-X-state.puml
+  5. db/tables/C-X_tables.sql
+end note
+
+@enduml

@@ -1,0 +1,270 @@
+@startuml Complete Workflow
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontSize 11
+
+skinparam activity {
+  BackgroundColor #E3F2FD
+  BorderColor #1565C0
+  FontName Helvetica
+  ArrowColor #424242
+}
+
+skinparam activityDiamond {
+  BackgroundColor #E8F5E9
+  BorderColor #2E7D32
+}
+
+skinparam note {
+  BackgroundColor #FFF8E1
+  BorderColor #F57F17
+}
+
+skinparam decision {
+  BackgroundColor #FCE4EC
+  BorderColor #C2185B
+}
+
+skinparam swimlane {
+  BackgroundColor #F5F5F5
+  BorderColor #BDBDBD
+}
+
+title LUỒNG HOẠT ĐỘNG - BẮT BUỘC PHỎNG VẤN
+
+|#F5F5F5 **NGƯỜI DÙNG**|
+start
+:Nhập lệnh;
+/create-srs "Tên Dự Án";
+
+|#BBDEFB **SRS AGENT**|
+:1. Chào user + Giới thiệu quy tắc;
+note right
+  ╔═══════════════════════════════╗
+  ║  QUY TẮC PHỎNG VẤN:       ║
+  ║  • Hỏi từng câu một        ║
+  ║  • Đào sâu khi vague      ║
+  ║  • Satisfaction check      ║
+  ║  • Gõ "XÁC NHẬN" để xong ║
+  ╚═══════════════════════════════╝
+end note
+
+|#FFF8E1 **CHỜ USER**|
+:User gõ "bắt đầu";
+
+|#BBDEFB **PHASE 1: THU THẬP YÊU CẦU**|
+partition "STEP 1: Giới thiệu" {
+  :Hiển thị quy tắc;
+  :Chờ "bắt đầu";
+}
+
+partition "STEP 2: Thông tin Dự án" {
+  :Câu 1: Tên dự án;
+  while (Đủ thông tin?) is (Không)      note
+    Probing:
+    "Cụ thể hơn được không?"
+    "Cho ví dụ?"
+  end note
+  endwhile (Có)
+  :☝️ Satisfied?;
+
+  :Câu 2: Mô tả hệ thống;
+  while (Đủ chi tiết?) is (Không)
+    :Đào sâu features;
+  endwhile (Có)
+  :☝️ Satisfied?;
+
+  :Câu 3: Hệ thống cũ?;
+  :Câu 4: Vấn đề kinh doanh;
+}
+
+partition "STEP 3: Người dùng & Actors" {
+  :Câu 5: Ai sử dụng?;
+  while (Actors rõ ràng?) is (Không)
+    :Đào sâu từng actor;
+  endwhile (Có)
+  :☝️ Satisfied?;
+
+  :Câu 6: Quyền hạn?;
+  :Câu 7: Guest users?;
+}
+
+partition "STEP 4: Tính năng & MoSCoW" {
+  :Câu 8: Danh sách tính năng;
+  while (Mỗi feature đủ?) is (Không)
+    :Đào sâu 6 chi tiết:\nAi, Trigger, Steps, Result, Error;
+  endwhile (Đã đủ)
+  :☝️ Satisfied?;
+
+  :Câu 9: MoSCoW;
+  if (Tất cả MUST?) then (Có)
+    :⚠️ Cảnh báo thực tế hơn;
+  endif
+  :☝️ Satisfied?;
+}
+
+partition "STEP 5-10: Chi tiết" {
+  :STEP 5: Dữ liệu;
+  :STEP 6: Nền tảng;
+  :STEP 7: Tích hợp;
+  :STEP 8: Non-Functional;
+  :STEP 9: Security;
+  :STEP 10: Business Rules;
+}
+
+|#FFF3E0 **STEP 11: XÁC NHẬN CUỐI CÙNG**|
+:Hiển thị bảng TỔNG HỢP;
+
+if (User gõ "XÁC NHẬN"?) then (Có)
+  :✅ Tiếp tục;
+else (Không - cần sửa)
+  :Quay lại sửa câu hỏi cụ thể;
+  while (Sửa đủ?) is (Chưa)
+    :Sửa + Satisfaction check;
+  endwhile (Xong)
+endif
+
+|#C8E6C9 **TẠO REQUIREMENTS SUMMARY**|
+:Sinh file\nrequirements-summary.md;
+note right
+  Nội dung:
+  • Project Overview
+  • Users & Actors
+  • Features (MoSCoW)
+  • Data Entities
+  • Non-Functional
+  • Technical
+  • Open Questions
+end note
+
+|#BBDEFB **PHASE 2: TẠO SRS**|
+:Đọc requirements-summary.md;
+:Validate đầy đủ thông tin;
+
+# PHẢI spawn N agents = N use cases từ requirements
+:@uc-diagram-agent (UC01) &
+@uc-diagram-agent (UC02) &
+@uc-diagram-agent (UC03) &
+@uc-diagram-agent (UC04) &
+... (N agents) &
+wait;
+
+|#90CAF9 **MỖI UC TẠO 6 DIAGRAMS**|
+partition "Per-UC Diagrams" {
+  :uc-{id}-use-case.puml;
+  :uc-{id}-screenflow.puml;
+  :uc-{id}-statediagram.puml;
+  :uc-{id}-sequence.puml;
+  :uc-{id}-class-backend.puml;
+  :uc-{id}-class-frontend.puml;
+}
+
+|#FFCC80 **VERIFICATION**|
+:glob kiểm tra files;
+
+if (Tất cả files tồn tại?) then (Có)
+  :✅ Verification PASS;
+else (Thiếu)
+  :Respawn agent cho UC thiếu;
+  :Retry verification;
+endif
+
+|#C5E1A5 **GỌI SRS-WRITING**|
+:skill({ name: "srs-writing" });
+:Tạo SRS_{Project}_v1.0.0.md;
+
+|#81C784 **SRS HOÀN THÀNH**|
+stop
+
+|#F5F5F5 **NGƯỜI DÙNG**|
+start
+:/create-sdd "Tên Dự Án";
+
+|#BBDEFB **SDD AGENT**|
+:Xác minh SRS tồn tại;
+if (SRS có?) then (Có)
+  :✅ Đọc SRS + requirements-summary.md;
+else (Không)
+  :⛔ LỖI - Cần chạy SRS trước;
+  stop
+endif
+
+|#BBDEFB **PHASE: TẠO SDD**|
+:Xác định N components từ SRS;
+note right
+  Ví dụ:
+  • AuthModule (từ UC Login/Register)
+  • ProductModule (từ UC ViewProduct)
+  • OrderModule (từ UC PlaceOrder)
+  • PaymentModule (từ UC Payment)
+  • InventoryModule (từ UC ManageStock)
+  • ReportModule (từ UC ViewReport)
+end note
+
+# SPAWN N component-agents = N components từ SRS
+:@component-agent (Auth) &
+@component-agent (Product) &
+@component-agent (Order) &
+@component-agent (Payment) &
+@component-agent (...N) &
+wait;
+
+|#90CAF9 **MỖI COMPONENT TẠO 5 ARTIFACTS**|
+partition "Per-Component Artifacts" {
+  :{component}-class-backend.puml;
+  :{component}-class-frontend.puml;
+  :{component}-sequence.puml;
+  :{component}-state.puml;
+  :db/tables/{component}_tables.sql;
+}
+
+|#FFCC80 **+ db-agent + api-agent**|
+:@db-agent & @api-agent &
+wait;
+
+|#C8E6C9 **TẠO SDD DOCUMENT**|
+:skill({ name: "sdd-writing" });
+:Tạo SDD_{Project}_v1.0.0.md;
+
+|#81C784 **SDD HOÀN THÀNH**|
+stop
+
+|#E1BEE7 **/generate-docs = SRS + SDD**|
+start
+:/generate-docs "Tên Dự Án";
+|#BBDEFB **SRS AGENT**|
+partition "Phase 1: Phỏng vấn (BẮT BUỘC)" {
+  :Requirements Gathering\n(v3.0.0);
+  note right
+    Đi qua 11 steps
+    User gõ "XÁC NHẬN"
+  end note
+}
+partition "Phase 2: SRS" {
+  :uc-diagram-agents (N);
+  :srs-writer;
+}
+
+|#BBDEFB **SDD AGENT (Sau Phase 1 xong)**|
+partition "Phase 3: SDD" {
+  :component-agents (N);
+  :db-agent + api-agent;
+  :sdd-writer;
+}
+
+|#81C784 **CẢ HAI HOÀN THÀNH**|
+stop
+
+legend right
+  |= Màu |= Ý nghĩa |
+  | #BBDEFB | Agent/Bước chính |
+  | #FFF8E1 | Chờ user input |
+  | #FFF3E0 | Xác nhận cuối |
+  | #C8E6C9 | Hoàn thành/Start |
+  | #FFCC80 | Verification |
+  | #90CAF9 | Per-UC/Per-Component |
+  | #E1BEE7 | Kết hợp |
+  | #F5F5F5 | User/Swimlane |
+endlegend
+
+@enduml

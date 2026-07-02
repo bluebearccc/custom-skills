@@ -1,0 +1,204 @@
+@startuml Mandatory Interview Flow
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontSize 12
+
+skinparam activity {
+  BackgroundColor #E3F2FD
+  BorderColor #1976D2
+  FontName Helvetica
+  ArrowColor #424242
+}
+
+skinparam activityDiamond {
+  BackgroundColor #FFF3E0
+  BorderColor #E65100
+}
+
+skinparam note {
+  BackgroundColor #FFF8E1
+  BorderColor #F9A825
+}
+
+skinparam decision {
+  BackgroundColor #FCE4EC
+  BorderColor #C2185B
+}
+
+title LUỒNG BẮT BUỘC PHỎNG VẤN NGƯỜI DÙNG
+
+|#3F51B5 **Người dùng**|
+start
+:Nhập lệnh /create-srs [Tên Dự Án];
+
+|#E3F2FD **SRS Agent bắt đầu**|
+:Hiển thị giới thiệu\n"Xin chào! Tôi sẽ giúp bạn\nthu thập yêu cầu...";
+
+|#FFF8E1 **YÊU CẦU NHẬP**|
+:Chờ user gõ "bắt đầu";
+
+|#E3F2FD **Requirements Gathering v3.0.0**|
+partition "STEP 1: Giới thiệu" {
+  :Hiển thị quy tắc phỏng vấn;
+  note right
+    • Hỏi từng câu một
+    • Đào sâu khi vague
+    • Satisfaction check sau mỗi câu
+    • Phải gõ "XÁC NHẬN" khi xong
+  end note
+}
+
+partition "STEP 2: Thông tin Dự án" {
+  :Câu 2.1: Tên dự án **BẮT BUỘC**;
+  while (Câu trả lời đầy đủ?) is (Không)
+    :ĐÀO SÂU - Probing;
+    note right
+      "Cụ thể hơn được không?"
+      "Cho ví dụ cụ thể?"
+    end note
+  end while (Có)
+  :☝️ Satisfaction Check;
+  while (User hài lòng?) is (Không)
+    :Bổ sung thêm;
+  end while (Có)
+
+  :Câu 2.2: Mô tả hệ thống **BẮT BUỘC**;
+  while (Mô tả đủ chi tiết?) is (Không)
+    :ĐÀO SÂU về features cụ thể;
+    note right
+      "Cụ thể là:
+       a) Tạo đơn hàng?
+       b) Quản lý tồn kho?
+       c) Tính tiền/thanh toán?
+       d) ..."
+    end note
+  end while (Có)
+  :☝️ Satisfaction Check;
+
+  :Câu 2.3: Hệ thống hiện có **BẮT BUỘC**;
+  if (Chọn B/C/D - có hệ thống cũ?) then (Có)
+    :Đào sâu về:\n• Hệ thống cũ\n• Dữ liệu cần di chuyển\n• Tính năng bắt buộc giữ;
+  endif
+  :☝️ Satisfaction Check;
+
+  :Câu 2.4: Vấn đề kinh doanh (Tùy chọn);
+}
+
+partition "STEP 3: Người dùng & Actors" {
+  :Câu 3.1: Danh sách người dùng **BẮT BUỘC**;
+  while (Actors đã rõ ràng?) is (Không)
+    :ĐÀO SÂU cho từng actor;
+    note right
+      "Với Admin:
+       a) Làm gì?
+       b) Quyền hạn gì?
+       ..."
+    end note
+  end while (Có)
+  :☝️ Satisfaction Check;
+
+  :Câu 3.2: Quyền hạn từng Actor **BẮT BUỘC**;
+  while (Quyền hạn đã phân biệt?) is (Chưa)
+    :ĐÀO SÂU về CRUD permissions;
+  end while (Đã)
+  :☝️ Satisfaction Check;
+
+  :Câu 3.3: Guest users (Tùy chọn);
+}
+
+partition "STEP 4: Tính năng & MoSCoW" {
+  :Câu 4.1: Danh sách tính năng **BẮT BUỘC**;
+  while (Mỗi tính năng đã mô tả đủ?) is (Chưa)
+    :ĐÀO SÂU cho từng feature;
+    note right
+      Với feature "X":
+      1. Ai sử dụng?
+      2. Trigger là gì?
+      3. Các bước chính?
+      4. Kết quả?
+      5. Lỗi có thể xảy ra?
+    end note
+  end while (Đã đủ)
+  :☝️ Satisfaction Check;
+
+  :Câu 4.2: MoSCoW phân loại **BẮT BUỘC**;
+  if (Tất cả đều là Must?) then (Có)
+    :⚠️ Cảnh báo - có thể thực tế hơn;
+    note right
+      "Bạn đánh dấu tất cả đều MUST.
+       Thật ra rất ít hệ thống
+       cần tất cả ngay lập tức."
+    end note
+  endif
+  :☝️ Satisfaction Check;
+}
+
+partition "STEP 5: Dữ liệu" {
+  :Câu 5.1: Entities **BẮT BUỘC**;
+  while (Mỗi entity đã có fields?) is (Chưa)
+    :ĐÀO SÂU về:\n• Fields/thông tin\n• Relationships\n• Permissions;
+  end while (Đã đủ)
+  :☝️ Satisfaction Check;
+
+  :Câu 5.2: Quy mô dữ liệu (Tùy chọn);
+}
+
+partition "STEP 6: Nền tảng" {
+  :Câu 6.1: Nền tảng truy cập **BẮT BUỘC**;
+  :☝️ Satisfaction Check;
+
+  :Câu 6.2: Yêu cầu giao diện (Tùy chọn);
+}
+
+partition "STEP 7-10: Chi tiết khác" {
+  :Câu 7: Tích hợp hệ thống (Tùy chọn);
+  :Câu 8: Non-Functional Requirements **BẮT BUỘC**;
+  :Câu 9: Security & Authentication **BẮT BUỘC**;
+  :Câu 10: Business Rules (Tùy chọn);
+}
+
+|#FFF3E0 **STEP 11: XÁC NHẬN CUỐI CÙNG**|
+:Hiển thị bảng TỔNG HỢP tất cả\nđã thu thập;
+
+note right
+  ╔═══════════════════════════════╗
+  ║  📋 KIỂM TRA CUỐI CÙNG      ║
+  ╠═══════════════════════════════╣
+  ║  1. Project Info ✅          ║
+  ║  2. Users & Actors ✅       ║
+  ║  3. Features (MoSCoW) ✅   ║
+  ║  4. Data Entities ✅        ║
+  ║  5. Technical ✅            ║
+  ║  6. Open Questions ⚠️      ║
+  ╚═══════════════════════════════╝
+end note
+
+if (User gõ "XÁC NHẬN"?) is (Không) then
+  :Điều hướng quay lại\ncâu hỏi cần sửa;
+  while (Sửa xong?) is (Chưa)
+    :Sửa câu hỏi cụ thể;
+    :☝️ Satisfaction Check;
+  end while (Xong)
+endif
+
+|#4CAF50 **TẠO REQUIREMENTS SUMMARY**|
+:Sinh file\nrequirements-summary.md;
+
+|#E3F2FD **Sau khi phỏng vấn xong**|
+:Tiếp tục tạo SRS\n(Spawn uc-diagram-agents song song);
+
+|#4CAF50 **SRS HOÀN THÀNH**|
+:Tiếp tục SDD\n(Đọc SRS → Component agents);
+
+stop
+
+legend right
+  |= Màu |= Ý nghĩa |
+  | #E3F2FD | Bước chính thức |
+  | #FFF8E1 | Yêu cầu nhập liệu |
+  | #FFF3E0 | Bước xác nhận |
+  | #4CAF50 | Kết quả/hoàn thành |
+  | #FCE4EC | Decision/Diamond |
+endlegend
+
+@enduml

@@ -1,0 +1,180 @@
+@startuml Sequence - Multi-Agent Parallel FIXED
+!include ../PlantUML/config.cfg
+
+title AgentCode Framework - /generate-docs FIXED Multi-Agent PARALLEL Flow
+
+actor User
+participant "Terminal" as Term
+participant "Doc Coordinator" as DocCo #Gold
+
+' SRS Workflow
+box "SRS Workflow (Parallel)" #LightGreen
+  participant "srs-agent" as SRSAgt #LightGreen
+  participant "uc-diagram-agent\n(UC01)" as uc01 #LightGray
+  participant "uc-diagram-agent\n(UC02)" as uc02 #LightGray
+  participant "uc-diagram-agent\n(...N)" as uc0N #LightGray
+end box
+
+' SDD Workflow
+box "SDD Workflow (Parallel)" #LightGreen
+  participant "sdd-agent" as SDDAgt #LightGreen
+  participant "component-agent\n(C1)" as comp1 #LightGray
+  participant "component-agent\n(C2)" as comp2 #LightGray
+  participant "db-agent" as DBAgent #LightGray
+  participant "api-agent" as APIAgent #LightGray
+end box
+
+' === MAIN FLOW ===
+User -> Term : /generate-docs MyProject
+Term -> DocCo : route
+
+DocCo -> DocCo : Create docs/MyProject/
+
+== PARALLEL SPAWN (Step 1) ==
+
+DocCo -> SRSAgt : @srs-agent &
+DocCo -> SDDAgt : @sdd-agent &
+
+== SRS AGENT - Requirements Collection ==
+
+activate SRSAgt
+SRSAgt -> SRSAgt : Thu thập requirements
+note right: Xác định:\n• Actors: N người dùng\n• Use Cases: N UCs
+
+== SRS AGENT - PARALLEL UC Diagram Agents ==
+
+note across #LightYellow
+  **CRITICAL FIX:**
+  Spawn N uc-diagram-agents SONG SONG
+  MỖI agent tạo 6 diagrams cho 1 UC
+  DÙNG & + wait syntax
+end note
+
+SRSAgt -> uc01 : @uc-diagram-agent (UC01) &
+SRSAgt -> uc02 : @uc-diagram-agent (UC02) &
+SRSAgt -> uc0N : @uc-diagram-agent (...N) &
+SRSAgt -> SRSAgt : wait  ← PHẢI CÓ
+
+activate uc01
+uc01 -> uc01 : Generate UC01 diagrams
+note right uc01
+  1. uc-01-use-case.puml
+  2. uc-01-screenflow.puml
+  3. uc-01-statediagram.puml
+  4. uc-01-sequence.puml
+  5. uc-01-class-backend.puml
+  6. uc-01-class-frontend.puml
+end note
+uc01 -> SRSAgt : UC01 Complete
+deactivate uc01
+
+activate uc02
+uc02 -> uc02 : Generate UC02 diagrams
+note right uc02
+  1. uc-02-use-case.puml
+  2. uc-02-screenflow.puml
+  ...
+end note
+uc02 -> SRSAgt : UC02 Complete
+deactivate uc02
+
+activate uc0N
+uc0N -> uc0N : Generate UCN diagrams
+uc0N -> SRSAgt : UCN Complete
+deactivate uc0N
+
+== SRS AGENT - VERIFY ALL UC DIAGRAMS ==
+
+SRSAgt -> SRSAgt : glob diagrams/uc-*/*.puml
+alt "Thiếu diagrams"
+  SRSAgt -> uc0N : respawn @uc-diagram-agent
+end
+
+SRSAgt -> SRSAgt : Compile SRS Document
+deactivate SRSAgt
+
+== SDD AGENT - PARALLEL Components ==
+
+activate SDDAgt
+
+note across #LightYellow
+  **CRITICAL FIX:**
+  Spawn N component-agents SONG SONG
+  MỖI agent tạo 5 artifacts cho 1 component
+  KHÔNG hardcode số lượng
+end note
+
+par "Parallel Component Design"
+  SDDAgt -> comp1 : @component-agent (C1) &
+  SDDAgt -> comp2 : @component-agent (C2) &
+  SDDAgt -> SDDAgt : wait
+end
+
+activate comp1
+comp1 -> comp1 : Design C1
+note right comp1
+  1. C1-class-backend.puml
+  2. C1-class-frontend.puml
+  3. C1-sequence.puml
+  4. C1-state.puml
+  5. db/tables/C1_tables.sql
+end note
+comp1 -> SDDAgt : C1 Complete
+deactivate comp1
+
+activate comp2
+comp2 -> comp2 : Design C2
+note right comp2
+  1. C2-class-backend.puml
+  2. C2-class-frontend.puml
+  3. C2-sequence.puml
+  4. C2-state.puml
+  5. db/tables/C2_tables.sql
+end note
+comp2 -> SDDAgt : C2 Complete
+deactivate comp2
+
+par "Parallel DB + API"
+  SDDAgt -> DBAgent : @db-agent
+  activate DBAgent
+  DBAgent -> DBAgent : Generate schema.sql
+  DBAgent -> SDDAgt : DB Complete
+  deactivate DBAgent
+
+  SDDAgt -> APIAgent : @api-agent
+  activate APIAgent
+  APIAgent -> APIAgent : Generate openapi.yaml
+  APIAgent -> SDDAgt : API Complete
+  deactivate APIAgent
+end
+
+== SDD AGENT - VERIFY ALL COMPONENTS ==
+
+SDDAgt -> SDDAgt : glob diagrams/components/*/*
+alt "Thiếu artifacts"
+  SDDAgt -> comp1 : respawn @component-agent
+end
+
+SDDAgt -> SDDAgt : Compile SDD Document
+deactivate SDDAgt
+
+== INTEGRATION ==
+
+DocCo -> DocCo : Package outputs
+DocCo -> DocCo : Generate index.md
+
+DocCo -> Term : All Complete
+Term -> User : SRS + SDD + ALL Diagrams + DB + API
+
+== LEGEND ==
+note as N1
+  **FIXES APPLIED:**
+  1. SRS Agent spawns N parallel uc-diagram-agents
+  2. Mỗi UC tạo 6 diagrams đầy đủ
+  3. SDD Agent spawns N parallel component-agents
+  4. Mỗi component tạo 5 artifacts đầy đủ
+  5. Quality Gates verify all files exist
+  6. Respawn if missing files detected
+end note
+
+@enduml

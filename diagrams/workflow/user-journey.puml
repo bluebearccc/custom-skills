@@ -1,0 +1,66 @@
+@startuml User Journey
+!include ../PlantUML/config.cfg
+
+title AgentCode Framework - User Journey
+
+' === USER ACTIONS ===
+|User|
+start
+:Type /generate-docs MyProject;
+
+|#LightGray|Backend (System)|
+:doc-coordinator receives command;
+:Create docs/MyProject/ structure;
+
+fork
+  :SRS Workflow;
+  :Spawn @srs-agent &;
+  :requirements-agent interviews user;
+  :Spawn 5 uc-diagram-agents (parallel);
+  note right
+    Each UC agent creates 6 diagrams:
+    - use-case
+    - screenflow
+    - statediagram
+    - sequence
+    - class-backend
+    - class-frontend
+  end note
+  :Verify all diagrams created;
+  :Write SRS document;
+fork again
+  :SDD Workflow;
+  :Spawn @sdd-agent &;
+  :Spawn 6 component-agents (parallel);
+  note right
+    Each component agent creates 5 artifacts:
+    - class-backend.puml
+    - class-frontend.puml
+    - sequence.puml
+    - state.puml
+    - db/tables/xxx_tables.sql
+  end note
+  :Spawn db-agent + api-agent;
+  :Verify all components created;
+  :Write SDD document;
+end fork
+
+:Generate index.md;
+:Package all outputs;
+
+|User|
+stop
+
+note right of |User|
+  **What User Sees:**
+  1. Command entered
+  2. Progress indicator
+  3. Final document list
+
+  **What Happens:**
+  18 agents run in parallel
+  32+ files generated
+  ~2 minutes total
+end note
+
+@enduml
