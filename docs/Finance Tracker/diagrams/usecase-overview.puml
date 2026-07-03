@@ -1,0 +1,53 @@
+@startuml usecase-overview
+' Finance Tracker — System Use Case Diagram
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+actor "Admin" as Admin
+actor "Member" as Member
+actor "Email Service" as Email <<system>>
+
+rectangle "Finance Tracker" {
+  usecase "UC-01 Log in" as UC01
+  usecase "UC-02 Manage Member Accounts" as UC02
+  usecase "UC-03 Record Fund Contribution" as UC03
+  usecase "UC-04 Record Fund Expense" as UC04
+  usecase "UC-05 View Fund Balance,\nHistory & Payment Status" as UC05
+  usecase "UC-06 Schedule & Manage Match" as UC06
+  usecase "UC-07 Record Match Result\n& Player Stats" as UC07
+  usecase "UC-08 Manage Tournament\n& Standings" as UC08
+  usecase "UC-09 View Leaderboards\n& Standings" as UC09
+  usecase "UC-10 View Dashboards\n& My Stats" as UC10
+  usecase "UC-11 Send Match Reminder" as UC11
+}
+
+' Admin capabilities
+Admin --> UC01
+Admin --> UC02
+Admin --> UC03
+Admin --> UC04
+Admin --> UC05
+Admin --> UC06
+Admin --> UC07
+Admin --> UC08
+Admin --> UC09
+Admin --> UC10
+Admin --> UC11
+
+' Member capabilities
+Member --> UC01
+Member --> UC05
+Member --> UC09
+Member --> UC10
+Member --> UC11
+
+' System-to-system
+UC11 --> Email
+
+note right of UC07
+  Updates career stats,
+  standings and per-tournament
+  leaderboards as a side effect.
+end note
+@enduml

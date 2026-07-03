@@ -1,0 +1,16 @@
+@startuml uc08-manage-tournament
+' UC-08 Manage Tournament & Standings
+title UC-08 Manage Tournament & Standings (Admin)
+start
+:Admin opens Tournaments;
+:Create tournament\n(name, dates, participating teams);
+:Save tournament;
+repeat
+  :Tournament match result recorded (UC-07);
+  :Auto-compute league table\n(points W/D/L);
+  :Update per-tournament\ntop scorers/assists;
+repeat while (More matches?) is (yes)
+->no;
+:Standings & leaderboards current;
+stop
+@enduml

@@ -1,0 +1,16 @@
+@startuml uc09-view-leaderboards
+' UC-09 View Leaderboards & Standings
+title UC-09 View Leaderboards & Standings
+start
+:User opens Leaderboards;
+:Select scope (Overall / Tournament);
+:System computes rankings;
+fork
+  :Show top scorers;
+fork again
+  :Show top assists;
+fork again
+  :Show current standings;
+end fork
+stop
+@enduml

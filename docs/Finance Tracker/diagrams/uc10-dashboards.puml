@@ -1,0 +1,14 @@
+@startuml uc10-dashboards
+' UC-10 View Dashboards & My Stats
+title UC-10 View Dashboards & My Stats
+start
+:User logs in;
+if (Role = Admin?) then (Admin)
+  :Show fund summary\n(balance, contributions vs expenses,\noutstanding dues);
+  :Show team performance overview;
+else (Member)
+  :Show "My Stats"\n(goals, assists, matches played,\nattendance rate);
+  :Show personal dues status;
+endif
+stop
+@enduml

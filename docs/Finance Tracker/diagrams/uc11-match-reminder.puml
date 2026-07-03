@@ -1,0 +1,17 @@
+@startuml uc11-match-reminder
+' UC-11 Send Match Reminder
+title UC-11 Send Match Reminder
+start
+:Trigger\n(scheduled window before match\nOR Admin manual trigger);
+:Identify upcoming match\n+ relevant members;
+:Compose reminder\n(+ attendance request);
+:Send email via Email Service;
+if (Delivery succeeded?) then (yes)
+  :Mark notification sent;
+else (no)
+  :Log failure;
+  :Retry / flag to Admin;
+endif
+:(Should-have) Collect\nattendance responses;
+stop
+@enduml

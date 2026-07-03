@@ -1,0 +1,26 @@
+@startuml uc01-login
+' UC-01 Log in
+title UC-01 Log in
+start
+:User opens Finance Tracker;
+:Enter email/username + password;
+:Submit credentials;
+if (Credentials valid?) then (yes)
+  :Create authenticated session;
+  if (Role = Admin?) then (Admin)
+    :Load Admin dashboard;
+  else (Member)
+    :Load Member dashboard;
+  endif
+  stop
+else (no)
+  :Show error message;
+  if (Failed attempts >= limit?) then (yes)
+    :Apply temporary lockout;
+    stop
+  else (no)
+    :Allow retry;
+    stop
+  endif
+endif
+@enduml

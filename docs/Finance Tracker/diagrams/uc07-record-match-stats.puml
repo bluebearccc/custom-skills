@@ -1,0 +1,22 @@
+@startuml uc07-record-match-stats
+' UC-07 Record Match Result & Player Stats
+title UC-07 Record Match Result & Player Stats (Admin)
+start
+:Admin opens a played match;
+:Enter final score + result (W/L/D);
+:Record lineup/attendance\n(starters, subs, who played);
+:Attribute goals & assists\nto individual players;
+if (Goals attributed <= team score?) then (yes)
+  :Save result, stats, attendance;
+  :Update player career stats;
+  if (Match belongs to tournament?) then (yes)
+    :Recompute standings;
+    :Update per-tournament leaderboards;
+  else (no)
+  endif
+  stop
+else (no)
+  :Show validation warning;
+  stop
+endif
+@enduml

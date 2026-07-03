@@ -1,0 +1,19 @@
+@startuml uc04-record-expense
+' UC-04 Record Fund Expense
+title UC-04 Record Fund Expense (Admin)
+start
+:Admin opens Fund > Expenses;
+:Enter amount (VND), date,\ncategory, description;
+if (Amount & date valid?) then (yes)
+  if (Expense > current balance?) then (yes)
+    :Show over-balance warning\n(allowed, flagged);
+  else (no)
+  endif
+  :Save expense;
+  :Decrease fund balance;
+  stop
+else (no)
+  :Show validation error;
+  stop
+endif
+@enduml

@@ -1,0 +1,18 @@
+@startuml uc06-schedule-match
+' UC-06 Schedule & Manage Match
+title UC-06 Schedule & Manage Match (Admin)
+start
+:Admin opens Matches;
+switch (Action?)
+case (Create)
+  :Enter date/time, opponent,\nvenue, optional tournament;
+  :Save match (status = scheduled);
+case (Edit)
+  :Update match details;
+  :Save changes;
+case (Cancel)
+  :Set status = cancelled;
+endswitch
+:Match appears on schedule\n(eligible for reminders);
+stop
+@enduml

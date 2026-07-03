@@ -1,0 +1,27 @@
+@startuml uc02-manage-members
+' UC-02 Manage Member Accounts
+title UC-02 Manage Member Accounts (Admin)
+start
+:Admin opens Member Management;
+switch (Action?)
+case (Create)
+  :Enter member info\n(name, contact, team A/B,\nposition, jersey no.);
+  :Set initial credentials;
+  if (Email / jersey unique?) then (yes)
+    :Save member + login;
+  else (no)
+    :Show validation error;
+    stop
+  endif
+case (Edit)
+  :Update member fields;
+  :Save changes;
+case (Reassign team)
+  :Move member to other team;
+  :Save changes;
+case (Deactivate)
+  :Set status = inactive;
+endswitch
+:Member record persisted;
+stop
+@enduml

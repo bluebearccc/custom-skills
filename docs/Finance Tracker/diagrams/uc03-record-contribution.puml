@@ -1,0 +1,17 @@
+@startuml uc03-record-contribution
+' UC-03 Record Fund Contribution
+title UC-03 Record Fund Contribution (Admin)
+start
+:Admin opens Fund > Contributions;
+:Select member;
+:Enter amount (VND), date, period, note;
+if (Amount & date valid?) then (yes)
+  :Save contribution;
+  :Increase fund balance;
+  :Mark member "paid" for period;
+  stop
+else (no)
+  :Show validation error;
+  stop
+endif
+@enduml

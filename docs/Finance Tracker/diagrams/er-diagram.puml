@@ -1,0 +1,141 @@
+@startuml er-diagram
+' Finance Tracker — Entity Relationship Diagram
+hide circle
+skinparam linetype ortho
+
+entity "User" as user {
+  * id : uuid <<PK>>
+  --
+  * name : varchar
+  * email : varchar <<unique>>
+  phone : varchar
+  photo_url : varchar
+  * password_hash : varchar
+  * role : enum(Admin, Member)
+  * status : enum(active, inactive)
+  * join_date : date
+}
+
+entity "Team" as team {
+  * id : uuid <<PK>>
+  --
+  * name : varchar   ' Team A / Team B
+}
+
+entity "MemberProfile" as profile {
+  * user_id : uuid <<PK,FK>>
+  --
+  * team_id : uuid <<FK>>
+  position : enum(GK,DEF,MID,FWD)
+  jersey_number : int
+}
+
+entity "FundTransaction" as fund {
+  * id : uuid <<PK>>
+  --
+  * type : enum(contribution, expense)
+  member_id : uuid <<FK>>  ' null for expense
+  * amount_vnd : bigint
+  * date : date
+  category : varchar
+  period : varchar         ' e.g. 2026-07
+  note : text
+  * created_by : uuid <<FK>>
+}
+
+entity "PaymentStatus" as pay {
+  * id : uuid <<PK>>
+  --
+  * member_id : uuid <<FK>>
+  * period : varchar
+  * status : enum(paid, unpaid)
+  amount_vnd : bigint
+  fund_transaction_id : uuid <<FK>>
+}
+
+entity "Match" as match {
+  * id : uuid <<PK>>
+  --
+  * datetime : timestamp
+  * opponent : varchar
+  venue : varchar
+  tournament_id : uuid <<FK>>   ' nullable
+  team_id : uuid <<FK>>
+  score_for : int
+  score_against : int
+  result : enum(W,L,D)
+  * status : enum(scheduled, played, cancelled)
+}
+
+entity "Lineup" as lineup {
+  * id : uuid <<PK>>
+  --
+  * match_id : uuid <<FK>>
+  * member_id : uuid <<FK>>
+  * role : enum(starter, sub)
+  * played : boolean
+}
+
+entity "PlayerMatchStat" as stat {
+  * id : uuid <<PK>>
+  --
+  * match_id : uuid <<FK>>
+  * member_id : uuid <<FK>>
+  goals : int
+  assists : int
+}
+
+entity "Tournament" as tour {
+  * id : uuid <<PK>>
+  --
+  * name : varchar
+  start_date : date
+  end_date : date
+}
+
+entity "TournamentTeam" as tt {
+  * tournament_id : uuid <<PK,FK>>
+  * team_id : uuid <<PK,FK>>
+}
+
+entity "Standing" as standing {
+  * id : uuid <<PK>>
+  --
+  * tournament_id : uuid <<FK>>
+  * team_id : uuid <<FK>>
+  played : int
+  win : int
+  draw : int
+  loss : int
+  points : int
+}
+
+entity "Notification" as notif {
+  * id : uuid <<PK>>
+  --
+  * type : enum(match_reminder)
+  * recipient_id : uuid <<FK>>
+  match_id : uuid <<FK>>
+  * channel : enum(email)
+  * status : enum(pending, sent, failed)
+  sent_at : timestamp
+}
+
+user ||--o| profile
+team ||--o{ profile
+user ||--o{ fund : "member (contribution)"
+user ||--o{ pay
+fund ||--o| pay
+team ||--o{ match
+tour ||--o{ match
+match ||--o{ lineup
+user ||--o{ lineup
+match ||--o{ stat
+user ||--o{ stat
+tour ||--o{ tt
+team ||--o{ tt
+tour ||--o{ standing
+team ||--o{ standing
+user ||--o{ notif
+match ||--o{ notif
+@enduml

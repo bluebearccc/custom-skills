@@ -1,0 +1,15 @@
+@startuml uc05-view-fund
+' UC-05 View Fund Balance, History & Payment Status
+title UC-05 View Fund Balance, History & Payment Status
+start
+:User opens Fund;
+:System loads current balance\n(contributions vs expenses);
+if (Role = Admin?) then (Admin)
+  :Show full transaction history;
+  :Show per-member paid/unpaid list;
+else (Member)
+  :Show fund summary;
+  :Show own dues status;
+endif
+stop
+@enduml
