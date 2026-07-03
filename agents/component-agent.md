@@ -1,4 +1,5 @@
 ---
+name: component-agent
 description: Agent specialized in designing individual component/module details in the SDD
 mode: subagent
 permission:

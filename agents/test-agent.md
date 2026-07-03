@@ -1,4 +1,5 @@
 ---
+name: test-agent
 description: Agent that creates the Test Plan and Test Cases from Acceptance Criteria in the SRS
 mode: subagent
 permission:

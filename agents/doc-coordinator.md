@@ -1,4 +1,5 @@
 ---
+name: doc-coordinator
 description: Agent that orchestrates the SRS and SDD document generation workflow
 mode: primary
 permission:

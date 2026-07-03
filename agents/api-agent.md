@@ -1,4 +1,5 @@
 ---
+name: api-agent
 description: Agent that designs the overall REST API spec following OpenAPI 3.0
 mode: subagent
 permission:

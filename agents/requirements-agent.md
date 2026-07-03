@@ -1,4 +1,5 @@
 ---
+name: requirements-agent
 description: Agent specialized in gathering requirements for each use case or actor
 mode: subagent
 permission:

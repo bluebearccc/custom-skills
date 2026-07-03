@@ -1,6 +1,7 @@
 ---
 description: Generate a Software Design Document (SDD)
 agent: doc-coordinator
+context: fork
 ---
 
 Generate a Software Design Document (SDD) following the IEEE standard.

@@ -1,6 +1,7 @@
 ---
 description: Generate a Software Requirement Specification (SRS)
 agent: doc-coordinator
+context: fork
 ---
 
 Generate a Software Requirement Specification (SRS) following the IEEE standard.

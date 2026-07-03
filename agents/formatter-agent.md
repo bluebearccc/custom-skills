@@ -1,4 +1,5 @@
 ---
+name: formatter-agent
 description: Agent that converts Markdown documents to Word (.docx) or PDF format for non-technical stakeholders
 mode: subagent
 permission:

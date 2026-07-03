@@ -131,3 +131,4 @@ II. Software Requirement Specification
 
 ## License
 
+Proprietary — AgentCode Framework

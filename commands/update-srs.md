@@ -8,6 +8,7 @@ examples:
   - "/update-srs MyProject --scope nfr"
   - "/update-srs MyProject --scope feature"
 agent: doc-coordinator
+context: fork
 ---
 
 # Command: /update-srs

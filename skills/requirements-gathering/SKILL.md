@@ -10,12 +10,12 @@ description: |
   - Stakeholders need to be interviewed with specific questions
 
   IMPORTANT: You MUST use the AskUserQuestion tool for ALL interview questions.
-version: "3.2.0"
+version: "4.0.0"
 allowed-tools: ["Read", "Write", "Edit", "Glob", "AskUserQuestion"]
 mode: false
 ---
 
-# Requirements Gathering Skill v3.2.0
+# Requirements Gathering Skill v4.0.0
 
 ## MANDATORY Principles
 
@@ -29,7 +29,7 @@ mode: false
 
 ```
 ✅ CHOICE question → AskUserQuestion (with options)
-✅ OPEN question   → prose: "📝 Question X/35: Briefly describe the system you want to build?"
+✅ OPEN question   → prose: "📝 Question X/38: Briefly describe the system you want to build?"
 ```
 
 ### AskUserQuestion — CORRECT signature
@@ -98,6 +98,20 @@ Every question must have a status:
 [ ] Skipped    - User declined to answer (record the reason)
 ```
 
+### 5. USE CASES MUST BE FULLY STRUCTURED BEFORE MOVING ON
+```
+Every Must-Have feature (and any Should-Have the user flags as needing detailed design) MUST have
+a complete Use Case entry before you leave Question 10:
+
+  UC ID · Actor(s) · Trigger · Preconditions · Main Flow (numbered steps)
+  · Alternative Flows · Exception/Error Flows · Postconditions
+
+This is NOT optional detail. The diagram-generation agents downstream (sequence diagrams, state
+diagrams, screen flows) read directly from these fields. A feature with only a name and a
+one-line description is NOT enough to generate a correct diagram from — it will be fabricated
+by a later agent instead of reflecting what the stakeholder actually said.
+```
+
 ---
 
 ## Interview Flow (12 Steps)
@@ -129,7 +143,7 @@ tool.Call("AskUserQuestion", {
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 1/35: What is the name of your project?\n\nExamples: 'Sales Management System', 'Food Ordering App', 'CRM Software'",
+    question: "📝 Question 1/38: What is the name of your project?\n\nExamples: 'Sales Management System', 'Food Ordering App', 'CRM Software'",
     header: "Project Name"
   }]
 })
@@ -163,7 +177,7 @@ tool.Call("AskUserQuestion", {
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 2/35: Briefly describe (2-3 sentences) the system you want to build.\n\nSuggested points to cover:\n• What does the system do?\n• Who uses it?\n• What is the main purpose?\n\nExample: 'A sales management system for a store with 5 employees. Employees can create orders and track inventory. The store owner views revenue reports.'",
+    question: "📝 Question 2/38: Briefly describe (2-3 sentences) the system you want to build.\n\nSuggested points to cover:\n• What does the system do?\n• Who uses it?\n• What is the main purpose?\n\nExample: 'A sales management system for a store with 5 employees. Employees can create orders and track inventory. The store owner views revenue reports.'",
     header: "System Desc."
   }]
 })
@@ -204,7 +218,7 @@ tool.Call("AskUserQuestion", {
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 3/35: Does this system replace or supplement any existing system?\n\nAnswer with one of the following cases:\nA) BRAND NEW - Built from scratch, no existing system\nB) REPLACEMENT - There is an old system, it will be fully retired\nC) SUPPLEMENT - There is an old system, adding new features to it\nD) UPGRADE - There is an old system, migrating to new technology",
+    question: "📝 Question 3/38: Does this system replace or supplement any existing system?\n\nAnswer with one of the following cases:\nA) BRAND NEW - Built from scratch, no existing system\nB) REPLACEMENT - There is an old system, it will be fully retired\nC) SUPPLEMENT - There is an old system, adding new features to it\nD) UPGRADE - There is an old system, migrating to new technology",
     header: "Existing System",
     options: [
       { label: "A) Brand new", description: "Built from scratch, no existing system" },
@@ -245,8 +259,42 @@ tool.Call("AskUserQuestion", {
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 4/35: What business problem or opportunity does this project address?\n\nSuggested points to cover:\n• What problems exist with the current process?\n• What benefits will this project bring?\n• How will success be measured? (time saved, revenue increase, fewer errors...)",
+    question: "📝 Question 4/38: What business problem or opportunity does this project address?\n\nSuggested points to cover:\n• What problems exist with the current process?\n• What benefits will this project bring?\n• How will success be measured? (time saved, revenue increase, fewer errors...)",
     header: "Business Problem"
+  }]
+})
+```
+
+---
+
+**Question 2.5 (Required) - STAKEHOLDERS & APPROVAL:**
+
+**USE the AskUserQuestion tool:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "📝 Question 5/38: Who are the key stakeholders for this project?\n\nI need to know:\n• Project Sponsor - who owns the budget and is ultimately accountable?\n• Product Owner / Business Owner - who decides what goes in scope?\n• Main point of contact - who do I ask when I have requirement questions?\n• Final approval authority - who signs off on the SRS before development starts?\n\nExample: 'Sponsor: CFO Nguyen Van A. Product Owner: Sales Director Tran Thi B. Point of contact: Tran Thi B. Approval: both must sign off.'",
+    header: "Stakeholders"
+  }]
+})
+```
+
+**Probing 2.5a (if roles are unclear or overlapping) - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "A few follow-ups:\n• Is the Sponsor the same person as the Product Owner, or someone different?\n• If the Sponsor and Product Owner disagree on a requirement, who has the final say?\n• Are there other stakeholders whose sign-off is needed (e.g., Legal, Security, IT)?\n• Is there anyone with a conflicting interest we should be aware of (e.g., two departments wanting different priorities)?",
+    header: "Clarify Roles"
+  }]
+})
+```
+
+**SATISFACTION CHECK 2.5 - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "☝️ Stakeholders:\n• Sponsor: [name]\n• Product Owner: [name]\n• Point of contact: [name]\n• Approval authority: [name(s)]\n\nAre you satisfied with this? Is anyone missing who needs to sign off on the SRS?",
+    header: "Confirm OK?"
   }]
 })
 ```
@@ -261,7 +309,7 @@ tool.Call("AskUserQuestion", {
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 5/35: Who will use this system?\n\nList all user groups (actors).\n\nAnswer in this format:\n| User Group | Short Description |\n| Admin | Manages the system |\n| Sales Staff | Creates orders |\n| Customer | Orders online |\n\nExample: 'Admin, Warehouse Staff, Accountant, Customer'",
+    question: "📝 Question 6/38: Who will use this system?\n\nList all user groups (actors).\n\nAnswer in this format:\n| User Group | Short Description |\n| Admin | Manages the system |\n| Sales Staff | Creates orders |\n| Customer | Orders online |\n\nExample: 'Admin, Warehouse Staff, Accountant, Customer'",
     header: "User List"
   }]
 })
@@ -305,7 +353,7 @@ tool.Call("AskUserQuestion", {
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 6/35: What permissions does each user group have, and how do they differ?\n\nFor each actor, I need to know:\n• What are they ALLOWED to do?\n• What are they NOT allowed to do?\n• Do they need approval from anyone?\n\nSuggested format:\n| Actor | Allowed | Not Allowed | Needs Approval |\n|-------|---------|----------------|---------------|\n| Admin | Everything | Nothing | No one |\n| Staff | CRUD orders | Delete approved orders | Manager |",
+    question: "📝 Question 7/38: What permissions does each user group have, and how do they differ?\n\nFor each actor, I need to know:\n• What are they ALLOWED to do?\n• What are they NOT allowed to do?\n• Do they need approval from anyone?\n\nSuggested format:\n| Actor | Allowed | Not Allowed | Needs Approval |\n|-------|---------|----------------|---------------|\n| Admin | Everything | Nothing | No one |\n| Staff | CRUD orders | Delete approved orders | Manager |",
     header: "Permissions"
   }]
 })
@@ -339,7 +387,7 @@ tool.Call("AskUserQuestion", {
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 7/35: Are there anonymous users (guests/not logged in)?\n\nIf YES, can they:\n• View products/services?\n• Compare products?\n• Add items to a cart without ordering?\n• Register a new account?\n\nIf NO, why not? (must log in before viewing content?)",
+    question: "📝 Question 8/38: Are there anonymous users (guests/not logged in)?\n\nIf YES, can they:\n• View products/services?\n• Compare products?\n• Add items to a cart without ordering?\n• Register a new account?\n\nIf NO, why not? (must log in before viewing content?)",
     header: "Guest Users"
   }]
 })
@@ -347,31 +395,21 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-## SECTION C: FUNCTIONAL REQUIREMENTS (Questions 8-12)
+## SECTION C: FUNCTIONAL REQUIREMENTS (Questions 9-14)
 
-### Question 8 (Required) - FEATURES LIST & MOSCOW:
+### Question 9 (Required) - FEATURES LIST & MOSCOW:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 8/35: What functions does the system need? List all features in priority order.\n\nFormat:\n| No. | Feature Name | Short Description | Main Actor | MoSCoW |\n|-----|--------------|-------------|-------------|--------|\n| 1 | Login | Email + password | User | Must |\n| 2 | Create Order | Create a new order | Staff | Must |\n...\n\nSuggested feature groups:\n• Account management (register, login, forgot password)\n• Basic CRUD (create, read, update, delete data)\n• Search & Filter & Sort\n• Reports & Statistics\n• Payment & Transactions\n• Notifications (email/SMS/push)",
+    question: "📝 Question 9/38: What functions does the system need? List all features in priority order.\n\nFormat:\n| No. | Feature Name | Short Description | Main Actor | MoSCoW |\n|-----|--------------|-------------|-------------|--------|\n| 1 | Login | Email + password | User | Must |\n| 2 | Create Order | Create a new order | Staff | Must |\n...\n\nSuggested feature groups:\n• Account management (register, login, forgot password)\n• Basic CRUD (create, read, update, delete data)\n• Search & Filter & Sort\n• Reports & Statistics\n• Payment & Transactions\n• Notifications (email/SMS/push)\n\nNote: for every feature marked Must (and any Should you want designed in detail), we will assign it a Use Case ID (UC01, UC02, ...) and specify its full flow in the next question — so make sure the feature list is complete before moving on.",
     header: "Features"
   }]
 })
 ```
 
-**Probing 8a (dig deeper into each feature) - USE AskUserQuestion:**
-```javascript
-tool.Call("AskUserQuestion", {
-  questions: [{
-    question: "For the feature '[feature name]', I need to understand clearly:\n\n1. WHO uses this feature? (Which actor?)\n2. How does the feature start?\n   (User clicks a button? System triggers automatically? Scheduled? Event triggered?)\n3. What are the main steps to complete it?\n   (Step 1: ... → Step 2: ... → Step 3: ...)\n4. What is the final result?\n   (Data saved? Email sent? Page redirected?)\n5. What errors could occur?\n   (Network error? Validation failure? Permission denied?)\n6. When is it REJECTED?\n   (Invalid input? Insufficient permission? Data doesn't exist?)",
-    header: "Dig Into Feature"
-  }]
-})
-```
-
-**Probing 8b (if obvious features are missing) - USE AskUserQuestion:**
+**Probing 9a (if obvious features are missing) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -387,7 +425,7 @@ tool.Call("AskUserQuestion", {
 })
 ```
 
-**SATISFACTION CHECK 8 - USE AskUserQuestion:**
+**SATISFACTION CHECK 9 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -399,19 +437,84 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 9 (Required) - MOSCOW CLASSIFICATION:
+### Question 10 (Required, REPEAT FOR EACH Must-Have FEATURE) - USE CASE DETAILED SPECIFICATION:
+
+⚠️ **This question MUST be repeated for every Must-Have feature from Question 9 (and any Should-Have feature the user wants designed in detail) before moving to Question 11.** Track completion explicitly, e.g. "UC01 ✅, UC02 ✅, UC03 ⏳..." Do not proceed with partial coverage — see Principle 5.
+
+**USE the AskUserQuestion tool (once per feature) — OPEN-ENDED, so ask in prose:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "📝 Question 10/38 — Use Case [UC0X] '[Feature Name]':\n\nI need the full specification for this use case:\n\n1. UC ID: UC0X\n2. Actor(s): who performs it?\n3. Trigger: what starts it? (user action, schedule, event, another system)\n4. Preconditions: what must be true BEFORE this can start? (e.g., user is logged in, cart is not empty)\n5. Main Flow: the happy-path steps, numbered (Step 1 → Step 2 → Step 3 → ...)\n6. Alternative Flows: valid variations of the happy path (e.g., user applies a discount code)\n7. Exception/Error Flows: what happens when something goes wrong at each step? (validation fails, payment declined, network error)\n8. Postconditions: what must be true AFTER this completes successfully? (e.g., order status = 'Paid', inventory decremented)\n\nExample (UC04 - Place Order):\n• Preconditions: User is logged in; cart has ≥1 item\n• Main Flow: 1) User reviews cart → 2) User enters shipping address → 3) User selects payment method → 4) User confirms order → 5) System creates order record → 6) System sends confirmation email\n• Alternative Flow: User applies a discount code before confirming\n• Exception Flow: Payment is declined → order stays 'Pending Payment', user is notified, cart is preserved\n• Postconditions: Order status = 'Paid'; inventory decremented; confirmation email sent",
+    header: "UC0X Spec"
+  }]
+})
+```
+
+**Probing 10a (if any of the 8 fields is missing or vague):**
+```
+This use case is still missing some detail. Specifically:
+[list the missing field(s): Preconditions / Main Flow steps / Alternative Flows / Exception Flows / Postconditions]
+
+For exception flows in particular, walk through EACH step of the main flow and ask:
+"what could go wrong here, and what does the system do about it?"
+```
+
+**Probing 10b (if the feature has no meaningful alternative/exception flow) - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "Is it really true that this use case has no alternative paths and nothing can go wrong? Even simple use cases usually have at least one exception (e.g., 'required field missing', 'permission denied', 'record not found'). Confirm there really is none, or add it now.",
+    header: "Confirm No Exceptions",
+    options: [
+      { label: "Confirmed - none", description: "This use case genuinely has no alternative/exception flow" },
+      { label: "Add one now", description: "I'll describe the missing flow" }
+    ],
+    multiSelect: false
+  }]
+})
+```
+
+**SATISFACTION CHECK 10 (per UC) - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "☝️ UC0X '[Feature Name]':\n• Preconditions: [listed]\n• Main Flow: [N steps]\n• Alternative Flows: [listed / none]\n• Exception Flows: [listed]\n• Postconditions: [listed]\n\nIs this use case complete? Ready for the next one, or need to add anything here?",
+    header: "Confirm OK?"
+  }]
+})
+```
+
+**LOOP CHECK (after each UC, until all Must-Have features are covered) - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "✅ UC0X done. [Y] of [N] Must-Have use cases specified so far.\n\nReady for UC0(X+1) '[next feature name]'?",
+    header: "Next UC?",
+    options: [
+      { label: "Yes, continue", description: "Move to the next use case" },
+      { label: "Pause here", description: "I need a break, we'll continue later" }
+    ],
+    multiSelect: false
+  }]
+})
+```
+
+---
+
+### Question 11 (Required) - MOSCOW SANITY CHECK:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 9/35: Which features are MANDATORY, and which are 'nice to have'?\n\nUse MoSCoW:\n| Symbol | Meaning | Definition |\n|---------|---------|-------------|\n| M | Must Have | Without it = CANNOT be released |\n| S | Should Have | Should have = Important but not mandatory |\n| C | Could Have | Could have = Nice to have |\n| W | Won't Have | Not included in this version |",
+    question: "📝 Question 11/38: Now that every Must-Have feature has a full use case spec, let's sanity-check priorities. Which features are truly MANDATORY, and which are 'nice to have'?\n\nUse MoSCoW:\n| Symbol | Meaning | Definition |\n|---------|---------|-------------|\n| M | Must Have | Without it = CANNOT be released |\n| S | Should Have | Should have = Important but not mandatory |\n| C | Could Have | Could have = Nice to have |\n| W | Won't Have | Not included in this version |",
     header: "MoSCoW"
   }]
 })
 ```
 
-**Probing 9a (if everything is marked Must) - USE AskUserQuestion:**
+**Probing 11a (if everything is marked Must) - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -421,7 +524,7 @@ tool.Call("AskUserQuestion", {
 })
 ```
 
-**SATISFACTION CHECK 9 - USE AskUserQuestion:**
+**SATISFACTION CHECK 11 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -433,19 +536,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 10 (Required) - BUSINESS RULES & CALCULATIONS:
+### Question 12 (Required) - BUSINESS RULES & CALCULATIONS:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 10/35: Are there any special business rules the system should automate?\n\nFormat:\n| Rule | Description | Trigger | Action |\n|------|-------|---------|--------|\n| Auto_cancel | Auto-cancel order after 24h | Order unpaid > 24h | Cancel + notify |\n| Tier_pricing | Discount by quantity | Qty > 10 | 10% off |\n| Auto_refund | Auto-refund on cancellation | Order cancelled | Refund to original payment |\n\nExamples:\n• Automatically send an email when a new order arrives\n• Automatically calculate commission for agents (%)\n• Automatically renew a subscription\n• Automatic inventory alert when stock runs out\n• Validation rules (conditions for validating input)",
+    question: "📝 Question 12/38: Are there any special business rules the system should automate?\n\nFormat:\n| Rule | Description | Trigger | Action |\n|------|-------|---------|--------|\n| Auto_cancel | Auto-cancel order after 24h | Order unpaid > 24h | Cancel + notify |\n| Tier_pricing | Discount by quantity | Qty > 10 | 10% off |\n| Auto_refund | Auto-refund on cancellation | Order cancelled | Refund to original payment |\n\nExamples:\n• Automatically send an email when a new order arrives\n• Automatically calculate commission for agents (%)\n• Automatically renew a subscription\n• Automatic inventory alert when stock runs out\n• Validation rules (conditions for validating input)",
     header: "Business Rules"
   }]
 })
 ```
 
-**Probing 10a - USE AskUserQuestion:**
+**Probing 12a - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -455,7 +558,7 @@ tool.Call("AskUserQuestion", {
 })
 ```
 
-**SATISFACTION CHECK 10 - USE AskUserQuestion:**
+**SATISFACTION CHECK 12 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -467,19 +570,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 11 (Required) - VALIDATION & ERROR HANDLING:
+### Question 13 (Required) - VALIDATION & ERROR HANDLING:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 11/35: How does the system validate data? How is error handling done?\n\nFor each input type, I need to know:\n• Required fields?\n• Format validation? (email format, phone format, date format)\n• Range validation? (min/max quantity, date range)\n• Custom validation rules?\n\nError handling:\n• What is shown when validation fails?\n• What happens on a network error?\n• What happens on a timeout?\n• What happens when permission is denied?\n• Is there a retry mechanism?",
+    question: "📝 Question 13/38: How does the system validate data? How is error handling done?\n\nFor each input type, I need to know:\n• Required fields?\n• Format validation? (email format, phone format, date format)\n• Range validation? (min/max quantity, date range)\n• Custom validation rules?\n\nError handling:\n• What is shown when validation fails?\n• What happens on a network error?\n• What happens on a timeout?\n• What happens when permission is denied?\n• Is there a retry mechanism?",
     header: "Validation"
   }]
 })
 ```
 
-**Probing 11a - USE AskUserQuestion:**
+**Probing 13a - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -489,7 +592,7 @@ tool.Call("AskUserQuestion", {
 })
 ```
 
-**SATISFACTION CHECK 11 - USE AskUserQuestion:**
+**SATISFACTION CHECK 13 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -501,19 +604,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 12 (Optional) - REPORTING & ANALYTICS:
+### Question 14 (Optional) - REPORTING & ANALYTICS:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 12/35: What reports and analytics are needed?\n\nFormat:\n| Report | Description | Viewed By | Frequency | Format |\n|--------|--------|--------|----------|--------|\n| Revenue | Revenue summary by day | Admin, Manager | Daily | PDF, Excel |\n| Inventory | Inventory report | Admin, Warehouse | Weekly | Excel |\n\nNeed to know:\n• Real-time or delayed reports?\n• Who is allowed to view which reports?\n• Is drill-down needed? (click to see details)\n• Which export formats are supported?\n• Are there scheduled reports sent automatically by email?",
+    question: "📝 Question 14/38: What reports and analytics are needed?\n\nFormat:\n| Report | Description | Viewed By | Frequency | Format |\n|--------|--------|--------|----------|--------|\n| Revenue | Revenue summary by day | Admin, Manager | Daily | PDF, Excel |\n| Inventory | Inventory report | Admin, Warehouse | Weekly | Excel |\n\nNeed to know:\n• Real-time or delayed reports?\n• Who is allowed to view which reports?\n• Is drill-down needed? (click to see details)\n• Which export formats are supported?\n• Are there scheduled reports sent automatically by email?",
     header: "Reports"
   }]
 })
 ```
 
-**SATISFACTION CHECK 12 - USE AskUserQuestion:**
+**SATISFACTION CHECK 14 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -525,31 +628,21 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-## SECTION D: DATA MODEL (Questions 13-15)
+## SECTION D: DATA MODEL (Questions 15-17)
 
-### Question 13 (Required) - ENTITIES & FIELDS:
+### Question 15 (Required) - ENTITIES & FIELDS:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 13/35: What kinds of data does the system need to store? (Entities)\n\nFormat:\n| Entity | Description | Primary Fields | Managed By |\n|--------|--------|-----------------|-------------|\n| User | User account | id, name, email, phone, password, role | Admin |\n| Product | Product/service | id, name, price, stock, category_id | Admin |\n| Order | Order | id, user_id, total, status, created_at | Staff |\n\nHint - Think about the NOUNS in the system:\n• Who? → User, Customer, Employee, Admin",
+    question: "📝 Question 15/38: What kinds of data does the system need to store? (Entities)\n\nFormat:\n| Entity | Description | Primary Fields | Managed By |\n|--------|--------|-----------------|-------------|\n| User | User account | id, name, email, phone, password, role | Admin |\n| Product | Product/service | id, name, price, stock, category_id | Admin |\n| Order | Order | id, user_id, total, status, created_at | Staff |\n\nHint - Think about the NOUNS in the system:\n• Who? → User, Customer, Employee, Admin",
     header: "Entities"
   }]
 })
 ```
 
-**SATISFACTION CHECK 13 - USE AskUserQuestion:**
-```javascript
-tool.Call("AskUserQuestion", {
-  questions: [{
-    question: "☝️ Entity list:\n[listed]\n\nAre you satisfied with this list?\n• Are there other entities?\n• Does any entity need more fields?",
-    header: "Confirm OK?"
-  }]
-})
-```
-
-**Probing 13a (dig deeper into each entity):**
+**Probing 15a (dig deeper into each entity):**
 ```
 For entity "[name]", I need to know:
 1. What fields/information does it need?
@@ -560,7 +653,7 @@ For entity "[name]", I need to know:
 5. Any special validation?
 ```
 
-**Probing 13b (if common entities are missing):**
+**Probing 15b (if common entities are missing):**
 ```
 It looks like you haven't listed some common entities:
 • [ ] User/Account (login information)
@@ -572,31 +665,31 @@ It looks like you haven't listed some common entities:
 • [ ] Attachment/File
 ```
 
-**SATISFACTION CHECK 13:**
-```
-☝️ Entity list:
-[listed]
-
-Are you satisfied with this list?
-• Are there other entities?
-• Does any entity need more fields?
+**SATISFACTION CHECK 15 - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "☝️ Entity list:\n[listed]\n\nAre you satisfied with this list?\n• Are there other entities?\n• Does any entity need more fields?",
+    header: "Confirm OK?"
+  }]
+})
 ```
 
 ---
 
-### Question 14 (Required) - RELATIONSHIPS & CARDINALITY:
+### Question 16 (Required) - RELATIONSHIPS & CARDINALITY:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 14/35: How are the entities related to each other?\n\nFormat:\n| Entity A | Relationship | Entity B | Cardinality |\n|----------|--------------|----------|--------------|\n| User | has many | Order | 1:N |\n| Order | contains many | OrderItem | 1:N |\n| OrderItem | belongs to | Product | N:1 |\n| Product | belongs to | Category | N:1 |\n\nNeed to know:\n• 1:N or N:N?\n• Is there cascade delete? (deleting parent → deletes children?)\n• Is there soft delete? (is_deleted flag)\n• Is there timestamp tracking? (created_at, updated_at)",
+    question: "📝 Question 16/38: How are the entities related to each other?\n\nFormat:\n| Entity A | Relationship | Entity B | Cardinality |\n|----------|--------------|----------|--------------|\n| User | has many | Order | 1:N |\n| Order | contains many | OrderItem | 1:N |\n| OrderItem | belongs to | Product | N:1 |\n| Product | belongs to | Category | N:1 |\n\nNeed to know:\n• 1:N or N:N?\n• Is there cascade delete? (deleting parent → deletes children?)\n• Is there soft delete? (is_deleted flag)\n• Is there timestamp tracking? (created_at, updated_at)",
     header: "Relationships"
   }]
 })
 ```
 
-**Probing 14a - USE AskUserQuestion:**
+**Probing 16a - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -606,7 +699,7 @@ tool.Call("AskUserQuestion", {
 })
 ```
 
-**SATISFACTION CHECK 14 - USE AskUserQuestion:**
+**SATISFACTION CHECK 16 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -618,19 +711,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 15 (Optional) - DATA VOLUME & GROWTH:
+### Question 17 (Optional) - DATA VOLUME & GROWTH:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 15/35: Roughly how much initial data is there? What growth is expected?\n\nEstimate for each entity:\n• Users: ~ ? (e.g., 100, 1000, 10000)\n• Products: ~ ?\n• Orders/Transactions: ~ ?\n• Storage estimate: ~ ? GB\n\nExpected growth:\n• User growth: % / month\n• Data growth: % / month\n• Peak load: (e.g., 10,000 concurrent users)\n\nThis affects:\n• Database design (indexing, partitioning)\n• Caching strategy\n• Scalability requirements",
+    question: "📝 Question 17/38: Roughly how much initial data is there? What growth is expected?\n\nEstimate for each entity:\n• Users: ~ ? (e.g., 100, 1000, 10000)\n• Products: ~ ?\n• Orders/Transactions: ~ ?\n• Storage estimate: ~ ? GB\n\nExpected growth:\n• User growth: % / month\n• Data growth: % / month\n• Peak load: (e.g., 10,000 concurrent users)\n\nThis affects:\n• Database design (indexing, partitioning)\n• Caching strategy\n• Scalability requirements",
     header: "Data Volume"
   }]
 })
 ```
 
-**SATISFACTION CHECK 15 - USE AskUserQuestion:**
+**SATISFACTION CHECK 17 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -642,21 +735,21 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-## SECTION E: INTEGRATION & INTERFACES (Questions 16-19)
+## SECTION E: INTEGRATION & INTERFACES (Questions 18-21)
 
-**Question 16 (Required) - EXTERNAL SYSTEMS:**
+**Question 18 (Required) - EXTERNAL SYSTEMS:**
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 16/35: Does the system need to connect with any other system?\n\nFormat:\n| System | Purpose of Connection | Method | Data Flow |\n|----------|-----------------|--------|-----------|\n| Salesforce CRM | Sync customers | API | Bidirectional |\n| MISA Accounting | Export invoices | File export | One-way |\n| GHN Shipping | Calculate shipping fees | API | Bidirectional |\n| VNPay Payment | Payment processing | API | Bidirectional |\n\nCommon examples:\n• Payment gateway (Stripe, VNPay, MoMo, ZaloPay)\n• Shipping (GHN, GHTK, J&T, Ninja Van)\n• SMS/Email service (Twilio, SendGrid, AWS SES)\n• Storage (AWS S3, Google Drive)",
+    question: "📝 Question 18/38: Does the system need to connect with any other system?\n\nFormat:\n| System | Purpose of Connection | Method | Data Flow |\n|----------|-----------------|--------|-----------|\n| Salesforce CRM | Sync customers | API | Bidirectional |\n| MISA Accounting | Export invoices | File export | One-way |\n| GHN Shipping | Calculate shipping fees | API | Bidirectional |\n| VNPay Payment | Payment processing | API | Bidirectional |\n\nCommon examples:\n• Payment gateway (Stripe, VNPay, MoMo, ZaloPay)\n• Shipping (GHN, GHTK, J&T, Ninja Van)\n• SMS/Email service (Twilio, SendGrid, AWS SES)\n• Storage (AWS S3, Google Drive)",
     header: "External Systems"
   }]
 })
 ```
 
-**Probing 16a (for each connected system):**
+**Probing 18a (for each connected system):**
 ```
 For each system:
 1. Does the external system have an API spec yet?
@@ -666,7 +759,7 @@ For each system:
 5. What happens when the external system is down?
 ```
 
-**SATISFACTION CHECK 16 - USE AskUserQuestion:**
+**SATISFACTION CHECK 18 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -678,19 +771,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-**Question 17 (Required) - API SPECS & DATA FORMAT:**
+**Question 19 (Required) - API SPECS & DATA FORMAT:**
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 17/35: What data format do the API integrations use?\n\nFor each integration:\n• REST API (JSON) or GraphQL or SOAP (XML)?\n• Current API version?\n• Authentication method?\n• Standard error codes?",
+    question: "📝 Question 19/38: What data format do the API integrations use?\n\nFor each integration:\n• REST API (JSON) or GraphQL or SOAP (XML)?\n• Current API version?\n• Authentication method?\n• Standard error codes?",
     header: "API Specs"
   }]
 })
 ```
 
-**SATISFACTION CHECK 17 - USE AskUserQuestion:**
+**SATISFACTION CHECK 19 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -702,19 +795,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-**Question 18 (Required) - DATA SYNC STRATEGY:**
+**Question 20 (Required) - DATA SYNC STRATEGY:**
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 18/35: How is data synced between systems?\n\nChoose a sync mode:\nA) Real-time (Webhook, Socket) - Immediately when a change occurs\nB) Scheduled (Cron job) - Periodic (e.g., every 15 minutes)\nC) Batch (Manual trigger) - On demand\nD) Event-driven (Message queue) - When an event occurs\n\nFor each sync:\n• Sync direction? (Push, Pull, Bidirectional)\n• Conflict resolution when data mismatches?",
+    question: "📝 Question 20/38: How is data synced between systems?\n\nChoose a sync mode:\nA) Real-time (Webhook, Socket) - Immediately when a change occurs\nB) Scheduled (Cron job) - Periodic (e.g., every 15 minutes)\nC) Batch (Manual trigger) - On demand\nD) Event-driven (Message queue) - When an event occurs\n\nFor each sync:\n• Sync direction? (Push, Pull, Bidirectional)\n• Conflict resolution when data mismatches?",
     header: "Data Sync"
   }]
 })
 ```
 
-**SATISFACTION CHECK 18 - USE AskUserQuestion:**
+**SATISFACTION CHECK 20 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -726,19 +819,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-**Question 19 (Optional) - FILE IMPORTS/EXPORTS:**
+**Question 21 (Optional) - FILE IMPORTS/EXPORTS:**
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 19/35: Do you need to import/export data from files?\n\nCommon formats:\n• Excel (.xlsx, .csv) - for reports, data export\n• PDF - for invoices, contracts\n• JSON/XML - for API, data exchange\n• Image/PDF - for printing\n\nFor each type:\n• Who is allowed to export/import?\n• File size limit? (e.g., max 10MB)",
+    question: "📝 Question 21/38: Do you need to import/export data from files?\n\nCommon formats:\n• Excel (.xlsx, .csv) - for reports, data export\n• PDF - for invoices, contracts\n• JSON/XML - for API, data exchange\n• Image/PDF - for printing\n\nFor each type:\n• Who is allowed to export/import?\n• File size limit? (e.g., max 10MB)",
     header: "File Import/Export"
   }]
 })
 ```
 
-**SATISFACTION CHECK 19 - USE AskUserQuestion:**
+**SATISFACTION CHECK 21 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -750,15 +843,15 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-## SECTION F: PLATFORM & UI (Questions 20-22)
+## SECTION F: PLATFORM & UI (Questions 22-24)
 
-**Question 20 (Required) - PLATFORMS:**
+**Question 22 (Required) - PLATFORMS:**
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 20/35: How will users access the system?\n\nSelect all that apply:\nA) Web Browser (Chrome, Safari, Firefox, Edge...)\nB) Mobile Web (browser on a phone)\nC) Native iOS App\nD) Native Android App\nE) Desktop App (Windows/Mac/Linux)\nF) API for other systems to call\n\nIf multiple are selected, provide the usage split:\ne.g., Web 70%, Mobile Web 20%, API 10%",
+    question: "📝 Question 22/38: How will users access the system?\n\nSelect all that apply:\nA) Web Browser (Chrome, Safari, Firefox, Edge...)\nB) Mobile Web (browser on a phone)\nC) Native iOS App\nD) Native Android App\nE) Desktop App (Windows/Mac/Linux)\nF) API for other systems to call\n\nIf multiple are selected, provide the usage split:\ne.g., Web 70%, Mobile Web 20%, API 10%",
     header: "Platforms",
     options: [
       { label: "A) Web Browser", description: "Desktop browser" },
@@ -773,7 +866,7 @@ tool.Call("AskUserQuestion", {
 })
 ```
 
-**SATISFACTION CHECK 20 - USE AskUserQuestion:**
+**SATISFACTION CHECK 22 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -785,19 +878,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-**Question 21 (Required) - RESPONSIVE & ACCESSIBILITY:**
+**Question 23 (Required) - RESPONSIVE & ACCESSIBILITY:**
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 21/35: Are there any special requirements for the UI and accessibility?\n\nResponsive Design:\n• Mobile-first or desktop-first?\n• Breakpoints? (480px, 768px, 1024px, 1440px)\n• Touch-friendly targets? (min 44x44px)\n\nAccessibility (WCAG compliance):\n• Screen reader support? (alt text, ARIA labels)\n• Keyboard navigation?\n• Color contrast? (4.5:1 ratio minimum)\n• Dark mode support?\n\nUI/UX Standards:\n• Is there an existing design system? (Material, Bootstrap, Tailwind, custom)",
+    question: "📝 Question 23/38: Are there any special requirements for the UI and accessibility?\n\nResponsive Design:\n• Mobile-first or desktop-first?\n• Breakpoints? (480px, 768px, 1024px, 1440px)\n• Touch-friendly targets? (min 44x44px)\n\nAccessibility (WCAG compliance):\n• Screen reader support? (alt text, ARIA labels)\n• Keyboard navigation?\n• Color contrast? (4.5:1 ratio minimum)\n• Dark mode support?\n\nUI/UX Standards:\n• Is there an existing design system? (Material, Bootstrap, Tailwind, custom)",
     header: "UI/UX"
   }]
 })
 ```
 
-**SATISFACTION CHECK 21 - USE AskUserQuestion:**
+**SATISFACTION CHECK 23 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -809,13 +902,13 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-**Question 22 (Optional) - MULTI-LANGUAGE & INTERNATIONALIZATION:**
+**Question 24 (Optional) - MULTI-LANGUAGE & INTERNATIONALIZATION:**
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 22/35: Do you need support for multiple languages or internationalization?",
+    question: "📝 Question 24/38: Do you need support for multiple languages or internationalization?",
     header: "i18n"
   }]
 })
@@ -842,7 +935,7 @@ i18n implementation:
 • Dynamic language switching?
 ```
 
-**Probing 22a:**
+**Probing 24a:**
 ```
 For each language:
 1. Is content already available? (how much needs translating?)
@@ -857,7 +950,7 @@ Technical considerations:
 3. Is RTL layout mirroring needed?
 ```
 
-**SATISFACTION CHECK 22 - USE AskUserQuestion:**
+**SATISFACTION CHECK 24 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -869,21 +962,21 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-## SECTION G: NON-FUNCTIONAL REQUIREMENTS (Questions 23-27)
+## SECTION G: NON-FUNCTIONAL REQUIREMENTS (Questions 25-29)
 
-### Question 23 (Required) - PERFORMANCE:
+### Question 25 (Required) - PERFORMANCE:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 23/35: How fast does the system need to respond?\n\nAnswer specifically for each operation:\n| Operation | Acceptable | Ideal | Measurement |\n|-----------|------------|-------|------------|\n| Page load | < 3s | < 1s | P95 |\n| API call | < 1s | < 200ms | P95 |\n| Search query | < 2s | < 500ms | P95 |\n\nExamples:\n• 'The API must respond within < 500ms at P95'\n• 'Page load must be < 2 seconds with 1000 concurrent users'",
+    question: "📝 Question 25/38: How fast does the system need to respond?\n\nAnswer specifically for each operation:\n| Operation | Acceptable | Ideal | Measurement |\n|-----------|------------|-------|------------|\n| Page load | < 3s | < 1s | P95 |\n| API call | < 1s | < 200ms | P95 |\n| Search query | < 2s | < 500ms | P95 |\n\nExamples:\n• 'The API must respond within < 500ms at P95'\n• 'Page load must be < 2 seconds with 1000 concurrent users'",
     header: "Performance"
   }]
 })
 ```
 
-**SATISFACTION CHECK 23 - USE AskUserQuestion:**
+**SATISFACTION CHECK 25 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -895,19 +988,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 24 (Required) - SCALABILITY & CONCURRENCY:
+### Question 26 (Required) - SCALABILITY & CONCURRENCY:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 24/35: How does the system need to scale? How many concurrent users?\n\nConcurrent Users:\n| Metric | Value |\n|--------|-------|\n| Peak concurrent users | ~? |\n| Average concurrent users | ~? |\n| Peak hours | e.g., 9-11am, 2-4pm |\n\nData Growth:\n• User growth rate: % / month\n• Storage needed: ~? GB/TB",
+    question: "📝 Question 26/38: How does the system need to scale? How many concurrent users?\n\nConcurrent Users:\n| Metric | Value |\n|--------|-------|\n| Peak concurrent users | ~? |\n| Average concurrent users | ~? |\n| Peak hours | e.g., 9-11am, 2-4pm |\n\nData Growth:\n• User growth rate: % / month\n• Storage needed: ~? GB/TB",
     header: "Scalability"
   }]
 })
 ```
 
-**Probing 24a:**
+**Probing 26a:**
 ```
 Scalability models:
 • Vertical (scale up): Add CPU/RAM to the server
@@ -924,7 +1017,7 @@ Database scaling:
 • Partitioning for large tables
 ```
 
-**SATISFACTION CHECK 24 - USE AskUserQuestion:**
+**SATISFACTION CHECK 26 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -936,19 +1029,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 25 (Required) - AVAILABILITY & SLA:
+### Question 27 (Required) - AVAILABILITY & SLA:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 25/35: What uptime does the system need?\n\nSLA Levels:\n| SLA | Downtime/year | Downtime/month | Use Case |\n|-----|---------------|----------------|----------|\n| 99% | 3.65 days | 7.3 hours | Internal tools |\n| 99.9% | 8.76 hours | 43.8 min | Standard apps |\n| 99.95% | 4.38 hours | 21.9 min | E-commerce |\n| 99.99% | 52.6 min | 4.4 min | FinTech/Healthcare |\n\nMaintenance windows:\n• Planned maintenance: What day/time?\n• Emergency maintenance: When can it be done?",
+    question: "📝 Question 27/38: What uptime does the system need?\n\nSLA Levels:\n| SLA | Downtime/year | Downtime/month | Use Case |\n|-----|---------------|----------------|----------|\n| 99% | 3.65 days | 7.3 hours | Internal tools |\n| 99.9% | 8.76 hours | 43.8 min | Standard apps |\n| 99.95% | 4.38 hours | 21.9 min | E-commerce |\n| 99.99% | 52.6 min | 4.4 min | FinTech/Healthcare |\n\nMaintenance windows:\n• Planned maintenance: What day/time?\n• Emergency maintenance: When can it be done?",
     header: "Availability"
   }]
 })
 ```
 
-**SATISFACTION CHECK 25 - USE AskUserQuestion:**
+**SATISFACTION CHECK 27 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -960,19 +1053,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 26 (Required) - BACKUP & RECOVERY:
+### Question 28 (Required) - BACKUP & RECOVERY:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 26/35: How should backup and recovery work?\n\nBackup Strategy:\n| Type | Frequency | Retention |\n|------|-----------|-----------|\n| Full backup | Weekly | 4 weeks |\n| Incremental | Daily | 7 days |\n\nRPO (Recovery Point Objective):\n• How much data loss is acceptable?\n• e.g., RPO = 1 hour → Max acceptable data loss = 1 hour\n\nRTO (Recovery Time Objective):\n• If the system goes down, how quickly must it be back up?",
+    question: "📝 Question 28/38: How should backup and recovery work?\n\nBackup Strategy:\n| Type | Frequency | Retention |\n|------|-----------|-----------|\n| Full backup | Weekly | 4 weeks |\n| Incremental | Daily | 7 days |\n\nRPO (Recovery Point Objective):\n• How much data loss is acceptable?\n• e.g., RPO = 1 hour → Max acceptable data loss = 1 hour\n\nRTO (Recovery Time Objective):\n• If the system goes down, how quickly must it be back up?",
     header: "Backup"
   }]
 })
 ```
 
-**SATISFACTION CHECK 26 - USE AskUserQuestion:**
+**SATISFACTION CHECK 28 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -984,19 +1077,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 27 (Required) - SECURITY & AUTHENTICATION:
+### Question 29 (Required) - SECURITY & AUTHENTICATION:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 27/35: What are the security and authentication requirements?\n\nAuthentication Methods:\n| Method | Use Case | Security Level |\n|--------|----------|----------------|\n| Email + Password | Standard users | Basic |\n| Password + 2FA/TOTP | Sensitive apps | Strong |\n| OAuth/Social Login | Consumer apps | Strong |\n| SSO (SAML/OIDC) | Enterprise | Very Strong |\n\nPassword Requirements:\n• Minimum length: 8 / 12 / 16 characters?\n• Complexity requirements?\n• Is 2FA required?",
+    question: "📝 Question 29/38: What are the security and authentication requirements?\n\nAuthentication Methods:\n| Method | Use Case | Security Level |\n|--------|----------|----------------|\n| Email + Password | Standard users | Basic |\n| Password + 2FA/TOTP | Sensitive apps | Strong |\n| OAuth/Social Login | Consumer apps | Strong |\n| SSO (SAML/OIDC) | Enterprise | Very Strong |\n\nPassword Requirements:\n• Minimum length: 8 / 12 / 16 characters?\n• Complexity requirements?\n• Is 2FA required?",
     header: "Security"
   }]
 })
 ```
 
-**SATISFACTION CHECK 27 - USE AskUserQuestion:**
+**SATISFACTION CHECK 29 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -1008,11 +1101,11 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-## SECTION H: COMPLIANCE & RISK (Questions 28-30)
+## SECTION H: COMPLIANCE & RISK (Questions 30-32)
 
-### Question 28 (Required) - REGULATORY COMPLIANCE:
+### Question 30 (Required) - REGULATORY COMPLIANCE:
 ```
-📝 Question 28/35: Are there any regulatory compliance requirements?
+📝 Question 30/38: Are there any regulatory compliance requirements?
 
 Common Compliance Frameworks:
 | Framework | Region | Industry | Key Requirements |
@@ -1040,7 +1133,7 @@ Compliance evidence needed:
 • Security certifications
 ```
 
-**Probing 28a:**
+**Probing 30a:**
 ```
 Compliance implications:
 • GDPR: €20M fine or 4% of global revenue
@@ -1061,7 +1154,7 @@ If unsure about compliance:
 • Start with GDPR/PDPA as a baseline
 ```
 
-**SATISFACTION CHECK 28 - USE AskUserQuestion:**
+**SATISFACTION CHECK 30 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -1073,19 +1166,19 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 29 (Required) - DATA CLASSIFICATION & PRIVACY:
+### Question 31 (Required) - DATA CLASSIFICATION & PRIVACY:
 
 **USE the AskUserQuestion tool:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
-    question: "📝 Question 29/35: How is data classified and protected?\n\nData Classification:\n| Level | Examples | Handling |\n|-------|----------|----------|\n| Public | Marketing materials | Open |\n| Internal | Company policies | Internal only |\n| Confidential | Customer data | Restricted |\n| Restricted | Financial records, PII | Highly restricted |\n\nPII (Personally Identifiable Information):\n• What PII is collected? (name, email, phone, ID, IP)\n• How is PII stored?\n• PII retention period?",
+    question: "📝 Question 31/38: How is data classified and protected?\n\nData Classification:\n| Level | Examples | Handling |\n|-------|----------|----------|\n| Public | Marketing materials | Open |\n| Internal | Company policies | Internal only |\n| Confidential | Customer data | Restricted |\n| Restricted | Financial records, PII | Highly restricted |\n\nPII (Personally Identifiable Information):\n• What PII is collected? (name, email, phone, ID, IP)\n• How is PII stored?\n• PII retention period?",
     header: "Data Privacy"
   }]
 })
 ```
 
-**SATISFACTION CHECK 29 - USE AskUserQuestion:**
+**SATISFACTION CHECK 31 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -1097,9 +1190,9 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### Question 30 (Required) - AUDIT TRAIL & LOGGING:
+### Question 32 (Required) - AUDIT TRAIL & LOGGING:
 ```
-📝 Question 30/35: What logging and audit trail is needed?
+📝 Question 32/38: What logging and audit trail is needed?
 
 Audit Trail Requirements:
 | Event Type | Log Details | Retention |
@@ -1131,7 +1224,7 @@ Privacy logging:
 • Data exports
 ```
 
-**Probing 30a:**
+**Probing 32a:**
 ```
 Logging best practices:
 • Use structured logging (JSON)
@@ -1153,7 +1246,7 @@ Log retention:
 • Cold storage: 1-7 years (slow query, compliance)
 ```
 
-**SATISFACTION CHECK 30 - USE AskUserQuestion:**
+**SATISFACTION CHECK 32 - USE AskUserQuestion:**
 ```javascript
 tool.Call("AskUserQuestion", {
   questions: [{
@@ -1165,13 +1258,13 @@ tool.Call("AskUserQuestion", {
 
 ---
 
-### STEP 13: Operations & Support (Questions 31-33)
+### STEP 13: Operations & Support (Questions 33-36)
 
 ---
 
-**Question 31 (Required) - DEPLOYMENT & INFRASTRUCTURE:**
+**Question 33 (Required) - DEPLOYMENT & INFRASTRUCTURE:**
 ```
-📝 Question 31/35: What is the deployment environment and infrastructure?
+📝 Question 33/38: What is the deployment environment and infrastructure?
 
 Infrastructure:
 • Cloud provider? (AWS, Azure, GCP, On-premise, Hybrid)
@@ -1198,7 +1291,7 @@ Environment-specific configs:
 • Secrets management?
 ```
 
-**Probing 31a (if there's no infrastructure plan yet):**
+**Probing 33a (if there's no infrastructure plan yet):**
 ```
 Do you already have a cloud account? If not, I can recommend:
 • AWS: Most popular, wide range of services
@@ -1212,7 +1305,7 @@ For region, choose the one closest to your users:
 • Global → Multi-region
 ```
 
-**Probing 31b (if there's no CI/CD yet):**
+**Probing 33b (if there's no CI/CD yet):**
 ```
 A CI/CD pipeline helps automate deployment and reduce human error.
 If you don't have one, we can set up:
@@ -1226,7 +1319,7 @@ Deployment strategy:
 • Canary: Deploy to a small % of users first (lower risk)
 ```
 
-**SATISFACTION CHECK 31:**
+**SATISFACTION CHECK 33:**
 ```
 ☝️ Infrastructure:
 • Cloud: [provider]
@@ -1241,9 +1334,9 @@ Are you satisfied with this infrastructure plan?
 
 ---
 
-**Question 32 (Optional) - MONITORING & ALERTING:**
+**Question 34 (Optional) - MONITORING & ALERTING:**
 ```
-📝 Question 32/35: What are the monitoring and alerting requirements?
+📝 Question 34/38: What are the monitoring and alerting requirements?
 
 Monitoring:
 • Infrastructure monitoring? (CPU, RAM, Disk, Network)
@@ -1275,7 +1368,7 @@ Dashboards:
 • Custom dashboards for stakeholders?
 ```
 
-**Probing 32a (if there's no monitoring yet):**
+**Probing 34a (if there's no monitoring yet):**
 ```
 Monitoring helps detect problems BEFORE users complain.
 
@@ -1291,7 +1384,7 @@ Cost consideration:
 • Uptime monitoring: Free - $50/month
 ```
 
-**Probing 32b (if detailed alerting is needed):**
+**Probing 34b (if detailed alerting is needed):**
 ```
 Alerting needs to balance "enough information" against "not spamming".
 
@@ -1308,7 +1401,7 @@ Alert channels:
 • PagerDuty: For a professional on-call rotation
 ```
 
-**SATISFACTION CHECK 32:**
+**SATISFACTION CHECK 34:**
 ```
 ☝️ Monitoring & Alerting:
 • Monitoring tools: [list]
@@ -1323,9 +1416,9 @@ Are you satisfied with this monitoring plan?
 
 ---
 
-**Question 33 (Optional) - SUPPORT MODEL & TRAINING:**
+**Question 35 (Optional) - SUPPORT MODEL & TRAINING:**
 ```
-📝 Question 33/35: What is the support model and training plan?
+📝 Question 35/38: What is the support model and training plan?
 
 Support Model:
 • Tier 1: First line support (helpdesk)
@@ -1358,7 +1451,7 @@ Documentation:
 • Deployment runbook?
 ```
 
-**Probing 33a (if there's no support model yet):**
+**Probing 35a (if there's no support model yet):**
 ```
 The support model depends on the criticality of the system.
 
@@ -1374,7 +1467,7 @@ Tool choices:
 • Simple: Email + WhatsApp for small teams
 ```
 
-**Probing 33b (if training is needed):**
+**Probing 35b (if training is needed):**
 ```
 Training is necessary if users aren't familiar with the new system.
 
@@ -1400,7 +1493,7 @@ Training delivery:
 • Documentation: Always available, but can go out of date
 ```
 
-**SATISFACTION CHECK 33:**
+**SATISFACTION CHECK 35:**
 ```
 ☝️ Support Model:
 • Tiers: [T1/T2/T3 or single level]
@@ -1420,13 +1513,52 @@ Are you satisfied with this support model?
 
 ---
 
-### STEP 14: Project Governance (Questions 34-35)
+**Question 36 (Required) - CONFIGURATION MANAGEMENT:**
+
+**USE the AskUserQuestion tool:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "📝 Question 36/38: Which parts of the system should be configurable WITHOUT a code deploy?\n\nThink about:\n• Business parameters that change over time (prices, thresholds, tax rates, discount rules, approval limits)\n• Notification templates/content (email/SMS wording)\n• Feature flags — do you need to turn a feature on/off, or roll it out to a % of users, without redeploying?\n• Environment-specific settings that differ between Dev/Staging/Production (API keys, endpoints, limits)\n• If multiple clients/organizations use the same system, do they each need their own settings (multi-tenant configuration)?\n\nExample: 'Discount percentage and free-shipping threshold must be editable by Admin from a settings screen. Payment gateway API keys differ by environment. We want to be able to disable the new checkout flow instantly if something breaks.'",
+    header: "Configuration"
+  }]
+})
+```
+
+**Probing 36a (if the user says 'nothing needs to be configurable') - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "Even simple systems usually have at least one of these. Double-check:\n• Will pricing/discount/tax rules ever change after launch?\n• Will you want to disable a feature quickly if it has a bug, without waiting for a new deployment?\n• Do Dev/Staging/Production need different API keys or limits?\n\nIf the honest answer is still 'no' to all three, that's a valid answer — just confirm it.",
+    header: "Double-Check",
+    options: [
+      { label: "Still nothing needed", description: "Everything can be hardcoded/set once at deploy time" },
+      { label: "Actually, yes to some", description: "I'll specify which ones" }
+    ],
+    multiSelect: false
+  }]
+})
+```
+
+**SATISFACTION CHECK 36 - USE AskUserQuestion:**
+```javascript
+tool.Call("AskUserQuestion", {
+  questions: [{
+    question: "☝️ Configuration Management:\n• Admin-configurable settings: [list]\n• Feature flags needed: [yes/no - which features]\n• Environment-specific settings: [list]\n• Multi-tenant config: [yes/no]\n\nAre you satisfied with this? Anything else that should be configurable without a redeploy?",
+    header: "Confirm OK?"
+  }]
+})
+```
 
 ---
 
-**Question 34 (Required) - SUCCESS METRICS & ACCEPTANCE:**
+### STEP 14: Project Governance (Questions 37-38)
+
+---
+
+**Question 37 (Required) - SUCCESS METRICS & ACCEPTANCE:**
 ```
-📝 Question 34/35: How will the success of the project be measured?
+📝 Question 37/38: How will the success of the project be measured?
 
 Success Metrics (KPIs):
 | KPI | Current | Target | Measurement |
@@ -1452,7 +1584,7 @@ Post-implementation:
 • Continuous improvement plan?
 ```
 
-**Probing 34a (if there are no KPIs yet):**
+**Probing 37a (if there are no KPIs yet):**
 ```
 KPIs help measure the project's ROI and determine success.
 
@@ -1469,7 +1601,7 @@ Examples:
 • Adoption: "50% of users active weekly within 1 month" instead of "users use it a lot"
 ```
 
-**Probing 34b (if a UAT process is needed):**
+**Probing 37b (if a UAT process is needed):**
 ```
 User Acceptance Testing (UAT) is the last step before go-live.
 
@@ -1498,7 +1630,7 @@ Definition of Done:
 • Deployment approved
 ```
 
-**SATISFACTION CHECK 34:**
+**SATISFACTION CHECK 37:**
 ```
 ☝️ Success Metrics:
 • KPIs: [count] defined
@@ -1517,9 +1649,9 @@ Are you satisfied with these success metrics and acceptance criteria?
 
 ---
 
-**Question 35 (Required) - TIMELINE & PHASES:**
+**Question 38 (Required) - TIMELINE & PHASES:**
 ```
-📝 Question 35/35: What is the project timeline and what are its phases?
+📝 Question 38/38: What is the project timeline and what are its phases?
 
 Timeline:
 • Start date:
@@ -1547,7 +1679,7 @@ Budget:
 • Cost breakdown by phase?
 ```
 
-**Probing 35a (if the timeline isn't clear yet):**
+**Probing 38a (if the timeline isn't clear yet):**
 ```
 The timeline needs to be realistic and have buffer for unexpected delays.
 
@@ -1570,7 +1702,7 @@ Minimum viable timeline:
 • Large project (10+ features): 20+ weeks
 ```
 
-**Probing 35b (if there are special constraints):**
+**Probing 38b (if there are special constraints):**
 ```
 Constraints affect the timeline and scope.
 
@@ -1592,7 +1724,7 @@ Budget considerations:
 • Phase-based payments
 ```
 
-**SATISFACTION CHECK 35:**
+**SATISFACTION CHECK 38:**
 ```
 ☝️ Timeline:
 • Start: [date]
@@ -1619,7 +1751,7 @@ Are you satisfied with this timeline?
 
 ---
 
-### STEP 36: FINAL CONFIRMATION (After the interview is complete)
+### STEP 15: FINAL CONFIRMATION (After the interview is complete)
 
 ---
 
@@ -1629,19 +1761,21 @@ Are you satisfied with this timeline?
 ║  📋 FINAL CHECK - CONFIRM REQUIREMENTS                                      ║
 ╠══════════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                      ║
-║  1. PROJECT CONTEXT (4 questions)                                                       ║
+║  1. PROJECT CONTEXT (5 questions)                                                       ║
 ║     ✅ Project name: [name]                                                            ║
 ║     ✅ System description: [description]                                                     ║
 ║     ✅ Existing system: [yes/no]                                                     ║
 ║     ✅ Business problem: [description]                                                  ║
+║     ✅ Stakeholders: [sponsor / product owner / approval authority]                      ║
 ║                                                                                      ║
 ║  2. USERS & ACTORS (3 questions)                                                          ║
 ║     ✅ Actors: [list with permissions]                                         ║
 ║     ✅ Permissions: [detailed description]                                                 ║
 ║     ✅ Guest users: [yes/no]                                                      ║
 ║                                                                                      ║
-║  3. FUNCTIONAL REQUIREMENTS (5 questions)                                                ║
+║  3. FUNCTIONAL REQUIREMENTS (6 questions)                                                ║
 ║     ✅ Features: [count] features listed                                   ║
+║     ✅ Use Cases: [count]/[count] Must-Have UC specs completed (preconditions/postconditions/flows) ║
 ║     ✅ MoSCoW: Must: [X], Should: [Y], Could: [Z]                                   ║
 ║     ✅ Business rules: [count] rules                                           ║
 ║     ✅ Error handling: [description]                                                     ║
@@ -1674,12 +1808,13 @@ Are you satisfied with this timeline?
 ║     ✅ Data classification: [levels]                                                ║
 ║     ✅ Audit trail: [description]                                                         ║
 ║                                                                                      ║
-║  9. OPERATIONS & SUPPORT (3 questions)                                                    ║
+║  9. OPERATIONS & SUPPORT (4 questions)                                                    ║
 ║     ✅ Infrastructure: [cloud/provider/region/environments]                         ║
 ║     ✅ CI/CD: [yes/no, tool]                                                      ║
 ║     ✅ Monitoring: [tools/alerts]                                                   ║
 ║     ✅ Support model: [tiers/hours/channels]                                       ║
 ║     ✅ Training: [yes/no, materials]                                              ║
+║     ✅ Configuration Management: [configurable settings, feature flags]              ║
 ║                                                                                      ║
 ║  10. PROJECT GOVERNANCE (2 questions)                                                    ║
 ║     ✅ Success metrics: [KPIs with targets]                                          ║
@@ -1691,8 +1826,8 @@ Are you satisfied with this timeline?
 ║                                                                                      ║
 ║  📊 SUMMARY:                                                                        ║
 ║  ────────────────────────────────────────────────────────────────────────────────    ║
-║  Total questions: 35                                                                ║
-║  Required ✅ answered: [X]/26                                                    ║
+║  Total questions: 38                                                                ║
+║  Required ✅ answered: [X]/29                                                    ║
 ║  Optional ⚠️ answered: [Y]/9                                                     ║
 ║  Optional ❌ skipped: [Z]/9                                                      ║
 ║                                                                                      ║
@@ -1708,7 +1843,7 @@ Are you satisfied with this timeline?
 ╚══════════════════════════════════════════════════════════════════════════════════════╝
 ```
 
-**Probing 36a (if any required question is unanswered):**
+**Probing FCa (if any required question is unanswered):**
 ```
 ⚠️ Warning: There are [X] REQUIRED questions that have not been fully answered:
 
@@ -1725,7 +1860,7 @@ B) Temporarily mark them as [TBD] and proceed
 C) Accept the risk and continue with assumptions
 ```
 
-**Probing 36b (if the user wants to edit a previous answer):**
+**Probing FCb (if the user wants to edit a previous answer):**
 ```
 No problem! Tell me:
 • Which question number needs to change?
@@ -1737,7 +1872,7 @@ I'll update it and have you confirm again.
 
 ---
 
-### STEP 37: GENERATE REQUIREMENTS SUMMARY (After the user confirms with "CONFIRM")
+### STEP 16: GENERATE REQUIREMENTS SUMMARY (After the user confirms with "CONFIRM")
 
 **ONLY AFTER THE USER CONFIRMS WITH "CONFIRM"** → Generate the SRS document:
 
@@ -1745,7 +1880,7 @@ I'll update it and have you confirm again.
 # Software Requirements Specification (SRS) - [Project Name]
 **Version:** 1.0
 **Date:** [Timestamp]
-**Author:** Requirements Gathering Agent v3.2.0
+**Author:** Requirements Gathering Agent v4.0.0
 
 ---
 
@@ -1763,6 +1898,7 @@ I'll update it and have you confirm again.
 | SRS | Software Requirements Specification |
 | MVP | Minimum Viable Product |
 | UAT | User Acceptance Testing |
+| UC | Use Case |
 
 ### 1.4 References
 [Reference documents]
@@ -1798,6 +1934,14 @@ I'll update it and have you confirm again.
 | [System 1] | [Purpose] | [API/File/Other] |
 | [System 2] | [Purpose] | [API/File/Other] |
 
+### 2.6 Stakeholders
+| Role | Name | Responsibility |
+|------|------|----------------|
+| Project Sponsor | [Name] | Owns budget, ultimate accountability |
+| Product Owner | [Name] | Decides scope, priorities |
+| Point of Contact | [Name] | Answers requirement questions |
+| Approval Authority | [Name(s)] | Signs off on this SRS |
+
 ---
 
 ## 3. Functional Requirements
@@ -1805,34 +1949,50 @@ I'll update it and have you confirm again.
 ### 3.1 Feature List (MoSCoW)
 
 #### Must Have (Mandatory - blockers if missing)
-| ID | Feature | Description | Priority |
-|----|---------|-------------|----------|
-| F01 | [Feature Name] | [Description] | Must |
-| F02 | [Feature Name] | [Description] | Must |
+| ID | Feature | Description | Priority | Use Case |
+|----|---------|-------------|----------|----------|
+| F01 | [Feature Name] | [Description] | Must | UC01 |
+| F02 | [Feature Name] | [Description] | Must | UC02 |
 
 #### Should Have (Important but not blocking)
-| ID | Feature | Description | Priority |
-|----|---------|-------------|----------|
-| F10 | [Feature Name] | [Description] | Should |
+| ID | Feature | Description | Priority | Use Case |
+|----|---------|-------------|----------|----------|
+| F10 | [Feature Name] | [Description] | Should | UC10 (if detailed) |
 
 #### Could Have (Nice to have)
 | ID | Feature | Description | Priority |
 |----|---------|-------------|----------|
 | F20 | [Feature Name] | [Description] | Could |
 
-### 3.2 User Interactions and Flows
+### 3.2 Use Case Specifications
 
-#### [Flow 1: Flow name]
-```
-Actor: [Actor name]
-Trigger: [What starts this flow]
-Steps:
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-Result: [Expected outcome]
-Errors: [Error cases]
-```
+> One entry per Use Case gathered in Question 10. Every Must-Have feature MUST have a
+> corresponding entry here — this is what downstream diagram generation (sequence, state,
+> screen-flow diagrams) reads from.
+
+#### UC01 - [Use Case Name]
+| Field | Value |
+|-------|-------|
+| Actor(s) | [Actor] |
+| Trigger | [What starts it] |
+| Preconditions | [What must be true before] |
+| Main Flow | 1. [Step] → 2. [Step] → 3. [Step] → ... |
+| Alternative Flows | [Valid variations, or "None"] |
+| Exception/Error Flows | [What goes wrong, and what happens] |
+| Postconditions | [What must be true after success] |
+
+#### UC02 - [Use Case Name]
+| Field | Value |
+|-------|-------|
+| Actor(s) | [Actor] |
+| Trigger | [What starts it] |
+| Preconditions | [What must be true before] |
+| Main Flow | 1. [Step] → 2. [Step] → 3. [Step] → ... |
+| Alternative Flows | [Valid variations, or "None"] |
+| Exception/Error Flows | [What goes wrong, and what happens] |
+| Postconditions | [What must be true after success] |
+
+[... one entry per UC ...]
 
 ### 3.3 Data Handling
 
@@ -1941,6 +2101,12 @@ Errors: [Error cases]
 - **Admin Training:** [Yes/No - materials]
 - **Documentation:** [User/Admin/API docs]
 
+### 6.5 Configuration Management
+- **Admin-configurable settings:** [List - e.g. discount rules, thresholds, templates]
+- **Feature flags:** [Yes/No - which features, rollout strategy]
+- **Environment-specific settings:** [List - e.g. API keys, limits per Dev/Staging/Prod]
+- **Multi-tenant configuration:** [Yes/No - description]
+
 ---
 
 ## 7. Success Metrics & Acceptance
@@ -1991,7 +2157,7 @@ Errors: [Error cases]
 - **Interview Date:** [Date]
 - **Duration:** [Duration]
 - **Participants:** [Names/Roles]
-- **Questions Answered:** [X]/35
+- **Questions Answered:** [X]/38
 
 ### B. Change History
 | Version | Date | Author | Changes |

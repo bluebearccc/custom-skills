@@ -1,4 +1,5 @@
 ---
+name: db-agent
 description: Agent that designs the overall database schema for the whole system
 mode: subagent
 permission:

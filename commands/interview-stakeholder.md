@@ -2,6 +2,7 @@
 name: interview-stakeholder
 description: Interview a stakeholder to gather requirements
 agent: doc-coordinator
+context: fork
 syntax: /interview-stakeholder [stakeholder_name] [--type user|manager|developer|customer]
 examples:
   - "/interview-stakeholder John --type user"

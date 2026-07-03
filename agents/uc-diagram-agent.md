@@ -1,4 +1,5 @@
 ---
+name: uc-diagram-agent
 description: Agent specialized in creating PlantUML diagrams for each use case
 mode: subagent
 permission:

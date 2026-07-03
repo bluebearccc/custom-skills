@@ -1,4 +1,5 @@
 ---
+name: quality-agent
 description: Agent that performs comprehensive quality checks — cross-document consistency, diagram syntax, artifact coverage
 mode: subagent
 permission:

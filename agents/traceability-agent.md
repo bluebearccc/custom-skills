@@ -1,4 +1,5 @@
 ---
+name: traceability-agent
 description: Agent that creates the Requirements Traceability Matrix (RTM) — mapping FR → UC → Component → API → DB → Test
 mode: subagent
 permission:

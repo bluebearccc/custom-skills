@@ -1,6 +1,7 @@
 ---
 description: Generate the full document set (SRS + SDD)
 agent: doc-coordinator
+context: fork
 ---
 
 Generate the full set of software documentation, including SRS and SDD.

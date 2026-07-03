@@ -8,6 +8,7 @@ examples:
   - "/export-docs MyProject --format docx --docs srs"
   - "/export-docs MyProject --format all"
 agent: doc-coordinator
+context: fork
 ---
 
 # Command: /export-docs

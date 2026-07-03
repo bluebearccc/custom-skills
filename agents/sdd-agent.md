@@ -1,4 +1,5 @@
 ---
+name: sdd-agent
 description: Agent that orchestrates the entire SDD document generation workflow
 mode: subagent
 permission:

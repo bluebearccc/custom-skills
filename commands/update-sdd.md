@@ -9,6 +9,7 @@ examples:
   - "/update-sdd MyProject --scope db"
   - "/update-sdd MyProject --scope nfr"
 agent: doc-coordinator
+context: fork
 ---
 
 # Command: /update-sdd

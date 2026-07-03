@@ -1,4 +1,5 @@
 ---
+name: integration-agent
 description: Agent that consolidates, packages, and creates the index for the entire SRS + SDD documentation
 mode: subagent
 permission:

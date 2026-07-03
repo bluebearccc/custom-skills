@@ -1,4 +1,5 @@
 ---
+name: srs-agent
 description: Agent that orchestrates the entire SRS document generation workflow
 mode: subagent
 permission:
@@ -52,11 +53,13 @@ Spawned by `doc-coordinator` upon receiving the `/create-srs` or `/generate-docs
 │  PHASE 1 — REQUIREMENTS GATHERING                          │
 ├─────────────────────────────────────────────────────────────┤
 │  1. Call the requirements-gathering skill                   │
-│  2. Conduct the 35-question interview (11 steps)            │
+│  2. Conduct the 38-question interview (12 steps)            │
 │     - Ask each question via the AskUserQuestion tool         │
 │     - Dig deeper when answers are vague                     │
+│     - EVERY Must-Have feature gets a full Use Case spec      │
+│       (preconditions/postconditions/flows) — see Question 10│
 │     - Satisfaction check after each question                │
-│  3. Wait for the user to type "CONFIRM" at Step 11           │
+│  3. Wait for the user to type "CONFIRM" at the final step   │
 │  4. Create requirements-summary.md                          │
 │                                                             │
 │  ⛔ DO NOT MOVE TO PHASE 2 UNLESS requirements-summary.md  │
@@ -67,7 +70,11 @@ Spawned by `doc-coordinator` upon receiving the `/create-srs` or `/generate-docs
 **Verify Phase 1 completion:**
 ```
 ✅ File docs/{ProjectName}/requirements-summary.md exists
-✅ The file contains the sections: Project Name, Actors, Use Cases, Features, NFRs
+✅ The file contains the sections: Project Name, Stakeholders, Actors, Features,
+   Use Case Specifications (§3.2), NFRs, Configuration Management
+✅ EVERY Must-Have feature in §3.1 has a matching UC0x entry in §3.2 with all
+   8 fields filled in (Actor, Trigger, Preconditions, Main Flow, Alternative
+   Flows, Exception Flows, Postconditions) — NOT just a name and description
 ✅ The user has typed "CONFIRM" in the session
 ```
 
@@ -89,10 +96,21 @@ Create the system diagrams:
 - diagrams/screen-flow.puml
 ```
 
-**Step 2b — Read requirements-summary.md, determine the list of UCs:**
+**Step 2b — Read requirements-summary.md §3.2 "Use Case Specifications", determine the list of UCs:**
 ```
+Read the UC IDs directly from §3.2 — do NOT infer them from the §3.1 Feature List (F0x IDs are
+a separate business-tracking numbering and are not guaranteed to line up 1:1 with UC0x IDs).
+
+For each UC entry in §3.2, also carry forward its Preconditions / Main Flow / Alternative Flows /
+Exception Flows / Postconditions — uc-diagram-agent needs these to build accurate sequence and
+state diagrams, not just the UC name.
+
 Example output after reading:
 UC List = [UC01-Login, UC02-Register, UC03-ViewProduct, UC04-Order, UC05-Payment]
+
+⚠️ IF §3.2 is missing, or a Must-Have feature from §3.1 has no matching UC0x entry →
+   Phase 1 is NOT actually complete (see "Verify Phase 1 completion" above). Return to
+   Phase 1 rather than fabricating the missing preconditions/flows yourself.
 ```
 
 **Step 2c — Spawn N uc-diagram-agents IN PARALLEL:**
