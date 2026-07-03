@@ -1,10 +1,10 @@
 # AgentCode Framework — Manifest
 
-## Tổng quan
+## Overview
 
-AgentCode Framework là một AI agent coding framework để tự động hóa việc tạo tài liệu phần mềm (SRS, SDD, RTM, Test Plan) theo các chuẩn quốc tế (IEEE, ISO).
+AgentCode Framework is an AI agent coding framework for automating the creation of software documentation (SRS, SDD, RTM, Test Plan) following international standards (IEEE, ISO).
 
-**Thành phần:** 13 agents · 10 skills · 10 commands. Chi tiết workflow xem [AGENTS.md](AGENTS.md).
+**Components:** 13 agents · 10 skills · 10 commands. See [AGENTS.md](AGENTS.md) for the full workflow.
 
 ## Framework Components
 
@@ -12,13 +12,13 @@ AgentCode Framework là một AI agent coding framework để tự động hóa 
 
 | Agent | Type | Description |
 |-------|------|-------------|
-| `doc-coordinator.md` | PRIMARY | Điều phối toàn bộ quy trình |
-| `srs-agent.md` | SUBAGENT | Coordinator SRS workflow |
-| `sdd-agent.md` | SUBAGENT | Coordinator SDD workflow |
-| `requirements-agent.md` | SUBAGENT | Thu thập requirements 1 actor/UC (multi-spawn) |
-| `uc-diagram-agent.md` | SUBAGENT | Tạo 6 diagrams cho 1 UC (multi-spawn) |
-| `component-agent.md` | SUBAGENT | Thiết kế 5 artifacts cho 1 component (multi-spawn) |
-| `db-agent.md` | SUBAGENT | Schema tổng thể + ER diagram + DDL |
+| `doc-coordinator.md` | PRIMARY | Coordinates the entire process |
+| `srs-agent.md` | SUBAGENT | SRS workflow coordinator |
+| `sdd-agent.md` | SUBAGENT | SDD workflow coordinator |
+| `requirements-agent.md` | SUBAGENT | Gathers requirements for 1 actor/UC (multi-spawn) |
+| `uc-diagram-agent.md` | SUBAGENT | Generates 6 diagrams for 1 UC (multi-spawn) |
+| `component-agent.md` | SUBAGENT | Designs 5 artifacts for 1 component (multi-spawn) |
+| `db-agent.md` | SUBAGENT | Overall schema + ER diagram + DDL |
 | `api-agent.md` | SUBAGENT | OpenAPI 3.0 spec + error codes |
 | `integration-agent.md` | SUBAGENT | Index, consistency check, packaging |
 | `traceability-agent.md` | SUBAGENT | RTM (FR→UC→Component→API→DB→Test) |
@@ -29,8 +29,8 @@ AgentCode Framework là một AI agent coding framework để tự động hóa 
 **Agent File Format** (YAML frontmatter):
 ```yaml
 ---
-description: Mô tả agent
-mode: subagent          # primary cho doc-coordinator
+description: Agent description
+mode: subagent          # primary for doc-coordinator
 permission:
   edit: allow
   read: allow
@@ -44,52 +44,52 @@ System prompt here
 
 | Skill | Version | Description |
 |-------|---------|-------------|
-| `requirements-gathering` | 3.2.0 | Thu thập yêu cầu từ stakeholders (AskUserQuestion) |
-| `srs-writing` | 4.0.0 | Viết tài liệu SRS + AC per UC + RTI |
-| `sdd-writing` | 4.0.0 | Viết tài liệu SDD + error/logging/caching/rate-limit |
-| `uml-design` | 3.0.0 | Tạo UML diagrams (use case, sequence, state, deployment, DFD) |
-| `component-design` | 1.0.0 | 5 artifacts cho 1 component |
-| `database-design` | 1.0.0 | Thiết kế database schema |
-| `api-design` | 3.0.0 | Thiết kế REST API + OpenAPI 3.0 |
+| `requirements-gathering` | 4.0.0 | Gathers requirements from stakeholders — 38-question / 12-step interview (AskUserQuestion) |
+| `srs-writing` | 4.0.0 | Writes the SRS document + AC per UC + RTI |
+| `sdd-writing` | 4.0.0 | Writes the SDD document + error/logging/caching/rate-limit |
+| `uml-design` | 3.0.0 | Generates UML diagrams (use case, sequence, state, deployment, DFD) |
+| `component-design` | 1.0.0 | 5 artifacts for 1 component |
+| `database-design` | 1.0.0 | Designs the database schema |
+| `api-design` | 3.0.0 | Designs the REST API + OpenAPI 3.0 |
 | `nfr-design` | 1.0.0 | Capacity, DR, i18n/l10n, accessibility |
-| `traceability` | 1.0.0 | Tạo RTM + coverage report |
+| `traceability` | 1.0.0 | Generates the RTM + coverage report |
 | `test-design` | 1.0.0 | Test Plan, Test Cases, Postman Collection |
 
 ### 3. COMMANDS (10)
 
 | Command | Description |
 |---------|-------------|
-| `/create-srs` | Tạo SRS |
-| `/create-sdd` | Tạo SDD |
+| `/create-srs` | Generate the SRS |
+| `/create-sdd` | Generate the SDD |
 | `/generate-docs` | Full pipeline (SRS + SDD + quality + RTM + test) |
-| `/interview-stakeholder` | Phỏng vấn stakeholder |
-| `/create-srs-template` | Tạo template SRS |
-| `/create-sdd-template` | Tạo template SDD |
-| `/create-diagram` | Tạo UML diagram |
-| `/update-srs` | Cập nhật SRS (delta + semantic versioning) |
-| `/update-sdd` | Cập nhật SDD (delta, component-level) |
-| `/export-docs` | Xuất docx/pdf/html/xlsx |
+| `/interview-stakeholder` | Interview a stakeholder |
+| `/create-srs-template` | Generate the SRS template |
+| `/create-sdd-template` | Generate the SDD template |
+| `/create-diagram` | Generate a UML diagram |
+| `/update-srs` | Update the SRS (delta + semantic versioning) |
+| `/update-sdd` | Update the SDD (delta, component-level) |
+| `/export-docs` | Export to docx/pdf/html/xlsx |
 
 ## Quick Start
 
 ```
-/create-srs ProjectName       # Phỏng vấn → SRS
-/create-sdd ProjectName        # SRS đã có → SDD
-/generate-docs ProjectName     # Toàn bộ pipeline
-/export-docs ProjectName        # Xuất docx/pdf/html
+/create-srs ProjectName       # Interview → SRS
+/create-sdd ProjectName        # SRS already exists → SDD
+/generate-docs ProjectName     # Full pipeline
+/export-docs ProjectName        # Export docx/pdf/html
 ```
 
 ## File Structure
 
-Xem [AGENTS.md › Agent File Structure](AGENTS.md) cho cây thư mục đầy đủ.
+See [AGENTS.md › Agent File Structure](AGENTS.md) for the full directory tree.
 
 ```
 agentcode-framework/
 ├── AGENTS.md            # Workflow & registry (canonical)
-├── README.md            # Tổng quan
-├── MANIFEST.md          # File này
+├── README.md            # Overview
+├── MANIFEST.md          # This file
 ├── agents/              # 13 agent definitions
-├── skills/              # 10 skills (mỗi skill = SKILL.md)
+├── skills/              # 10 skills (each skill = SKILL.md)
 ├── commands/            # 10 slash commands
 ├── docs/                # Catalogues, user flow, question reviews
 └── diagrams/workflow/   # PlantUML workflow diagrams
@@ -123,11 +123,11 @@ II. Software Requirement Specification
 
 ## Integration
 
-| Host | Cách dùng |
+| Host | Usage |
 |------|-----------|
-| OpenCode | Copy vào `~/.config/opencode/skills/` |
-| Claude Code | Copy vào `~/.claude/skills/` |
-| Custom Agent | Import theo hướng dẫn trong [AGENTS.md](AGENTS.md) |
+| OpenCode | Copy into `~/.config/opencode/skills/` |
+| Claude Code | Copy into `~/.claude/skills/` |
+| Custom Agent | Import following the instructions in [AGENTS.md](AGENTS.md) |
 
 ## License
 

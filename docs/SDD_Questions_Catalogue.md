@@ -524,7 +524,7 @@
 | 10.2.6 | Performance/load testing? | [T] | k6 / JMeter / Gatling / Locust / No | **k6**: Script in JS; **Locust**: Python | **k6**: Scripting + Grafana; **JMeter**: GUI-based |
 | 10.2.7 | Security testing? | [T] | SAST (Semgrep, Bandit) / DAST (OWASP ZAP) / Dependency scan / Manual pentest | **SAST**: Semgrep, Bandit; **DAST**: OWASP ZAP; **Dependency**: Snyk |
 | 10.2.8 | Mutation testing? | [T] | Yes (Stryker, Pitest) / No / Need consultation | **Stryker**: JS/TS; **Pitest**: Java |
-| 10.2.9 | Snapshot testing? | [T] | Yes (Jest, Playwright) / No / Only for some components | UI components với stable markup: Jest snapshots |
+| 10.2.9 | Snapshot testing? | [T] | Yes (Jest, Playwright) / No / Only for some components | UI components with stable markup: Jest snapshots |
 
 ### 10.3 Code Review
 

@@ -6,222 +6,222 @@
 
 ---
 
-## 1. ĐÁNH GIÁ TỔNG QUAN
+## 1. OVERALL ASSESSMENT
 
-| Tiêu chí | Kết quả | Ghi chú |
+| Criterion | Result | Notes |
 |----------|---------|---------|
-| **1. LUỒNG CÂU HỎI (Flow)** | ✅ PASS | Thứ tự hợp lý: Project Info → Users → Use Cases → Features → NFR → UI → Data → Business → Integration → Maintenance |
-| **2. TÍNH ĐẦY ĐỦ (Completeness)** | ⚠️ PASS WITH CONCERNS | Thiếu một số câu hỏi quan trọng: Error Handling, Configuration Management, Audit Trail Review |
-| **3. TÍNH KHẢ DỤNG (Usability)** | ⚠️ PASS WITH CONCERNS | Một số câu hỏi kỹ thuật quá mức cho business user |
-| **4. SỰ NHẤT QUÁN (Consistency)** | ⚠️ PASS WITH CONCERNS | Có lỗi typo và format không nhất quán |
-| **5. GỢI Ý TRẢ LỜI (Answer Quality)** | ⚠️ PASS WITH CONCERNS | Thiếu examples và default values |
-| **6. MỐI LIÊN KẾT (Cross-references)** | ⚠️ PASS WITH CONCERNS | Có sự trùng lặp giữa một số danh mục |
+| **1. QUESTION FLOW** | ✅ PASS | Logical order: Project Info → Users → Use Cases → Features → NFR → UI → Data → Business → Integration → Maintenance |
+| **2. COMPLETENESS** | ⚠️ PASS WITH CONCERNS | Missing several important questions: Error Handling, Configuration Management, Audit Trail Review |
+| **3. USABILITY** | ⚠️ PASS WITH CONCERNS | Some questions are too technical for business users |
+| **4. CONSISTENCY** | ⚠️ PASS WITH CONCERNS | Contains typos and inconsistent formatting |
+| **5. ANSWER QUALITY** | ⚠️ PASS WITH CONCERNS | Missing examples and default values |
+| **6. CROSS-REFERENCES** | ⚠️ PASS WITH CONCERNS | Some duplication between categories |
 
-### KẾT QUẢ TỔNG THỂ: ⚠️ **PASS WITH CONCERNS**
+### OVERALL RESULT: ⚠️ **PASS WITH CONCERNS**
 
 ---
 
-## 2. VẤN ĐỀ CỤ THỂ CẦN SỬA
+## 2. SPECIFIC ISSUES TO FIX
 
-### 2.1 LỖI TYPO
+### 2.1 TYPOS
 
-| # | Vị trí | Lỗi | Sửa thành |
+| # | Location | Error | Fix |
 |---|--------|-----|------------|
-| 1 | 7.1 header | `Lo_type` | `Loại` |
-| 2 | 9.4 header | `Lo_type` | `Loại` |
+| 1 | 7.1 header | `Lo_type` | `Type` |
+| 2 | 9.4 header | `Lo_type` | `Type` |
 | 3 | 10.2.1 | `Wartung` (German) | `Maintenance` |
-| 4 | 1.3.3 | `future phases cần thiết kế预留` | `future phases cần thiết kế trước (reserved)` |
-| 5 | 4.2.4 | `khi nào触发` | `khi nào trigger` |
+| 4 | 1.3.3 | Stray Chinese character in "future phases need to be designed for 预留" | "future phases need to be designed for in advance (reserved)" |
+| 5 | 4.2.4 | Stray Chinese character in "when does it 触发" | "when does it trigger" |
 
-### 2.2 CÂU HỎI KỸ THUẬT QUÁ MỨC CHO BUSINESS USER
+### 2.2 QUESTIONS TOO TECHNICAL FOR A BUSINESS USER
 
-| # | Câu hỏi | Vấn đề | Đề xuất |
+| # | Question | Issue | Suggestion |
 |---|---------|--------|---------|
-| 1 | 5.2.1 `Authentication method nào (SSO, MFA, password)?` | Business user có thể không biết SSO, MFA là gì | Thêm gợi ý: "VD: Đăng nhập đơn giản (username/password), Đăng nhập công ty (SSO qua Microsoft/Google), Xác thực 2 bước (MFA)" |
-| 2 | 5.2.2 `Authorization model (RBAC, ABAC, permissions)?` | RBAC, ABAC là khái niệm kỹ thuật | Đổi thành: "Phân quyền theo vai trò (vd: Admin, Manager, User) hay theo đặc tính cụ thể (vd: chỉ được sửa dữ liệu phòng mình)?" |
-| 3 | 5.5.5 `API version compatibility policy?` | Quá kỹ thuật | Đổi thành: "Khi cập nhật hệ thống, phiên bản cũ của ứng dụng/app cũ có cần hoạt động không?" |
-| 4 | 8.3.4 `Coding standards và frameworks bắt buộc?` | Coding standards không phải câu hỏi cho business | Chuyển sang phần technical constraints hoặc loại bỏ khỏi business requirements |
-| 5 | 9.2.3 `GraphQL subscriptions/queries/mutations?` | Quá kỹ thuật | Thay bằng: "Có cần API để ứng dụng bên thứ ba kết nối không? Loại API nào?" |
-| 6 | 9.3.4 `EDI standards nếu có (B2B integrations)?` | EDI quá chuyên môn | Thêm giải thích: "EDI (Electronic Data Interchange) - chuẩn trao đổi dữ liệu điện tử với đối tác B2B" |
+| 1 | 5.2.1 `Which authentication method (SSO, MFA, password)?` | A business user may not know what SSO or MFA is | Add guidance: "E.g.: Simple login (username/password), Company login (SSO via Microsoft/Google), Two-step verification (MFA)" |
+| 2 | 5.2.2 `Authorization model (RBAC, ABAC, permissions)?` | RBAC and ABAC are technical concepts | Rephrase as: "Should permissions be role-based (e.g. Admin, Manager, User) or attribute-based (e.g. can only edit data for their own department)?" |
+| 3 | 5.5.5 `API version compatibility policy?` | Too technical | Rephrase as: "When the system is updated, does an old version of the app/client still need to keep working?" |
+| 4 | 8.3.4 `Mandatory coding standards and frameworks?` | Coding standards are not a question for the business side | Move to the technical constraints section or remove from business requirements |
+| 5 | 9.2.3 `GraphQL subscriptions/queries/mutations?` | Too technical | Replace with: "Does a third-party application need to connect via API? What kind of API?" |
+| 6 | 9.3.4 `EDI standards, if any (B2B integrations)?` | EDI is too specialized | Add an explanation: "EDI (Electronic Data Interchange) — a standard for electronic data exchange with B2B partners" |
 
-### 2.3 CÂU HỎI THIẾU - CẦN THÊM
+### 2.3 MISSING QUESTIONS — TO BE ADDED
 
-| # | Danh mục | Câu hỏi cần thêm | Lý do |
+| # | Category | Question to add | Rationale |
 |---|----------|------------------|-------|
-| 1 | **Error Handling** | `Hệ thống cần xử lý lỗi như thế nào khi có sự cố? Có message mặc định cho user không?` | Thiếu section về error handling toàn cục |
-| 2 | **Error Handling** | `Có cần custom error codes không?` | Quan trọng cho debugging và support |
-| 3 | **Configuration** | `Có cấu hình nào cần thay đổi được bởi admin mà không cần deploy lại không?` | Quan trọng cho operational flexibility |
-| 4 | **Configuration** | `Feature flags/toggles có cần thiết không?` | Phổ biến trong phát triển hiện đại |
-| 5 | **Audit** | `Audit logs có cần reviewed định kỳ không? Ai review?` | Compliance requirement thường bị bỏ qua |
-| 6 | **Audit** | `Logs được lưu ở đâu và trong bao lâu?` | Bổ sung cho 5.2.5 Audit logging |
-| 7 | **Security** | `Data masking/anonymization có cần không?` | Quan trọng cho PII protection |
-| 8 | **Security** | `Có yêu cầu penetration testing không?` | Security validation |
-| 9 | **UX/UI** | `Có user testing/beta testing requirements không?` | UX validation |
-| 10 | **UX/UI** | `Prototype/MVP có cần không?` | Phổ biến trong agile development |
-| 11 | **Data** | `Data encryption keys được quản lý như thế nào?` | Security implementation detail |
-| 12 | **Business** | `Có yêu cầu về SLA/contract với khách hàng không?` | Legal requirement thường bị bỏ qua |
-| 13 | **Integration** | `Webhook/realtime notification có cần không?` | Integration pattern phổ biến |
-| 14 | **Maintenance** | `Application health dashboard có cần không?` | Operations visibility |
+| 1 | **Error Handling** | `How should the system handle errors when something goes wrong? Is there a default message for the user?` | Missing a section on global error handling |
+| 2 | **Error Handling** | `Are custom error codes needed?` | Important for debugging and support |
+| 3 | **Configuration** | `Is there any configuration that admins need to be able to change without a redeploy?` | Important for operational flexibility |
+| 4 | **Configuration** | `Are feature flags/toggles needed?` | Common in modern development |
+| 5 | **Audit** | `Do audit logs need to be reviewed periodically? Who reviews them?` | A compliance requirement that is often overlooked |
+| 6 | **Audit** | `Where are logs stored, and for how long?` | Complements 5.2.5 Audit logging |
+| 7 | **Security** | `Is data masking/anonymization required?` | Important for PII protection |
+| 8 | **Security** | `Is penetration testing required?` | Security validation |
+| 9 | **UX/UI** | `Are there user testing/beta testing requirements?` | UX validation |
+| 10 | **UX/UI** | `Is a prototype/MVP needed?` | Common in agile development |
+| 11 | **Data** | `How are data encryption keys managed?` | Security implementation detail |
+| 12 | **Business** | `Are there any SLA/contract requirements with customers?` | A legal requirement that is often overlooked |
+| 13 | **Integration** | `Are webhooks/real-time notifications needed?` | Common integration pattern |
+| 14 | **Maintenance** | `Is an application health dashboard needed?` | Operations visibility |
 
 ---
 
-## 3. VẤN ĐỀ TRÙNG LẶP (CROSS-REFERENCE)
+## 3. DUPLICATION ISSUES (CROSS-REFERENCE)
 
-| # | Câu hỏi A | Câu hỏi B | Vấn đề | Đề xuất |
+| # | Question A | Question B | Issue | Suggestion |
 |---|-----------|-----------|--------|---------|
-| 1 | 2.3.1 `Hệ thống bên ngoài nào tương tác?` | 9.1.1 `Hệ thống bên ngoài nào cần tích hợp?` | Trùng lặp về external systems | Gộp thành 1 câu, reference sang section 9 |
-| 2 | 4.1.2 `Nguồn dữ liệu đầu vào` | 7.1.1 `Liệt kê tất cả main data entities` | Liên quan chặt chẽ, có thể trùng lặp | Thêm reference: "Xem thêm 7.1.1" |
-| 3 | 5.2.5 `Audit logging requirements` | 10.4.1 `Logging requirements chi tiết` | Audit log vs general logging | Tách rõ: Audit log (security) vs Application log (operations) |
-| 4 | 4.3.5 `Notification channels` | 10.4.4 `Alerting thresholds` | Notifications vs Alerts | Có overlap, nên thêm reference |
-| 5 | 7.4 `Backup & Recovery` | 5.3.3 `Disaster recovery requirements` | Liên quan nhưng khác góc độ | Cần cross-reference rõ ràng |
+| 1 | 2.3.1 `Which external systems interact with this one?` | 9.1.1 `Which external systems need to be integrated?` | Duplicates external systems | Merge into a single question, referencing section 9 |
+| 2 | 4.1.2 `Input data sources` | 7.1.1 `List all main data entities` | Closely related, potentially duplicated | Add a reference: "See also 7.1.1" |
+| 3 | 5.2.5 `Audit logging requirements` | 10.4.1 `Detailed logging requirements` | Audit log vs. general logging | Clearly separate: Audit log (security) vs. Application log (operations) |
+| 4 | 4.3.5 `Notification channels` | 10.4.4 `Alerting thresholds` | Notifications vs. Alerts | There is overlap; should add a reference |
+| 5 | 7.4 `Backup & Recovery` | 5.3.3 `Disaster recovery requirements` | Related but from a different angle | Needs a clear cross-reference |
 
 ---
 
-## 4. ĐỀ XUẤT CẢI TIẾN
+## 4. IMPROVEMENT SUGGESTIONS
 
-### 4.1 CẢI TIẾN VỀ FORMAT
+### 4.1 FORMAT IMPROVEMENTS
 
-**Thống nhất Answer Type Notation:**
+**Standardize the Answer Type notation:**
 ```
-Hiện tại: Boolean + Text, Table, List, Number + Unit
-Đề xuất: Thêm prefix rõ ràng hơn
-  - [Boolean] Có/Không
-  - [Text] Mô tả ngắn
-  - [List] Danh sách (mỗi item một dòng)
-  - [Table: Col1, Col2] Bảng với các cột cụ thể
-  - [Number] Số cụ thể
-  - [Currency] Số tiền (VD: 100,000,000 VND)
-  - [Date] Ngày tháng (VD: 2024-12-31)
-  - [Duration] Thời gian (VD: 30 phút, 2 giờ)
-  - [Percentage] Phần trăm (VD: 99.9%)
-  - [File/Link] Đính kèm file hoặc link
+Current: Boolean + Text, Table, List, Number + Unit
+Proposed: Add clearer prefixes
+  - [Boolean] Yes/No
+  - [Text] Short description
+  - [List] List (one item per line)
+  - [Table: Col1, Col2] Table with specific columns
+  - [Number] Specific number
+  - [Currency] Amount of money (e.g. 100,000,000 VND)
+  - [Date] Date (e.g. 2024-12-31)
+  - [Duration] Duration (e.g. 30 minutes, 2 hours)
+  - [Percentage] Percentage (e.g. 99.9%)
+  - [File/Link] Attached file or link
 ```
 
-### 4.2 THÊM EXAMPLE ANSWERS
+### 4.2 ADD EXAMPLE ANSWERS
 
-| Câu hỏi | Example Answer |
+| Question | Example Answer |
 |---------|---------------|
-| 1.1.2 | "Hệ thống quản lý bán hàng trực tuyến cho phép khách hàng đặt hàng, thanh toán và theo dõi đơn hàng" |
-| 5.1.1 | "Trang chủ: < 2 giây, Tìm kiếm: < 1 giây, Thanh toán: < 5 giây" |
-| 5.3.1 | "99.9% uptime (tương đương downtime tối đa 8.7 giờ/năm)" |
-| 5.2.7 | "Tối thiểu 8 ký tự, có chữ hoa, chữ thường, số, ký tự đặc biệt, hết hạn sau 90 ngày" |
+| 1.1.2 | "An online sales management system that lets customers place orders, pay, and track shipments" |
+| 5.1.1 | "Home page: < 2 seconds, Search: < 1 second, Checkout: < 5 seconds" |
+| 5.3.1 | "99.9% uptime (equivalent to a maximum of 8.7 hours of downtime per year)" |
+| 5.2.7 | "At least 8 characters, with uppercase, lowercase, digits, special characters, expiring after 90 days" |
 | 9.3.1 | "CSV, XML, JSON, PDF, Excel (.xlsx)" |
 
-### 4.3 CẢI TIẾN VỀ STRUCTURE
+### 4.3 STRUCTURAL IMPROVEMENTS
 
-**Thêm Quick-Start Section:**
+**Add a Quick-Start Section:**
 ```
 ## QUICK START GUIDE
-Cho dự án nhỏ (< 3 tháng), chỉ cần trả lời các câu hỏi có ✓ (bắt buộc)
+For small projects (< 3 months), only the questions marked ✓ (required) need to be answered
 ```
 
-**Thêm Dependencies Notes:**
+**Add Dependency Notes:**
 ```
-## 3.1.4 Dependencies giữa các use cases?
-Note: Một số use cases có thể phụ thuộc vào use cases khác hoặc cần được thực hiện trước/sau
+## 3.1.4 Dependencies between use cases?
+Note: Some use cases may depend on other use cases or need to be performed before/after them
 ```
 
-**Tách riêng Technical vs Business Questions:**
+**Separate Technical vs. Business Questions:**
 ```
 ### SECTION X.X: Technical Requirements (For IT/Technical Stakeholders only)
 ```
 
-### 4.4 CẢI TIẾN VỀ USABILITY
+### 4.4 USABILITY IMPROVEMENTS
 
-1. **Thêm glossary terms mở rộng** trong Appendix B:
+1. **Add an expanded glossary** in Appendix B:
    - MFA, SSO, RBAC, ABAC
    - API, REST, GraphQL, SOAP
    - EDI, SFTP
    - MTBF, MTTR, RTO, RPO
    - Containerization, CI/CD
 
-2. **Thêm decision tree** cho một số câu hỏi phức tạp:
+2. **Add a decision tree** for some complex questions:
    ```
    5.2.1 Authentication Method?
-   ├── Ứng dụng nội bộ công ty → SSO (Single Sign-On)
-   ├── Ứng dụng khách hàng → MFA (Multi-Factor Authentication)
-   └── Cả hai → SSO + MFA
+   ├── Internal company application → SSO (Single Sign-On)
+   ├── Customer-facing application → MFA (Multi-Factor Authentication)
+   └── Both → SSO + MFA
    ```
 
-3. **Thêm visual markers** cho độ khó:
+3. **Add visual difficulty markers:**
    ```
-   [✓ Bắt buộc] [○ Tùy chọn] [⚠️ Cần tư vấn kỹ thuật]
+   [✓ Required] [○ Optional] [⚠️ Needs technical consultation]
    ```
 
 ---
 
-## 5. ĐÁNH GIÁ CHI TIẾT THEO DANH MỤC
+## 5. DETAILED ASSESSMENT BY CATEGORY
 
-### Điểm số: 1-10 (10 = xuất sắc, 5 = trung bình, <5 = cần cải thiện)
+### Score: 1-10 (10 = excellent, 5 = average, <5 = needs improvement)
 
-| # | Danh mục | Điểm | Nhận xét |
+| # | Category | Score | Comment |
 |---|----------|------|----------|
-| 1 | **1. THÔNG TIN DỰ ÁN CƠ BẢN** | **8/10** | Đầy đủ, logic. Thiếu câu hỏi về project risks. |
-| 2 | **2. NGƯỜI DÙNG & ACTORS** | **8/10** | Tốt, có phân biệt primary/secondary actors. Có external actors. |
-| 3 | **3. USE CASES & TÍNH NĂNG** | **7/10** | Cấu trúc UC tốt (precondition, postcondition, main flow, alternative, exception). Thiếu acceptance criteria. |
-| 4 | **4. YÊU CẦU CHỨC NĂNG** | **7/10** | Data I/O, Business Logic, Reports đều có. Thiếu Error Handling section. |
-| 5 | **5. YÊU CẦU PHI CHỨC NĂNG** | **8/10** | Performance, Security, Availability, Scalability, Compatibility đều tốt. Thiếu Maintainability. |
-| 6 | **6. GIAO DIỆN NGƯỜI DÙNG** | **7/10** | UI type, Screens, Accessibility có. Thiếu UX research/testing requirements. |
-| 7 | **7. DỮ LIỆU & STORAGE** | **8/10** | ER diagram, Data volume, Retention, Backup đều tốt. |
-| 8 | **8. BUSINESS RULES & CONSTRAINTS** | **7/10** | Legal, Technical, Resource constraints đều có. Thiếu Policy/Governance. |
-| 9 | **9. TÍCH HỢP & NGOẠI VI** | **7/10** | External systems, API, File formats, Third-party đều tốt. |
-| 10 | **10. BẢO TRÌ & VẬN HÀNH** | **7/10** | Deployment, Maintenance, Training, Monitoring đều có. Có lỗi "Wartung". |
+| 1 | **1. BASIC PROJECT INFORMATION** | **8/10** | Complete, logical. Missing a question about project risks. |
+| 2 | **2. USERS & ACTORS** | **8/10** | Good, distinguishes primary/secondary actors. Includes external actors. |
+| 3 | **3. USE CASES & FEATURES** | **7/10** | Good UC structure (precondition, postcondition, main flow, alternative, exception). Missing acceptance criteria. |
+| 4 | **4. FUNCTIONAL REQUIREMENTS** | **7/10** | Data I/O, Business Logic, Reports are all covered. Missing an Error Handling section. |
+| 5 | **5. NON-FUNCTIONAL REQUIREMENTS** | **8/10** | Performance, Security, Availability, Scalability, Compatibility are all good. Missing Maintainability. |
+| 6 | **6. USER INTERFACE** | **7/10** | UI type, Screens, Accessibility are covered. Missing UX research/testing requirements. |
+| 7 | **7. DATA & STORAGE** | **8/10** | ER diagram, Data volume, Retention, Backup are all good. |
+| 8 | **8. BUSINESS RULES & CONSTRAINTS** | **7/10** | Legal, Technical, Resource constraints are all covered. Missing Policy/Governance. |
+| 9 | **9. INTEGRATION & EXTERNAL SYSTEMS** | **7/10** | External systems, API, File formats, Third-party are all good. |
+| 10 | **10. MAINTENANCE & OPERATIONS** | **7/10** | Deployment, Maintenance, Training, Monitoring are all covered. Contains the "Wartung" error. |
 
 ---
 
-## 6. PRIORITY MATRIX - SỬA THEO THỨ TỰ
+## 6. PRIORITY MATRIX — FIX ORDER
 
-### HIGH PRIORITY (Sửa ngay - ảnh hưởng chất lượng tài liệu)
+### HIGH PRIORITY (Fix immediately — affects document quality)
 
-| # | Issue | Lý do |
+| # | Issue | Reason |
 |---|-------|-------|
-| 1 | 7.1 & 9.4 typo `Lo_type` | Lỗi syntax, ảnh hưởng parsing |
-| 2 | 10.2.1 `Wartung` | Tiếng Đức sai trong tài liệu Tiếng Việt |
-| 3 | Thiếu Error Handling questions | Gap lớn trong requirements |
-| 4 | Thiếu Configuration Management | Quan trọng cho operations |
-| 5 | 5.2.2 RBAC/ABAC quá kỹ thuật | Business user không hiểu |
+| 1 | 7.1 & 9.4 typo `Lo_type` | Syntax error, affects parsing |
+| 2 | 10.2.1 `Wartung` | Incorrect German word in an English/Vietnamese document |
+| 3 | Missing Error Handling questions | Large gap in requirements |
+| 4 | Missing Configuration Management | Important for operations |
+| 5 | 5.2.2 RBAC/ABAC too technical | Business users won't understand |
 
-### MEDIUM PRIORITY (Sửa trong phiên bản tiếp theo)
-
-| # | Issue |
-|---|-------|
-| 1 | Thêm example answers |
-| 2 | Thống nhất Answer Type notation |
-| 3 | Fix cross-references giữa 2.3 và 9.1 |
-| 4 | Thêm glossary terms (MFA, SSO, RBAC, etc.) |
-| 5 | 1.3.3 Chinese character `预留` |
-
-### LOW PRIORITY (Cải tiến từ từ)
+### MEDIUM PRIORITY (Fix in the next version)
 
 | # | Issue |
 |---|-------|
-| 1 | Thêm Quick-Start guide |
-| 2 | Thêm decision trees |
-| 3 | Thêm visual markers cho độ khó |
-| 4 | Tách riêng Technical vs Business sections |
+| 1 | Add example answers |
+| 2 | Standardize the Answer Type notation |
+| 3 | Fix cross-references between 2.3 and 9.1 |
+| 4 | Add glossary terms (MFA, SSO, RBAC, etc.) |
+| 5 | 1.3.3 stray Chinese character `预留` |
+
+### LOW PRIORITY (Improve gradually)
+
+| # | Issue |
+|---|-------|
+| 1 | Add a Quick-Start guide |
+| 2 | Add decision trees |
+| 3 | Add visual difficulty markers |
+| 4 | Separate Technical vs. Business sections |
 
 ---
 
-## 7. KẾT LUẬN
+## 7. CONCLUSION
 
-**Điểm tổng thể: 7.3/10**
+**Overall score: 7.3/10**
 
-**Điểm mạnh:**
-- Cấu trúc phân loại rõ ràng, logic
-- Độ phủ sóng tốt về các khía cạnh requirements
-- Sử dụng MoSCoW prioritization tốt
-- Có Appendix glossary hữu ích
+**Strengths:**
+- Clear, logical classification structure
+- Good coverage of requirements aspects
+- Good use of MoSCoW prioritization
+- Includes a useful glossary appendix
 
-**Cần cải thiện:**
-- Sửa 5 lỗi typo/format
-- Thêm Error Handling và Configuration Management sections
-- Giảm ngôn ngữ kỹ thuật cho business user
-- Thêm example answers
+**Needs improvement:**
+- Fix 5 typo/format errors
+- Add Error Handling and Configuration Management sections
+- Reduce technical language for business users
+- Add example answers
 - Fix cross-references
 
-**Khuyến nghị:**
-- Phát hành phiên bản 1.1 với các HIGH priority fixes
-- Xem xét tách thành 2 phiên bản: Business Requirements Questionnaire và Technical Requirements Checklist
+**Recommendations:**
+- Release version 1.1 with the HIGH priority fixes
+- Consider splitting into 2 versions: a Business Requirements Questionnaire and a Technical Requirements Checklist
 
 ---
 
@@ -229,3 +229,4 @@ Note: Một số use cases có thể phụ thuộc vào use cases khác hoặc c
 - Review Version: 1.0
 - Review Date: 2026-03-23
 - Status: Ready for Revision
+</content>
